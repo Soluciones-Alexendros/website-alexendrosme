@@ -7,7 +7,7 @@ Lista viva de pendientes del repositorio standalone `website-alexendrosme`
 
 ## 1. Infraestructura git ✅ (2026-04-12)
 
-- [x] Repo creado: `github.com/Alexendros/PersonaWeb` (hoy `Iniciativas-Alexendros/website-alexendrosme`).
+- [x] Repo creado: `github.com/Alexendros/PersonaWeb` (hoy `Soluciones-Alexendros/website-alexendrosme`).
 - [x] `main` pusheado, PR de audit mergeado.
 - [x] Proteger `main` en GitHub (require PR + 1 review, status checks build/e2e/lhci, enforce admins).
 

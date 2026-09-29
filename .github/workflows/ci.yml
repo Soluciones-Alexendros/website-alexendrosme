@@ -286,7 +286,7 @@ jobs:
             npx vercel deploy --prod --token "${{ secrets.VERCEL_TOKEN }}" --scope alexendros-team --yes
           else
             echo "::warning::VERCEL_TOKEN not set in repo secrets. Skipping deploy."
-            echo "::warning::Set VERCEL_TOKEN at https://github.com/Iniciativas-Alexendros/website-alexendrosme/settings/secrets/actions"
+            echo "::warning::Set VERCEL_TOKEN at https://github.com/Soluciones-Alexendros/website-alexendrosme/settings/secrets/actions"
             echo "::warning::Token can be created at https://vercel.com/account/tokens"
           fi
         env:
