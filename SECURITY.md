@@ -22,7 +22,7 @@
 
 **No abras un issue público** para reportar vulnerabilidades.
 
-1. Preferible: [GitHub Security Advisory](https://github.com/Iniciativas-Alexendros/website-alexendrosme/security/advisories/new).
+1. Preferible: [GitHub Security Advisory](https://github.com/Soluciones-Alexendros/website-alexendrosme/security/advisories/new).
 2. Alternativa: correo privado a security@alexendros.me. Cifra el mensaje con
    la clave PGP publicada en el directorio Web Key Directory
    (PENDIENTE_PUBLICAR_WKD, accesible vía
