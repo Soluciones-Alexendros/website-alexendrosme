@@ -23,7 +23,7 @@ Antes de abrir un issue revisa estas vías:
 
 Para preguntas, problemas reproducibles o propuestas concretas utiliza la
 sección
-[Issues del repositorio](https://github.com/Iniciativas-Alexendros/website-alexendrosme/issues)
+[Issues del repositorio](https://github.com/Soluciones-Alexendros/website-alexendrosme/issues)
 (plantillas en `.github/ISSUE_TEMPLATE/`).
 
 ## 3. Vulnerabilidades
