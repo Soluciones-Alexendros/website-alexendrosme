@@ -109,7 +109,7 @@ y este proyecto se adhiere a [SemVer 2.0.0](https://semver.org/lang/es/).
 - **Dependabot cooldown**: `cooldown.default-days: 7` añadido a ambos ecosistemas (npm + github-actions).
 - **Badge a11y contraste**: `--ax-accent-fg` en light mode corregido de `oklch(0.08→0.05)` para alcanzar ≥4.5:1 WCAG AA en badges "En construcción".
 - **CSS huérfano**: 4 declaraciones sueltas eliminadas de `components.css` (`width: 2rem`, `WhiteSpace`, reglas pseudo).
-- **CHANGELOG.md** (Tarea 1): URLs repo actualizadas `Alexendros/website-alexendrosme` → `Iniciativas-Alexendros/website-alexendrosme`.
+- **CHANGELOG.md** (Tarea 1): URLs repo actualizadas `Alexendros/website-alexendrosme` → `Soluciones-Alexendros/website-alexendrosme`.
 - **CI unificado v4** (Tarea 2): `actions/checkout@v4`, `setup-node@v4` con `node-version-file: .nvmrc`, `upload-artifact@v4`, `concurrency` + `cancel-in-progress`.
 - **package.json engines.node** (Tarea 3): `>=24` → `>=22` (alineado con `.nvmrc` = 22).
 - **Sitemaps/JSON-LD**: snapshot regression actualizados (12 imágenes). Build + tests + lint + tsc 0 errores.
@@ -208,12 +208,12 @@ y este proyecto se adhiere a [SemVer 2.0.0](https://semver.org/lang/es/).
 
 - Versión inicial del repositorio con canon de documentación aplicado.
 
-[0.8.0]: https://github.com/Iniciativas-Alexendros/website-alexendrosme/compare/v0.7.2...v0.8.0
-[0.7.2]: https://github.com/Iniciativas-Alexendros/website-alexendrosme/compare/v0.7.1...v0.7.2
-[0.7.1]: https://github.com/Iniciativas-Alexendros/website-alexendrosme/compare/v0.7.0...v0.7.1
-[0.7.0]: https://github.com/Iniciativas-Alexendros/website-alexendrosme/compare/v0.6.0...v0.7.0
-[0.6.0]: https://github.com/Iniciativas-Alexendros/website-alexendrosme/compare/v0.5.0...v0.6.0
-[0.5.0]: https://github.com/Iniciativas-Alexendros/website-alexendrosme/compare/v0.3.0...v0.5.0
-[0.3.0]: https://github.com/Iniciativas-Alexendros/website-alexendrosme/compare/v0.2.0...v0.3.0
-[0.2.0]: https://github.com/Iniciativas-Alexendros/website-alexendrosme/compare/v0.1.0...v0.2.0
-[0.1.0]: https://github.com/Iniciativas-Alexendros/website-alexendrosme/releases/tag/v0.1.0
+[0.8.0]: https://github.com/Soluciones-Alexendros/website-alexendrosme/compare/v0.7.2...v0.8.0
+[0.7.2]: https://github.com/Soluciones-Alexendros/website-alexendrosme/compare/v0.7.1...v0.7.2
+[0.7.1]: https://github.com/Soluciones-Alexendros/website-alexendrosme/compare/v0.7.0...v0.7.1
+[0.7.0]: https://github.com/Soluciones-Alexendros/website-alexendrosme/compare/v0.6.0...v0.7.0
+[0.6.0]: https://github.com/Soluciones-Alexendros/website-alexendrosme/compare/v0.5.0...v0.6.0
+[0.5.0]: https://github.com/Soluciones-Alexendros/website-alexendrosme/compare/v0.3.0...v0.5.0
+[0.3.0]: https://github.com/Soluciones-Alexendros/website-alexendrosme/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/Soluciones-Alexendros/website-alexendrosme/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/Soluciones-Alexendros/website-alexendrosme/releases/tag/v0.1.0

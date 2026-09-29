@@ -85,11 +85,11 @@
   "author": "Alexendros <contacto@alexendros.me>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Iniciativas-Alexendros/website-alexendrosme.git"
+    "url": "https://github.com/Soluciones-Alexendros/website-alexendrosme.git"
   },
   "homepage": "https://alexendros.me",
   "bugs": {
-    "url": "https://github.com/Iniciativas-Alexendros/website-alexendrosme/issues"
+    "url": "https://github.com/Soluciones-Alexendros/website-alexendrosme/issues"
   },
   "keywords": [
     "personal-website",

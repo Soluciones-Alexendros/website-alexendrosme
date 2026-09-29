@@ -26,7 +26,7 @@ Usamos las siguientes herramientas:
 Pasos típicos:
 
 ```bash
-git clone git@github.com:Iniciativas-Alexendros/website-alexendrosme.git
+git clone git@github.com:Soluciones-Alexendros/website-alexendrosme.git
 cd website-alexendrosme
 npm install
 npm run test
