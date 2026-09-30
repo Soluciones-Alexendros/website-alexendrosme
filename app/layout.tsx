@@ -17,27 +17,25 @@ import { prePaintScriptString } from "@/lib/theme-pre-paint";
 
 const ParticleBg = dynamic(() => import("@/components/particle-bg").then((m) => m.ParticleBg));
 
-/** Display / títulos: editorial, ensayos. next/font descarga en build y sirve local. */
+/** Display / títulos: variable (un solo query; evita fallo Turbopack en Vercel). */
 const sourceSerif = Source_Serif_4({
   subsets: ["latin"],
   variable: "--font-source-serif",
-  weight: ["600", "700"],
   display: "swap",
 });
 
-/** Body / UI: pareja Adobe, lectura larga. */
+/** Body / UI: variable. */
 const sourceSans = Source_Sans_3({
   subsets: ["latin"],
   variable: "--font-source-sans",
-  weight: ["400", "600", "700"],
   display: "swap",
 });
 
-/** Código y labels. */
+/** Código y labels: un peso (Plex Mono no es variable en next/font). */
 const plexMono = IBM_Plex_Mono({
   subsets: ["latin"],
   variable: "--font-plex-mono",
-  weight: ["400", "500"],
+  weight: "400",
   display: "swap",
   preload: false,
 });
