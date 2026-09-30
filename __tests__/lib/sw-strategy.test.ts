@@ -14,8 +14,8 @@ describe("SW selectStrategy", () => {
     expect(selectStrategy("/_next/static/foo.js", "no-cors")).toBe("static-cache-first");
   });
 
-  it("/fonts/GeistVF.woff2 → static-cache-first", () => {
-    expect(selectStrategy("/fonts/GeistVF.woff2", "no-cors")).toBe("static-cache-first");
+  it("/fonts/source-sans.woff2 → static-cache-first", () => {
+    expect(selectStrategy("/fonts/source-sans.woff2", "no-cors")).toBe("static-cache-first");
   });
 
   it("/og/opengraph-image.png → static-cache-first", () => {

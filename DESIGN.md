@@ -3,7 +3,7 @@ version: "1.0"
 name: "Alexendros.me Design System"
 description: >
   Design system propio para alexendros.me. Atmósfera violeta profunda con
-  acento dorado. Dark-first, oklch exclusivo, tokens CSS custom properties
+  acento de latón mate. Dark-first, oklch exclusivo, tokens CSS custom properties
   con namespace --ax-*. Light mode activo: papel cálido + texto violeta.
 
 colors:
@@ -23,7 +23,7 @@ colors:
   # --- Text ---
   text-primary: oklch(0.97 0.008 310)
   text-secondary: oklch(0.8 0.01 310)
-  text-tertiary: oklch(0.62 0.012 310)
+  text-tertiary: oklch(0.75 0.01 310)
   text-disabled: oklch(0.46 0.014 310)
   text-inverse: oklch(0.07 0.012 315)
 
@@ -34,9 +34,9 @@ colors:
   border-focus: "{colors.accent}"
 
   # --- Accent (brand) ---
-  accent: oklch(0.78 0.165 85)
-  accent-dim: oklch(0.62 0.13 85)
-  accent-bright: oklch(0.92 0.1 88)
+  accent: oklch(0.76 0.12 85)
+  accent-dim: oklch(0.58 0.1 85)
+  accent-bright: oklch(0.88 0.08 88)
   accent-fg: oklch(0.12 0.014 50)
 
   brand-primary: "{colors.accent}"
@@ -82,15 +82,15 @@ colors:
 
   # --- Light mode (activo en colors.css) ---
   light:
-    surface-0: oklch(0.985 0.004 85)
+    surface-0: oklch(0.985 0.006 85)
     surface-100: oklch(0.94 0.007 85)
     surface-300: oklch(0.86 0.009 85)
     surface-500: oklch(0.74 0.011 85)
     text-primary: oklch(0.18 0.01 315)
     text-secondary: oklch(0.32 0.01 315)
     text-tertiary: oklch(0.4 0.01 315)
-    accent: oklch(0.52 0.16 85)
-    accent-bright: oklch(0.44 0.17 85)
+    accent: oklch(0.48 0.12 85)
+    accent-bright: oklch(0.4 0.12 85)
     accent-fg: oklch(1 0 0)
 
 motion:
@@ -139,48 +139,48 @@ z-index:
 
 typography:
   display:
-    fontFamily: "Geist Sans, Inter, sans-serif"
+    fontFamily: "Source Serif 4, Source Sans 3, Georgia, serif"
     fontSize: "clamp(3rem, 2.5rem + 2.4vw, 4.75rem)"
     fontWeight: 700
     lineHeight: 0.98
     letterSpacing: -0.035em
   h1:
-    fontFamily: "Geist Sans, Inter, sans-serif"
+    fontFamily: "Source Serif 4, Source Sans 3, Georgia, serif"
     fontSize: "clamp(2.25rem, 2rem + 1.2vw, 3rem)"
     fontWeight: 600
     lineHeight: 1.1
     letterSpacing: -0.022em
   h2:
-    fontFamily: "Geist Sans, Inter, sans-serif"
+    fontFamily: "Source Serif 4, Source Sans 3, Georgia, serif"
     fontSize: "clamp(1.75rem, 1.6rem + 0.7vw, 2.125rem)"
     fontWeight: 600
     lineHeight: 1.15
     letterSpacing: -0.022em
   h3:
-    fontFamily: "Geist Sans, Inter, sans-serif"
+    fontFamily: "Source Serif 4, Source Sans 3, Georgia, serif"
     fontSize: "clamp(1.438rem, 1.35rem + 0.4vw, 1.625rem)"
     fontWeight: 600
     lineHeight: 1.25
     letterSpacing: -0.022em
   body:
-    fontFamily: "Geist Sans, Inter, sans-serif"
+    fontFamily: "Source Sans 3, ui-sans-serif, system-ui, sans-serif"
     fontSize: "clamp(0.938rem, 0.9rem + 0.18vw, 1rem)"
     fontWeight: 400
     lineHeight: 1.6
     letterSpacing: -0.005em
   body-sm:
-    fontFamily: "Geist Sans, Inter, sans-serif"
+    fontFamily: "Source Sans 3, ui-sans-serif, system-ui, sans-serif"
     fontSize: "clamp(0.813rem, 0.79rem + 0.14vw, 0.875rem)"
     fontWeight: 400
     lineHeight: 1.5
   label:
-    fontFamily: "Geist Mono, monospace"
+    fontFamily: "IBM Plex Mono, ui-monospace, monospace"
     fontSize: "clamp(0.8rem, 0.77rem + 0.12vw, 0.813rem)"
     fontWeight: 500
     lineHeight: 1.2
     letterSpacing: 0.08em
   mono:
-    fontFamily: "Geist Mono, monospace"
+    fontFamily: "IBM Plex Mono, ui-monospace, monospace"
     fontSize: 0.92em
     letterSpacing: 0
 
@@ -215,7 +215,7 @@ puede sincronizarse más adelante, sin sustituir esta fuente.
 ## Overview
 
 La interfaz transmite una atmósfera **violeta profunda** con acentos
-**dorados**. El resultado evoca un acabado mate premium — una publicación de
+**de latón**. El resultado evoca un acabado mate premium — una publicación de
 alta gama o una galería contemporánea.
 
 - **Dark-first** — el sitio es nativamente oscuro. Light mode documentado
@@ -224,7 +224,7 @@ alta gama o una galería contemporánea.
   y manipulación perceptual uniforme.
 - **Elevación por luminosidad** — no se usan box-shadows en cards/inputs;
   la profundidad se comunica variando la luminosidad de las superficies.
-- **Geist Sans + Mono** — tipografía principal. Inter para display hero.
+- **Source Serif 4 + Source Sans 3 + IBM Plex Mono** — editorial / UI / código.
 - **Lucide** — iconografía unificada (20px por defecto).
 
 ## Colors

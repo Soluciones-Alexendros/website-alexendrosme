@@ -1,5 +1,4 @@
-import localFont from "next/font/local";
-import { Inter } from "next/font/google";
+import { Source_Serif_4, Source_Sans_3, IBM_Plex_Mono } from "next/font/google";
 import dynamic from "next/dynamic";
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
@@ -18,27 +17,27 @@ import { prePaintScriptString } from "@/lib/theme-pre-paint";
 
 const ParticleBg = dynamic(() => import("@/components/particle-bg").then((m) => m.ParticleBg));
 
-const geistSans = localFont({
-  src: "../public/fonts/GeistVF.woff2",
-  variable: "--font-geist-sans",
-  display: "swap",
-});
-
-const geistMono = localFont({
-  src: "../public/fonts/GeistMonoVF.woff2",
-  variable: "--font-geist-mono",
-  display: "swap",
-  preload: false,
-});
-
-// Alexendros.me Design System v1 · Inter weight 700/800 para hero h1.display.
-// Inter aprobado en otro hilo como reemplazo definitivo de la familia
-// neogrotesque (Outfit/Bricolage/Manrope descatalogados). Geist sigue
-// como sans body (doctrina alexendros.me CLAUDE.md §3).
-const interDisplay = Inter({
+/** Display / títulos: editorial, ensayos. next/font descarga en build y sirve local. */
+const sourceSerif = Source_Serif_4({
   subsets: ["latin"],
-  variable: "--font-display",
-  weight: ["700", "800"],
+  variable: "--font-source-serif",
+  weight: ["600", "700"],
+  display: "swap",
+});
+
+/** Body / UI: pareja Adobe, lectura larga. */
+const sourceSans = Source_Sans_3({
+  subsets: ["latin"],
+  variable: "--font-source-sans",
+  weight: ["400", "600", "700"],
+  display: "swap",
+});
+
+/** Código y labels. */
+const plexMono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  variable: "--font-plex-mono",
+  weight: ["400", "500"],
   display: "swap",
   preload: false,
 });
@@ -78,8 +77,8 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#faf8f2" },
-    { media: "(prefers-color-scheme: dark)", color: "#17130f" },
+    { media: "(prefers-color-scheme: light)", color: "#fcfaf6" },
+    { media: "(prefers-color-scheme: dark)", color: "#141016" },
   ],
   colorScheme: "dark light",
 };
@@ -89,7 +88,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html
       lang="es"
       data-accent="gold"
-      className={`${geistSans.variable} ${geistMono.variable} ${interDisplay.variable}`}
+      className={`${sourceSerif.variable} ${sourceSans.variable} ${plexMono.variable}`}
       suppressHydrationWarning
     >
       <head>
@@ -111,7 +110,7 @@ body{padding-top:var(--ax-banner-offset)}
 .site-nav__links{display:none;align-items:center;gap:.5rem}
 @media(min-width:48rem){.site-nav__links{display:flex}}
 .site-nav__link{position:relative;display:inline-flex;align-items:center;min-height:var(--ax-tap-target);padding:.5rem .75rem;border-radius:var(--ax-radius-md);font-size:var(--text-sm);font-weight:500;color:var(--muted-foreground);text-decoration:none}
-.nav-logo{display:inline-flex;align-items:center;min-height:var(--ax-tap-target);font-family:var(--font-geist-sans,ui-sans-serif,system-ui,sans-serif);font-size:var(--text-lg);font-weight:700;letter-spacing:-.025em;color:var(--primary);text-decoration:none}
+.nav-logo{display:inline-flex;align-items:center;min-height:var(--ax-tap-target);font-family:var(--font-display);font-size:var(--text-lg);font-weight:700;letter-spacing:-.025em;color:var(--primary);text-decoration:none}
 .hero-section{position:relative;padding-block:clamp(3rem,8vw,6rem);display:flex;flex-direction:column;gap:clamp(1rem,2vw,1.5rem);max-width:52rem}
 .hero-signature{font-family:var(--font-display),var(--font-sans);font-weight:700;font-size:var(--text-display);line-height:.98;letter-spacing:-.025em;text-wrap:balance}
 .body-layout{display:flex;min-height:100vh;flex-direction:column}
@@ -128,8 +127,8 @@ h1.display,.hero h1{font-family:var(--font-display);font-weight:700;letter-spaci
 
         {/* PWA: manifest + apple touch icon */}
         <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#faf8f2" media="(prefers-color-scheme: light)" />
-        <meta name="theme-color" content="#17130f" media="(prefers-color-scheme: dark)" />
+        <meta name="theme-color" content="#fcfaf6" media="(prefers-color-scheme: light)" />
+        <meta name="theme-color" content="#141016" media="(prefers-color-scheme: dark)" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="mobile-web-app-capable" content="yes" />

@@ -17,17 +17,18 @@ export interface OGTheme {
   muted: string;
 }
 
+/** Hex derivados de tokens OKLCH (Satori no pinta oklch de forma fiable). */
 export const PROYECTOS_THEME: OGTheme = {
-  background: "linear-gradient(135deg, #17130f 0%, #2a2318 100%)",
-  accent: "#d9b267",
-  title: "#f5f0ea",
-  description: "#a09888",
-  muted: "#6b6358",
+  background: "linear-gradient(135deg, #141016 0%, #1d191f 100%)",
+  accent: "#d4ab4f",
+  title: "#f7f4f9",
+  description: "#c0bcc3",
+  muted: "#756f7b",
 };
 
 export const OPINION_THEME: OGTheme = {
-  background: "linear-gradient(135deg, #0f1a17 0%, #182620 100%)",
-  accent: "#67d9b2",
+  background: "linear-gradient(135deg, #0f1714 0%, #182620 100%)",
+  accent: "#68b88f",
   title: "#eaf5f0",
   description: "#88a098",
   muted: "#586b63",
