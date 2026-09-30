@@ -281,18 +281,19 @@ Paneles translúcidos con backdrop-blur para cards flotantes (mission cards):
 
 ## Typography
 
-La estrategia tipográfica usa **Geist Sans** para narrativa y **Geist Mono**
-para datos técnicos.
+La estrategia tipográfica usa **Source Serif 4** para display/titulares,
+**Source Sans 3** para cuerpo y UI, e **IBM Plex Mono** para datos técnicos
+(ver ADR 0005).
 
-- **Display**: Geist Sans Bold a 700, clamp fluido 3rem→4.75rem.
+- **Display**: Source Serif 4 Bold 700, clamp fluido 3rem→4.75rem.
   Line-height 0.98, tracking -0.035em. Solo para hero principal.
-- **Headlines** (h1-h3): Geist Sans Semi-Bold 600, tracking -0.022em.
+- **Headlines** (h1-h3): Source Serif 4 Semi-Bold 600, tracking -0.022em.
   Tamaños fluidos con clamp.
-- **Body**: Geist Sans Regular 400, 16px base, line-height 1.6,
+- **Body**: Source Sans 3 Regular 400, 16px base, line-height 1.6,
   tracking -0.005em.
-- **Label**: Geist Mono Medium 500, uppercase, letter-spacing 0.08em.
+- **Label**: IBM Plex Mono Medium 500, uppercase, letter-spacing 0.08em.
   Para kickers, secciones, metadata técnica.
-- **Mono**: Geist Mono, tabular-nums para cifras alineadas.
+- **Mono**: IBM Plex Mono, tabular-nums para cifras alineadas.
 
 Los tokens tipográficos `--text-*` y `--tracking-*` se definen en el
 `@theme` block de Tailwind v4 y NO se renombran bajo `--ax-*` porque

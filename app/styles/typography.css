@@ -83,7 +83,7 @@
 
   .ds-h3,
   .title {
-    font-family: var(--font-sans);
+    font-family: var(--font-display);
     font-weight: 600;
     font-size: var(--text-2xl);
     line-height: 1.25;
