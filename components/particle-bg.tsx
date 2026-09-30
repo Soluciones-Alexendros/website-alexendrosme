@@ -34,8 +34,8 @@ export function ParticleBg() {
 
     const styles = getComputedStyle(document.documentElement);
     // Fallbacks alineados a Patrón axds gama Alexendros.me Design System (oro + ámbar profundo).
-    const primary: string = styles.getPropertyValue("--primary").trim() || "oklch(0.80 0.16 85)";
-    const accent: string = styles.getPropertyValue("--ax-accent").trim() || "oklch(0.66 0.14 65)";
+    const primary: string = styles.getPropertyValue("--primary").trim() || "oklch(0.76 0.12 85)";
+    const accent: string = styles.getPropertyValue("--ax-accent").trim() || "oklch(0.76 0.12 85)";
 
     let particles: Particle[] = [];
     let raf = 0;

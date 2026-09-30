@@ -65,10 +65,10 @@
   --ax-radius-lg: var(--radius);
   --ax-radius-xl: calc(var(--radius) + 4px);
 
-  /* Fonts — consumidos por next/font vía --font-geist-sans + --font-display (Inter v0.2.2) */
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-display: var(--font-display, "Inter"), var(--font-geist-sans), sans-serif;
+  /* Fonts — next/font inyecta --font-source-serif / --font-source-sans / --font-plex-mono */
+  --font-sans: var(--font-source-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-display: var(--font-source-serif), var(--font-source-sans), ui-serif, Georgia, serif;
 
   /* Keyframes para Tailwind v4 animate-* utilities */
   --animate-marquee: marquee 40s linear infinite;

@@ -40,8 +40,8 @@ export function ThemeToggle() {
           className={cn(
             "inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium theme-toggle-trigger",
             "transition-colors duration-fast ease-out-expo",
-            "bg-muted hover:bg-muted/80",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+            "bg-muted hover:[background:color-mix(in_oklch,var(--muted)_88%,var(--primary)_12%)]",
+            "focus-visible:outline-none focus-visible:[box-shadow:var(--ax-ring-focus)]",
             "data-[state=open]:bg-muted",
             "aria-invalid:border-destructive",
           )}

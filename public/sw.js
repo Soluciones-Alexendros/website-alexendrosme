@@ -10,7 +10,7 @@
  * Mensaje SKIP_WAITING desde cliente para forzar activación inmediata.
  */
 
-const CACHE_VERSION = "v2";
+const CACHE_VERSION = "v3";
 const STATIC_CACHE = `ax-static-${CACHE_VERSION}`;
 const NAV_CACHE = `ax-nav-${CACHE_VERSION}`;
 
