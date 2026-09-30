@@ -45,8 +45,6 @@ colors:
   brand-accent: "{colors.accent-dim}"
   brand-accent-fg: "{colors.accent-fg}"
 
-  Los tokens canónicos viven en el sistema de diseño Vergina Imperial (repositorio privado en preparación).
-
   # --- Semantic states ---
   success-fg: oklch(0.78 0.16 130)
   success-bg: oklch(0.2 0.06 130)
@@ -210,7 +208,9 @@ components:
 # Alexendros.me Design System
 
 Sistema de diseño propio para alexendros.me. Este documento sirve como fuente
-de verdad tanto para humanos como para agentes IA.
+de verdad tanto para humanos como para agentes IA. Los tokens canónicos viven
+aquí (`--ax-*` en `app/styles/tokens/`); un paquete privado de design system
+puede sincronizarse más adelante, sin sustituir esta fuente.
 
 ## Overview
 
