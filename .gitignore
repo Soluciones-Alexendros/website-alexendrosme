@@ -13,9 +13,10 @@ artifacts
 dist
 *.tsbuildinfo
 
-# env
+# env (`.env.example` se versiona a propósito)
 .env
 .env*.local
+!.env.example
 
 # editor / os
 .DS_Store
@@ -44,7 +45,6 @@ playwright/.cache/
 # Lighthouse CI local output
 .lighthouseci/
 .vercel
-.env*
 
 # Vitest coverage (regenerated on each `npm run test:coverage`)
 coverage/
