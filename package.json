@@ -15,7 +15,7 @@
     "typecheck": "tsc --noEmit",
     "format": "prettier --write \"**/*.{ts,tsx,js,mjs,json,md,css}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,mjs,json,md,css}\"",
-    "test": "vitest run --exclude __tests__/lib/contrast.test.ts",
+    "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:a11y": "vitest run __tests__/lib/contrast.test.ts --reporter verbose && playwright test tests/a11y.spec.ts",

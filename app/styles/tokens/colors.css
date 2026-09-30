@@ -1,5 +1,5 @@
 /* colors.css — Alexendros.me Design System v1 · Paleta completa
-   Atmósfera violeta profunda (hue 315) + acento dorado batido (hue 85).
+   Atmósfera violeta profunda (hue 315) + acento latón mate (hue 85, croma baja).
    Dark-first. oklch exclusivo. Profundidad por luminosidad.
    Light mode: calidez dorada (hue 85) + texto violeta (hue 315). */
 
@@ -29,18 +29,18 @@
      2. ACENTO OSCURO — dorado batido (default, hue 85, cálido)
      "Memoria, valor, firma, declaración." alexendros.me es lente identitaria.
      ===================================================================== */
-  --ax-accent: oklch(0.78 0.165 85); /* oro batido helénico */
-  --ax-accent-dim: oklch(0.62 0.13 85); /* oro grave */
-  --ax-accent-bright: oklch(0.92 0.1 88); /* brillo alto */
-  --ax-accent-fg: oklch(0.08 0.01 50); /* tinta oscura ≥4.5:1 sobre oro */
+  --ax-accent: oklch(0.76 0.12 85); /* latón mate */
+  --ax-accent-dim: oklch(0.58 0.1 85); /* latón grave */
+  --ax-accent-bright: oklch(0.88 0.08 88); /* brillo suave */
+  --ax-accent-fg: oklch(0.12 0.014 50); /* tinta oscura ≥4.5:1 sobre oro */
 
   /* Shimmer vertical — texto metalizado (cifras, números de sección) */
   --ax-accent-shimmer: linear-gradient(
     180deg,
-    oklch(0.92 0.1 88) 0%,
-    oklch(0.82 0.165 85) 38%,
-    oklch(0.62 0.13 85) 70%,
-    oklch(0.78 0.155 85) 100%
+    oklch(0.88 0.08 88) 0%,
+    oklch(0.78 0.11 85) 38%,
+    oklch(0.58 0.1 85) 70%,
+    oklch(0.74 0.11 85) 100%
   );
 
   /* Alias de marca para componentes que lean tokens "brand" */
@@ -137,7 +137,7 @@
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) {
     /* ----- Superficies: papel cálido (hue 85), croma baja; L 0.985 → 0.42 ----- */
-    --ax-surface-0: oklch(0.985 0.004 85);
+    --ax-surface-0: oklch(0.985 0.006 85);
     --ax-surface-50: oklch(0.97 0.005 85);
     --ax-surface-100: oklch(0.94 0.007 85); /* card base — salto claro vs page */
     --ax-surface-200: oklch(0.9 0.008 85);
@@ -155,9 +155,9 @@
     --ax-atmo-vignette: oklch(0.97 0.008 85);
 
     /* ----- Acento: oro cromático; hover = más oscuro (AA + texto blanco) ----- */
-    --ax-accent: oklch(0.52 0.16 85);
-    --ax-accent-dim: oklch(0.44 0.14 85);
-    --ax-accent-bright: oklch(0.44 0.17 85); /* hover: más oscuro que accent */
+    --ax-accent: oklch(0.48 0.12 85);
+    --ax-accent-dim: oklch(0.4 0.1 85);
+    --ax-accent-bright: oklch(0.4 0.12 85); /* hover: más oscuro que accent */
     --ax-accent-fg: oklch(1 0 0);
 
     --ax-brand-primary: var(--ax-accent);
@@ -168,10 +168,10 @@
 
     --ax-accent-shimmer: linear-gradient(
       180deg,
-      oklch(0.44 0.17 85) 0%,
-      oklch(0.52 0.16 85) 38%,
-      oklch(0.58 0.13 85) 70%,
-      oklch(0.48 0.14 85) 100%
+      oklch(0.4 0.12 85) 0%,
+      oklch(0.48 0.12 85) 38%,
+      oklch(0.52 0.1 85) 70%,
+      oklch(0.44 0.1 85) 100%
     );
 
     /* ----- Texto: violeta (hue 315), croma suave ----- */
@@ -237,7 +237,7 @@
 
 /* Selector manual para forzar light mode (data-theme="light" en <html>) */
 [data-theme="light"] {
-  --ax-surface-0: oklch(0.985 0.004 85);
+  --ax-surface-0: oklch(0.985 0.006 85);
   --ax-surface-50: oklch(0.97 0.005 85);
   --ax-surface-100: oklch(0.94 0.007 85);
   --ax-surface-200: oklch(0.9 0.008 85);
@@ -253,9 +253,9 @@
   --ax-atmo-velvet: oklch(0.94 0.02 85);
   --ax-atmo-vignette: oklch(0.97 0.008 85);
 
-  --ax-accent: oklch(0.52 0.16 85);
-  --ax-accent-dim: oklch(0.44 0.14 85);
-  --ax-accent-bright: oklch(0.44 0.17 85); /* hover: más oscuro que accent */
+  --ax-accent: oklch(0.48 0.12 85);
+  --ax-accent-dim: oklch(0.4 0.1 85);
+  --ax-accent-bright: oklch(0.4 0.12 85); /* hover: más oscuro que accent */
   --ax-accent-fg: oklch(1 0 0);
 
   --ax-brand-primary: var(--ax-accent);
@@ -266,10 +266,10 @@
 
   --ax-accent-shimmer: linear-gradient(
     180deg,
-    oklch(0.44 0.17 85) 0%,
-    oklch(0.52 0.16 85) 38%,
-    oklch(0.58 0.13 85) 70%,
-    oklch(0.48 0.14 85) 100%
+    oklch(0.4 0.12 85) 0%,
+    oklch(0.48 0.12 85) 38%,
+    oklch(0.52 0.1 85) 70%,
+    oklch(0.44 0.1 85) 100%
   );
 
   --ax-text-primary: oklch(0.18 0.01 315);
@@ -349,10 +349,10 @@
   --ax-atmo-velvet: oklch(0.18 0.06 315);
   --ax-atmo-vignette: oklch(0.04 0.02 315);
 
-  --ax-accent: oklch(0.78 0.165 85);
-  --ax-accent-dim: oklch(0.62 0.13 85);
-  --ax-accent-bright: oklch(0.92 0.1 88);
-  --ax-accent-fg: oklch(0.08 0.01 50);
+  --ax-accent: oklch(0.76 0.12 85);
+  --ax-accent-dim: oklch(0.58 0.1 85);
+  --ax-accent-bright: oklch(0.88 0.08 88);
+  --ax-accent-fg: oklch(0.12 0.014 50);
 
   --ax-brand-primary: var(--ax-accent);
   --ax-brand-primary-hc: var(--ax-accent);
@@ -362,10 +362,10 @@
 
   --ax-accent-shimmer: linear-gradient(
     180deg,
-    oklch(0.92 0.1 88) 0%,
-    oklch(0.82 0.165 85) 38%,
-    oklch(0.62 0.13 85) 70%,
-    oklch(0.78 0.155 85) 100%
+    oklch(0.88 0.08 88) 0%,
+    oklch(0.78 0.11 85) 38%,
+    oklch(0.58 0.1 85) 70%,
+    oklch(0.74 0.11 85) 100%
   );
 
   --ax-text-primary: oklch(0.97 0.008 310);
