@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useRef, useState, ReactNode } from "react";
 
 type Theme = "light" | "dark" | "system";
 
@@ -22,10 +22,29 @@ const ThemeContext = createContext<ThemeContextType>({
   setTheme: () => {},
 });
 
+function applyResolvedTheme(resolved: "light" | "dark", animate: boolean) {
+  const apply = () => {
+    const root = window.document.documentElement;
+    root.classList.remove("light", "dark");
+    root.classList.add(resolved);
+    root.setAttribute("data-theme", resolved);
+  };
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const doc = document as Document & {
+    startViewTransition?: (cb: () => void) => unknown;
+  };
+  if (animate && !reduce && typeof doc.startViewTransition === "function") {
+    doc.startViewTransition(apply);
+  } else {
+    apply();
+  }
+}
+
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>("system");
   const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("dark");
   const [mounted, setMounted] = useState(false);
+  const skipNextTransition = useRef(true);
 
   useEffect(() => {
     setMounted(true);
@@ -38,19 +57,17 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!mounted) return;
 
-    const root = window.document.documentElement;
-    root.classList.remove("light", "dark");
-
     let resolved: "light" | "dark";
-
     if (theme === "system") {
       resolved = window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
     } else {
       resolved = theme;
     }
 
-    root.classList.add(resolved);
-    root.setAttribute("data-theme", resolved);
+    const animate = !skipNextTransition.current;
+    skipNextTransition.current = false;
+    applyResolvedTheme(resolved, animate);
+
     setResolvedTheme(resolved);
     localStorage.setItem("theme", theme);
   }, [theme, mounted]);
@@ -60,11 +77,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
     const mediaQuery = window.matchMedia("(prefers-color-scheme: light)");
     const handleChange = () => {
-      const root = window.document.documentElement;
       const resolved = mediaQuery.matches ? "light" : "dark";
-      root.classList.remove("light", "dark");
-      root.classList.add(resolved);
-      root.setAttribute("data-theme", resolved);
+      applyResolvedTheme(resolved, true);
       setResolvedTheme(resolved);
     };
 

@@ -81,9 +81,17 @@
   }
 }
 
-/* View Transitions API para navegaciones */
+/* View Transitions API para navegaciones y cambio de tema */
 @view-transition {
   navigation: auto;
+}
+
+@supports (view-transition-name: none) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: var(--ax-duration-slow);
+    animation-timing-function: var(--ax-ease-out-expo);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -93,5 +101,10 @@
 
   body::after {
     opacity: 0;
+  }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
   }
 }

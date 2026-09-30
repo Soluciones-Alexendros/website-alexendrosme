@@ -21,8 +21,8 @@ export function LocaleToggle() {
           className={cn(
             "inline-flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sm font-medium",
             "transition-colors duration-fast ease-out-expo",
-            "bg-muted hover:bg-muted/80",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+            "bg-muted hover:[background:color-mix(in_oklch,var(--muted)_88%,var(--primary)_12%)]",
+            "focus-visible:outline-none focus-visible:[box-shadow:var(--ax-ring-focus)]",
             "theme-toggle-trigger",
           )}
           aria-label={t("localeToggle.ariaLabel").replace(
