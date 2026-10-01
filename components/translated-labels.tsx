@@ -33,11 +33,18 @@ export function TagsLabel() {
 }
 
 /** Renders "{N} min de lectura" / "{N} min read" for collection rows */
-export function ReadingTime({ minutes }: { minutes: number }) {
+export function ReadingTime({
+  minutes,
+  withSeparator = true,
+}: {
+  minutes: number;
+  withSeparator?: boolean;
+}) {
   const { t } = useI18n();
   return (
     <span>
-      <span aria-hidden="true">·</span> {minutes} {t("article.minutesShort")}
+      {withSeparator ? <span aria-hidden="true">·</span> : null} {minutes}{" "}
+      {t("article.minutesShort")}
     </span>
   );
 }

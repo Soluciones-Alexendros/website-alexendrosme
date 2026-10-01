@@ -111,11 +111,11 @@ export default async function OpinionArticle({ params }: Props) {
       />
 
       <div className="site-shell article-shell">
-        <nav className="article-nav">
+        <div className="article-nav">
           <LocaleLink href="/opinion" className="ds-caption back-link">
             <BackOpinionLabel />
           </LocaleLink>
-        </nav>
+        </div>
 
         <div className="article-layout">
           <ArticleToc items={tocItems} />

@@ -19,7 +19,7 @@ export function LocaleToggle() {
         <button
           type="button"
           className={cn(
-            "inline-flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sm font-medium",
+            "inline-flex items-center gap-1.5 [border-radius:var(--ax-radius-sm)] px-2 py-1.5 text-sm font-medium",
             "transition-colors duration-fast ease-out-expo",
             "bg-muted hover:[background:color-mix(in_oklch,var(--muted)_88%,var(--primary)_12%)]",
             "focus-visible:outline-none focus-visible:[box-shadow:var(--ax-ring-focus)]",
@@ -43,7 +43,7 @@ export function LocaleToggle() {
             type="button"
             onClick={() => setLocale(l.value)}
             className={cn(
-              "flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm",
+              "flex w-full items-center gap-3 [border-radius:var(--ax-radius-sm)] px-3 py-2 text-sm",
               "transition-colors duration-fast ease-out-expo",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
               "hover:bg-muted",

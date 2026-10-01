@@ -1,7 +1,7 @@
 "use client";
 
 import { useLayoutEffect, useState } from "react";
-import { Shield, X } from "lucide-react";
+import { Shield, ArrowUpRight, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 
@@ -73,7 +73,11 @@ export function AntiMonetizationBanner() {
           className="anti-monetization-banner__link"
         >
           {t("antiMonetization.link")}
-          <X className="anti-monetization-banner__link-icon" aria-hidden="true" size={14} />
+          <ArrowUpRight
+            className="anti-monetization-banner__link-icon"
+            aria-hidden="true"
+            size={14}
+          />
         </a>
       </div>
       <button

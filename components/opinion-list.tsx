@@ -26,7 +26,6 @@ export function OpinionFeatured({ slug, title, description, date, readingTime }:
           {description ? <p className="opinion-featured__desc">{description}</p> : null}
           <div className="opinion-featured__meta">
             <LocalDate date={date} />
-            <span aria-hidden="true">·</span>
             <span className="ds-caption">
               <ReadingTime minutes={readingTime} />
             </span>
@@ -77,7 +76,7 @@ export function OpinionArchive({ items }: { items: ArchiveItem[] }) {
                 ) : null}
               </div>
               <span className="opinion-archive__mins ds-caption">
-                <ReadingTime minutes={article.readingTime} />
+                <ReadingTime minutes={article.readingTime} withSeparator={false} />
               </span>
             </li>
           );

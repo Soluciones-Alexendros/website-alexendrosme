@@ -4,7 +4,7 @@ import { BreadcrumbJsonLd } from "@/components/breadcrumb-json-ld";
 import { siteConfig } from "@/lib/site";
 import { LocaleLink } from "@/components/locale-link";
 import { tagPath } from "@/lib/seo/tags";
-import { TagsIndexHeader, TagsEmpty, BackHomeLabel } from "@/components/translated-labels";
+import { TagsIndexHeader, BackHomeLabel } from "@/components/translated-labels";
 import { rootOgImageUrl } from "@/lib/seo/og";
 import { hreflangAlternates } from "@/lib/seo/hreflang";
 
@@ -44,9 +44,6 @@ export default async function TagsIndexPage() {
         <BreadcrumbJsonLd items={[{ name: "Etiquetas", href: `${siteConfig.url}/tags` }]} />
         <div className="site-shell article-shell">
           <TagsIndexHeader count={0} />
-          <p className="empty-state">
-            <TagsEmpty />
-          </p>
           <footer className="section-footer">
             <LocaleLink href="/" className="back-link">
               <BackHomeLabel />

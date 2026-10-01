@@ -13,13 +13,15 @@ function TocNav({
   items,
   activeId,
   onNavigate,
+  label,
 }: {
   items: ToCItem[];
   activeId: string;
   onNavigate: (e: React.MouseEvent<HTMLAnchorElement>, id: string) => void;
+  label: string;
 }) {
   return (
-    <nav>
+    <nav aria-label={label}>
       <ul className="toc-list">
         {items.map((item) => (
           <li key={item.id} className={cn("toc-item", `toc-level-${item.level}`)}>
@@ -83,12 +85,22 @@ export function ArticleToc({ items }: Props) {
     <>
       <details className="toc-mobile">
         <summary className="toc-mobile__summary">{t("article.tocTitle")}</summary>
-        <TocNav items={items} activeId={activeId} onNavigate={handleClick} />
+        <TocNav
+          items={items}
+          activeId={activeId}
+          onNavigate={handleClick}
+          label={t("article.tocTitle")}
+        />
       </details>
 
       <aside className="toc" aria-label={t("article.tocTitle")}>
         <p className="toc-title">{t("article.tocTitle")}</p>
-        <TocNav items={items} activeId={activeId} onNavigate={handleClick} />
+        <TocNav
+          items={items}
+          activeId={activeId}
+          onNavigate={handleClick}
+          label={t("article.tocTitle")}
+        />
       </aside>
     </>
   );

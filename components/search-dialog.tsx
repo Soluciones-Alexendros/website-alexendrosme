@@ -137,7 +137,7 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
       <DialogPrimitive.Portal>
         <DialogPrimitive.Overlay
           className={cn(
-            "fixed inset-0 z-[60]",
+            "fixed inset-0 z-[var(--ax-z-overlay)]",
             "bg-black/50 backdrop-blur-sm",
             "data-[state=open]:animate-in data-[state=closed]:animate-out",
             "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
@@ -145,7 +145,7 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
         />
         <DialogPrimitive.Content
           className={cn(
-            "fixed left-1/2 top-[15vh] z-[60] w-full max-w-lg -translate-x-1/2",
+            "search-dialog__content fixed left-1/2 top-[15vh] z-[var(--ax-z-modal)] w-full max-w-lg -translate-x-1/2",
             "border border-border bg-popover",
             "data-[state=open]:animate-in data-[state=closed]:animate-out",
             "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
@@ -153,10 +153,6 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
             "data-[state=closed]:slide-out-to-top-[5%] data-[state=open]:slide-in-from-top-[5%]",
             "transition-[opacity,transform] duration-200 ease-out-expo",
           )}
-          style={{
-            borderRadius: "var(--ax-radius-lg)",
-            boxShadow: "var(--ax-shadow-popover)",
-          }}
           onOpenAutoFocus={(e) => {
             e.preventDefault();
             inputRef.current?.focus();
@@ -174,14 +170,14 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
               aria-label={t("search.placeholder")}
               disabled={loadError}
             />
-            <kbd className="hidden sm:inline-flex items-center gap-0.5 rounded-md border border-border bg-muted px-1.5 py-0.5 text-xs text-muted-foreground font-mono">
-              <Command className="size-3" />K
+            <kbd className="hidden sm:inline-flex items-center gap-0.5 [border-radius:var(--ax-radius-sm)] border border-border bg-muted px-1.5 py-0.5 text-xs text-muted-foreground font-mono">
+              <Command className="size-3" aria-hidden="true" />K
             </kbd>
             {query && (
               <button
                 type="button"
                 onClick={() => setQuery("")}
-                className="inline-flex items-center justify-center rounded-md p-1 hover:bg-muted transition-colors"
+                className="inline-flex items-center justify-center [border-radius:var(--ax-radius-sm)] min-h-11 min-w-11 p-1 hover:bg-muted transition-colors"
                 aria-label={t("search.clear")}
               >
                 <X className="size-4 text-muted-foreground" />
@@ -225,7 +221,7 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
                     type="button"
                     onClick={() => handleSelect(item.slug, item.type)}
                     className={cn(
-                      "flex w-full flex-col gap-1 rounded-lg px-3 py-2.5 text-left",
+                      "flex w-full flex-col gap-1 [border-radius:var(--ax-radius-md)] px-3 py-2.5 text-left",
                       "transition-colors duration-100",
                       "hover:bg-muted focus-visible:bg-muted",
                       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",

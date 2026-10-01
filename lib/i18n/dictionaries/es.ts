@@ -67,7 +67,7 @@ const es: TranslationDict = {
     system: "Sistema",
     light: "Claro",
     dark: "Oscuro",
-    ariaLabel: "Tema actual: {theme}. Click para cambiar.",
+    ariaLabel: "Tema actual: {theme}. Cambiar tema.",
   },
 
   localeToggle: {

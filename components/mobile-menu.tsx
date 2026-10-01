@@ -10,11 +10,21 @@ import { useI18n } from "@/lib/i18n";
 import { useSearch } from "@/components/search-provider";
 import { useLocalePrefix, withLocalePrefix } from "@/lib/i18n/locale-path";
 
+function scrollBehavior(): ScrollBehavior {
+  if (
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  ) {
+    return "auto";
+  }
+  return "smooth";
+}
+
 function scrollToAnchor(href: string) {
   if (!href.startsWith("#")) return;
   const el = document.querySelector(href);
   if (el) {
-    el.scrollIntoView({ behavior: "smooth" });
+    el.scrollIntoView({ behavior: scrollBehavior() });
     window.history.replaceState(null, "", href);
   }
 }
@@ -35,7 +45,7 @@ export function MobileMenu({ activeHash }: { activeHash: string }) {
           variant="ghost"
           size="icon-touch"
           className="mobile-only"
-          aria-label={t("nav.menuLabel")}
+          aria-label={open ? t("nav.menuCloseLabel") : t("nav.menuLabel")}
         >
           {open ? (
             <X className="icn-md" aria-hidden="true" />
@@ -52,7 +62,7 @@ export function MobileMenu({ activeHash }: { activeHash: string }) {
             onClick={() => {
               setOpen(false);
               if (onHome) {
-                window.scrollTo({ top: 0, behavior: "smooth" });
+                window.scrollTo({ top: 0, behavior: scrollBehavior() });
               }
             }}
           >

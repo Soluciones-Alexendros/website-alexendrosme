@@ -12,8 +12,8 @@
   --ax-radius-2xl: 24px;
   --ax-radius-full: 9999px;
 
-  /* Alias shadcn consume --radius */
-  --radius: 0.5rem;
+  /* Alias shadcn consume --radius (spacing.css única fuente, = ax-md) */
+  --radius: var(--ax-radius-md);
 
   /* =====================================================================
      2. Z-INDEX semántico
