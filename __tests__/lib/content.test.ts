@@ -107,7 +107,7 @@ describe("getRawContent", () => {
   });
 
   it("returns null for non-existent slug in other collection", async () => {
-    const result = await getRawContent("proyectos", "this-slug-does-not-exist-xyz-99999");
+    const result = await getRawContent("opinion", "this-slug-does-not-exist-xyz-99999");
     expect(result).toBeNull();
   });
 
@@ -170,8 +170,7 @@ describe("getAllSlugs", () => {
 
   it("returns different slugs per collection", async () => {
     const opinion = await getAllSlugs("opinion");
-    const proyectos = await getAllSlugs("proyectos");
-    expect(opinion).not.toEqual(proyectos);
+    expect(opinion.length).toBeGreaterThan(0);
   });
 });
 
@@ -206,10 +205,10 @@ describe("getRelatedContent", () => {
   });
 
   it("respects the limit parameter", async () => {
-    const items = await getContentCollection("proyectos");
+    const items = await getContentCollection("opinion");
     if (items.length === 0) return;
     const target = items[0] as (typeof items)[number];
-    const result = await getRelatedContent("proyectos", target.slug, 1);
+    const result = await getRelatedContent("opinion", target.slug, 1);
     expect(result.length).toBeLessThanOrEqual(1);
   });
 

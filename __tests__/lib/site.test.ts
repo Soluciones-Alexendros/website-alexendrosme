@@ -92,14 +92,6 @@ describe("siteConfig", () => {
     it("tiene email válido", () => {
       expect(siteConfig.contact.email).toMatch(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
     });
-
-    it("tiene telegram con handle que empieza con @", () => {
-      expect(siteConfig.contact.telegram.handle).toMatch(/^@/);
-    });
-
-    it("tiene matrix con handle que contiene :", () => {
-      expect(siteConfig.contact.matrix.handle).toContain(":");
-    });
   });
 
   describe("desarrollo: deep freeze en NODE_ENV=development", () => {
@@ -144,20 +136,6 @@ describe("siteConfig", () => {
       const { siteConfig: devConfig } = await import("@/lib/site");
       expect(() => {
         (devConfig.contact as unknown as Record<string, unknown>).extra = {};
-      }).toThrow(TypeError);
-    });
-
-    it("lanza TypeError al mutar siteConfig.contact.telegram en desarrollo", async () => {
-      const { siteConfig: devConfig } = await import("@/lib/site");
-      expect(() => {
-        (devConfig.contact.telegram as unknown as Record<string, unknown>).handle = "mutated";
-      }).toThrow(TypeError);
-    });
-
-    it("lanza TypeError al mutar siteConfig.contact.matrix en desarrollo", async () => {
-      const { siteConfig: devConfig } = await import("@/lib/site");
-      expect(() => {
-        (devConfig.contact.matrix as unknown as Record<string, unknown>).handle = "mutated";
       }).toThrow(TypeError);
     });
   });

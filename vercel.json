@@ -17,7 +17,6 @@
     { "source": "/uses", "destination": "/#biografia", "permanent": true },
     { "source": "/empleo", "destination": "/", "permanent": false },
     { "source": "/about", "destination": "/#biografia", "permanent": true },
-    { "source": "/projects", "destination": "/proyectos", "permanent": true },
     { "source": "/contact", "destination": "/", "permanent": true },
     {
       "source": "/herramientas",

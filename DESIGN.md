@@ -78,7 +78,7 @@ colors:
   ring-focus: "0 0 0 2px {colors.surface-0}, 0 0 0 4px {colors.accent}"
 
   # --- Special ---
-  accent-shimmer: "linear-gradient(180deg, oklch(0.92 0.1 88) 0%, oklch(0.82 0.165 85) 38%, oklch(0.62 0.13 85) 70%, oklch(0.78 0.155 85) 100%)"
+  accent-shimmer: "linear-gradient(180deg, oklch(0.88 0.08 88) 0%, oklch(0.78 0.11 85) 38%, oklch(0.58 0.1 85) 70%, oklch(0.74 0.11 85) 100%)"
 
   # --- Light mode (activo en colors.css) ---
   light:
@@ -143,7 +143,7 @@ typography:
     fontSize: "clamp(3rem, 2.5rem + 2.4vw, 4.75rem)"
     fontWeight: 700
     lineHeight: 0.98
-    letterSpacing: -0.035em
+    letterSpacing: -0.025em
   h1:
     fontFamily: "Source Serif 4, Source Sans 3, Georgia, serif"
     fontSize: "clamp(2.25rem, 2rem + 1.2vw, 3rem)"
@@ -218,8 +218,8 @@ La interfaz transmite una atmósfera **violeta profunda** con acentos
 **de latón**. El resultado evoca un acabado mate premium — una publicación de
 alta gama o una galería contemporánea.
 
-- **Dark-first** — el sitio es nativamente oscuro. Light mode documentado
-  como "planned" pero no implementado.
+- **Dark-first** — el sitio es nativamente oscuro. Light mode activo:
+  papel cálido con texto violeta.
 - **Tokens OKLCH** — todos los colores usan oklch para contraste consistente
   y manipulación perceptual uniforme.
 - **Elevación por luminosidad** — no se usan box-shadows en cards/inputs;
@@ -245,17 +245,17 @@ donde la elevación se comunica exclusivamente por diferencias de luminosidad:
 
 El acento dorado (hue 85) es el único motor de interacción:
 
-- **accent** (`oklch(0.78 0.165 85)`): dorado batido —CTAs, links activos,
+- **accent** (`oklch(0.76 0.12 85)`): dorado batido — CTAs, links activos,
   badges destacados.
-- **accent-dim** (`oklch(0.62 0.13 85)`): dorado grave — variante secundaria.
-- **accent-bright** (`oklch(0.92 0.1 88)`): brillo alto — hover states.
+- **accent-dim** (`oklch(0.58 0.1 85)`): dorado grave — variante secundaria.
+- **accent-bright** (`oklch(0.88 0.08 88)`): brillo alto — hover states.
 
 ### Texto
 
 Neutro tintado violeta mínimo (hue 310):
 
 - **text-primary** (`oklch(0.97 0.008 310)`): casi blanco — texto principal.
-- **text-tertiary** (`oklch(0.62 0.012 310)`): muted — captions, metadata.
+- **text-tertiary** (`oklch(0.75 0.01 310)`): muted — captions, metadata.
 
 ### Estados semánticos
 
@@ -274,7 +274,8 @@ Gradientes radiales opcionales para hero/landing:
 
 ### Glass
 
-Paneles translúcidos con backdrop-blur para cards flotantes (mission cards):
+Paneles translúcidos con backdrop-blur para overlays flotantes
+(nav sticky, dialog, popover):
 
 - **glass-bg**: gradiente semi-transparente sutil.
 - **glass-blur**: `blur(20px) saturate(140%)`.
@@ -286,7 +287,7 @@ La estrategia tipográfica usa **Source Serif 4** para display/titulares,
 (ver ADR 0005).
 
 - **Display**: Source Serif 4 Bold 700, clamp fluido 3rem→4.75rem.
-  Line-height 0.98, tracking -0.035em. Solo para hero principal.
+  Line-height 0.98, tracking -0.025em. Solo para hero principal.
 - **Headlines** (h1-h3): Source Serif 4 Semi-Bold 600, tracking -0.022em.
   Tamaños fluidos con clamp.
 - **Body**: Source Sans 3 Regular 400, 16px base, line-height 1.6,
@@ -304,7 +305,8 @@ son la API de utility classes (`text-sm`, `tracking-heading`).
 - **Grid**: contenedor centrado con `max-width` y padding lateral.
 - **Spacing scale**: escala de 8px base (4px, 8px, 16px, 32px, 64px, 96px).
 - **Measure**: `65ch` máximo para prosa legible.
-- **Tap target**: 44px mínimo (WCAG 2.1 AA).
+- **Tap target**: 44px mínimo como estándar del sistema (WCAG 2.2 AA exige
+  24px; 44px cubre el criterio AAA de tamaño de objetivo).
 - **Safe inset**: `max(1rem, env(safe-area-inset-left))` para notch.
 
 ## Elevation & Depth
@@ -338,7 +340,7 @@ El lenguaje de formas es de **precisión arquitectónica**:
 - **Badges**: fondo dorado, texto surface-0, radio full.
 - **Nav**: header pegajoso con backdrop-blur glass. Links con underline
   animado vía `--ax-ease-spring`.
-- **FAB Contacto**: flotante con popover Radix. Foco-trap nativo.
+- **FAB Contacto**: acceso directo a email como enlace `mailto:`.
 - **Atmosphere**: capas CSS con animación `atm-drift`, respeta
   `prefers-reduced-motion`.
 - **Iconos**: Lucide, tamaño por defecto 20px.

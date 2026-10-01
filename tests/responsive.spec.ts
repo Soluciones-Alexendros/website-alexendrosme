@@ -48,13 +48,18 @@ test.describe("Responsividad · no-overflow + tap targets ≥44px", () => {
 
   test("FAB visible en mobile", async ({ page, viewport }) => {
     if (!viewport || viewport.width >= 768) test.skip();
-    // En mobile, el FAB de contacto debe estar visible sin scroll
-    const contactFab = page.locator("button", { hasText: "Escríbeme" });
+    // En mobile, el FAB de contacto (enlace mailto) debe estar visible sin scroll
+    const contactFab = page.locator("a[href^='mailto:']", { hasText: "Escríbeme" }).first();
     await expect(contactFab).toBeVisible();
   });
 
   test("nav mobile: Sheet se abre y cierra", async ({ page, viewport }) => {
     if (!viewport || viewport.width >= 768) test.skip();
+    // El aviso fijo superior puede solaparse con la cabecera; se descarta antes de interactuar.
+    const bannerDismiss = page.locator(".anti-monetization-banner__dismiss");
+    if (await bannerDismiss.isVisible()) {
+      await bannerDismiss.click();
+    }
     const hamburger = page.locator("button[aria-label='Abrir menú']");
     if (!(await hamburger.isVisible())) return;
     await hamburger.click();

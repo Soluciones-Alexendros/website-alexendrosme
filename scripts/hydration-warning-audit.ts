@@ -26,10 +26,9 @@ import { chromium, type ConsoleMessage, type Page } from "@playwright/test";
 
 const DEFAULT_ROUTES = [
   "/",
-  "/proyectos",
   "/opinion",
   "/legal/cookies",
-  "/legal/seguridad",
+  "/legal/licencia",
   "/legal/aviso-legal",
   "/legal/privacidad",
 ] as const;

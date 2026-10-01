@@ -16,7 +16,6 @@ const NAV_CACHE = `ax-nav-${CACHE_VERSION}`;
 
 const PRECACHE_URLS = [
   "/",
-  "/proyectos",
   "/opinion",
   "/manifest.json",
   "/icon.svg",

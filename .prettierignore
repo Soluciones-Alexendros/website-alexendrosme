@@ -3,3 +3,7 @@ out/
 node_modules/
 public/
 pnpm-lock.yaml
+lighthouse-reports/
+coverage/
+test-results/
+playwright-report/

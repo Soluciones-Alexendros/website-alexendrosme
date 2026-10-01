@@ -8,7 +8,6 @@ const en: TranslationDict = {
 
   nav: {
     biografia: "(Auto)biography",
-    proyectos: "Projects",
     opinion: "Opinion",
     productos: "Products",
     productosLabel: "Product hub — alexendros.dev",
@@ -39,8 +38,7 @@ const en: TranslationDict = {
     },
     publicaciones: {
       title: "Latest pieces",
-      desc: "The latest from {proyectosLink} and {opinionLink}.",
-      proyectosLabel: "Projects",
+      desc: "The latest from {opinionLink}.",
       opinionLabel: "Opinion",
       empty: "No posts yet.",
     },
@@ -51,12 +49,10 @@ const en: TranslationDict = {
     avisoLegal: "Legal notice",
     privacidad: "Privacy",
     cookies: "Cookies",
-    seguridad: "Security",
+    licencia: "License",
     hubProductos: "Product hub → alexendros.dev",
     hubLabel: "Product hub — alexendros.dev",
-    copyright:
-      "· Alejandro Domingo Agustí · Anti-commercial: copy it, use it, share it. Don't trade with it. F.A.F.O.",
-    quote: "What use is money to those who don't know how to use it? I already have it.",
+    copyright: "CC BY-NC-SA 4.0",
   },
 
   antiMonetization: {
@@ -85,7 +81,6 @@ const en: TranslationDict = {
   },
 
   article: {
-    backProyectos: "← Back to Projects",
     backOpinion: "← Back to Opinion",
     tagsLabel: "Tags",
     minutesShort: "min read",
@@ -121,7 +116,6 @@ const en: TranslationDict = {
     placeholder: "Search articles...",
     noResults: 'No results found for "{query}".',
     results: '{count} result(s) for "{query}"',
-    sectionProyectos: "Projects",
     sectionOpinion: "Opinion",
     shortcut: "Search (Ctrl/⌘K)",
     loadError: "Could not load the search index. Please try again later.",
@@ -141,9 +135,6 @@ const en: TranslationDict = {
   contact: {
     fabLabel: "Contact actions",
     emailLabel: "Send email",
-    telegramLabel: "Telegram",
-    statusPreparacion: "Preparing",
-    statusProximamente: "Coming soon",
     contactame: "Contact me",
   },
 };

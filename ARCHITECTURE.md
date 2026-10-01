@@ -9,7 +9,7 @@
   cardinales → calidad → no-objetivos → stack.
 - **Contenido a integrar según contexto:** Adapta módulos y stack de este repo.
   No copies la arquitectura de una CLI ni un SaaS. No metas stack/devops de
-  producto en este sitio. Las colecciones son `proyectos` y `opinion`.
+  producto en este sitio. La colección es `opinion` (colección única; ver ADR-0006).
 
 Documento de "cómo y por qué". Describe la forma del sistema, las decisiones
 cardinales y los puntos de extensión. Para el "qué", revisa el código y los
@@ -20,7 +20,7 @@ ADR.
 Aplicación Next.js 16 que sirve el sitio web personal de Alexendros —
 [alexendros.me](https://alexendros.me), espacio libre de dinero. **Export
 estático** (`output: "export"`) desplegado en Vercel con dominio gestionado
-en Hostinger. Colecciones de contenido: `/proyectos` y `/opinion`.
+en Hostinger. Colección de contenido: `/opinion` (ver ADR-0006).
 
 Entrada: MDX en `content/` + componentes de presentación.  
 Salida: HTML/CSS/JS estáticos en `out/`.
@@ -41,7 +41,7 @@ Visitante
 app/                App Router + metadata + i18n
 components/         UI del design system `--ax-*`
 lib/content/        loader MDX + Zod
-content/            proyectos/ · opinion/
+content/ opinion/
 public/             sitemaps, feeds, og, search-index
 ```
 
@@ -49,7 +49,7 @@ public/             sitemaps, feeds, og, search-index
 
 ### `app/` · App Router
 
-- Estructura por ruta. `layout.tsx` envuelve el árbol y aplica fuentes Geist.
+- Estructura por ruta. `layout.tsx` envuelve el árbol y aplica fuentes editoriales (Source Serif 4, Source Sans 3, IBM Plex Mono).
 - Server Components por defecto. Solo se marca `'use client'` cuando el
   componente requiere efectos del navegador.
 - `metadata` por ruta para SEO; el `layout.tsx` raíz expone el `metadataBase`.
@@ -65,21 +65,21 @@ public/             sitemaps, feeds, og, search-index
 ### `lib/`
 
 - Utilidades sin dependencia de React (validación, mapeos, helpers).
-- `lib/content/` · loader + tipos (colecciones `proyectos` | `opinion`), MDX
+- `lib/content/` · loader + tipos (colección `opinion`), MDX
   con gray-matter + Zod. `lib/i18n/` · diccionarios es/en. `lib/seo/` ·
   breadcrumb JSON-LD, hreflang, OG helpers. `lib/feed.ts` · RSS/Atom.
-  `lib/og-image.tsx` · OG dinámicas (PROYECTOS_THEME / OPINION_THEME).
+  `lib/og-image.tsx` · OG dinámicas (OPINION_THEME).
 
 ### `content/`
 
-- `content/proyectos/` y `content/opinion/` con frontmatter validado
+- `content/opinion/` con frontmatter validado
   (title, date, tags, description, draft).
 
 ### `public/`
 
 - Estáticos: sitemaps segmentados (`sitemap-pages.xml`,
-  `sitemap-proyectos.xml`, `sitemap-opinion.xml`), feeds (`feed.xml`,
-  `feed-proyectos.*`, `feed-opinion.*`), `search-index.json`, `sw.js`,
+  `sitemap-opinion.xml`), feeds (`feed.xml`,
+  `feed-opinion.*`, `feed-opinion.*`), `search-index.json`, `sw.js`,
   `manifest.json`, `og/`.
 
 ## 4. Decisiones cardinales
@@ -93,7 +93,7 @@ public/             sitemaps, feeds, og, search-index
   los nameservers y la facturación.
 
 Detalles individuales en [`docs/architecture/decisions/`](docs/architecture/decisions/)
-(0002 reconversión, 0003 theme-storage, 0004 pre-paint). El stub
+(0002 reconversión, 0003 theme-storage, 0004 pre-paint, 0005 tipografía editorial, 0006 contenido y rutas legales). El stub
 [`DECISIONS.md`](DECISIONS.md) apunta aquí.
 
 ## 5. Calidad
@@ -109,7 +109,7 @@ Detalles individuales en [`docs/architecture/decisions/`](docs/architecture/deci
 ## 6. Puntos de extensión
 
 - Nuevas rutas: añadir bajo `app/` siguiendo el patrón existente.
-- Contenido: añadir MDX en `content/proyectos/` o `content/opinion/`.
+- Contenido: añadir MDX en `content/opinion/`.
 - Componentes: importar desde el design system en lugar de duplicar.
 - Telemetría: Vercel Web Analytics ya activo; Sentry no forma parte del sitio.
 

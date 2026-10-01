@@ -15,5 +15,7 @@
 | 0002 | Reconversión .me a espacio libre de dinero | accepted  |
 | 0003 | Storage de tema (localStorage → IDB-ready) | accepted  |
 | 0004 | Pre-paint theme cookie + inline script     | accepted  |
+| 0005 | Tipografía editorial                       | accepted  |
+| 0006 | Consolidación de contenido y rutas legales | accepted  |
 
 Nuevas decisiones: copia `0001-template.md` y registra la fila en esta tabla.

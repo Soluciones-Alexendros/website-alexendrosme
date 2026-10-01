@@ -37,16 +37,14 @@ test.describe("Landing · smoke + anchors + FABs", () => {
     expect(scrollY).toBeLessThan(100);
   });
 
-  test("nav contiene biografía, proyectos y opinión", async ({ page, viewport }) => {
+  test("nav contiene biografía y opinión", async ({ page, viewport }) => {
     const isMobile = !viewport || viewport.width < 768;
     if (isMobile) {
       await expect(page.locator("a[href='#biografia']").first()).toBeAttached();
-      await expect(page.locator("a[href='/proyectos']").first()).toBeAttached();
       await expect(page.locator("a[href='/opinion']").first()).toBeAttached();
     } else {
       const nav = page.locator("header nav ul").first();
       await expect(nav.locator("a[href='#biografia']")).toBeVisible();
-      await expect(nav.locator("a[href='/proyectos']")).toBeVisible();
       await expect(nav.locator("a[href='/opinion']")).toBeVisible();
     }
   });
@@ -79,18 +77,9 @@ test.describe("Landing · smoke + anchors + FABs", () => {
     await expect(page.locator("#publicaciones")).toBeAttached();
   });
 
-  test("FAB Escríbeme es visible y abre el popover", async ({ page }) => {
-    const fab = page.locator("button", { hasText: "Escríbeme" });
+  test("FAB Escríbeme es un enlace mailto visible", async ({ page }) => {
+    const fab = page.locator("a[href^='mailto:']", { hasText: "Escríbeme" }).first();
     await expect(fab).toBeVisible();
-    await fab.click();
-    await expect(page.locator("a[href^='mailto:']").first()).toBeVisible();
-  });
-
-  test("FABs: Escape cierra el popover y devuelve foco al trigger", async ({ page }) => {
-    const fab = page.locator("button", { hasText: "Escríbeme" });
-    await fab.click();
-    await page.keyboard.press("Escape");
-    await expect(fab).toBeFocused();
   });
 
   test("footer: enlace Hub de productos visible con href/target/rel correctos", async ({

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { siteConfig } from "@/lib/site";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Mail } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 
 export function Footer() {
@@ -13,7 +13,7 @@ export function Footer() {
     { label: t("footer.avisoLegal"), href: "/legal/aviso-legal" },
     { label: t("footer.privacidad"), href: "/legal/privacidad" },
     { label: t("footer.cookies"), href: "/legal/cookies" },
-    { label: t("footer.seguridad"), href: "/legal/seguridad" },
+    { label: t("footer.licencia"), href: "/legal/licencia" },
   ];
 
   return (
@@ -76,22 +76,19 @@ export function Footer() {
                 <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
               </svg>
             </a>
+            <a
+              href={`mailto:${siteConfig.contact.email}`}
+              aria-label={t("contact.emailLabel")}
+              className="icon-link"
+            >
+              <Mail className="icn-md" aria-hidden="true" />
+            </a>
           </div>
-        </div>
 
-        <div className="footer-email">
-          <a href={`mailto:${siteConfig.contact.email}`} className="footer-link">
-            {siteConfig.contact.email}
-          </a>
+          <p className="footer-legal">
+            © {year} {siteConfig.fullName} · {t("footer.copyright")}
+          </p>
         </div>
-
-        <p className="footer-legal">
-          <span title="Comercial (€) tachado por lo anticomercial; Ç = C comercial quebrada">
-            <span className="strike-coin">€</span>Ç
-          </span>{" "}
-          · {year} {t("footer.copyright")}
-        </p>
-        <p className="footer-quote">{t("footer.quote")}</p>
       </div>
     </footer>
   );

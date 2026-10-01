@@ -1,25 +1,46 @@
-Attribution-NonCommercial-ShareAlike 4.0 International
+Licencias de website-alexendrosme
 
 Copyright (c) 2026 Alejandro Domingo Agustí (Alexendros)
 
-This work is licensed under the Creative Commons
-Attribution-NonCommercial-ShareAlike 4.0 International License.
+1. Contenidos editoriales — CC BY-NC-SA 4.0
 
-You are free to:
-- Share — copy and redistribute the material in any medium or format
-- Adapt — remix, transform, and build upon the material
+Los textos, artículos y demás contenidos editoriales originales de este
+sitio se publican bajo la licencia Creative Commons
+Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0).
 
-Under the following terms:
-- Attribution — You must give appropriate credit, provide a link to the
-  license, and indicate if changes were made.
-- NonCommercial — You may not use the material for commercial purposes.
-- ShareAlike — If you remix, transform, or build upon the material, you
-  must distribute your contributions under the same license as the original.
+Eres libre de compartir y adaptar el material siempre que des crédito
+apropiado, no lo uses con fines comerciales y distribuyas tus
+contribuciones bajo la misma licencia.
 
-No additional restrictions — You may not apply legal terms or technological
-measures that legally restrict others from doing anything the license permits.
+Texto legal completo: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
 
-Full legal text: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+2. Código fuente — MIT
 
-This is an anticommercial space. Copy it, use it, share it. Do not trade with it.
-Enquiries: contacto@alexendros.me
+El código fuente de este repositorio se publica bajo la licencia MIT:
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+3. Exclusiones
+
+Estas licencias no cubren marcas, nombres, logotipos ni derechos de imagen,
+tampoco materiales de terceros (fuentes, librerías, assets) que conservan
+sus propias licencias.
+
+Más detalle: https://alexendros.me/legal/licencia
+Consultas: contacto@alexendros.me

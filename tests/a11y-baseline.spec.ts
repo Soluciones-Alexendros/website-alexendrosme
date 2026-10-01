@@ -3,9 +3,6 @@ import AxeBuilder from "@axe-core/playwright";
 
 const pages = [
   { name: "home", path: "/" },
-  { name: "proyectos", path: "/proyectos" },
-  { name: "alignux", path: "/proyectos/alignux" },
-  { name: "neubat", path: "/proyectos/neubat" },
   { name: "opinion", path: "/opinion" },
   { name: "critica-tecnologica", path: "/opinion/critica-tecnologica" },
   { name: "manifiesto-eligete-a-ti", path: "/opinion/manifiesto-eligete-a-ti" },
@@ -17,7 +14,7 @@ const pages = [
   { name: "aviso-legal", path: "/legal/aviso-legal" },
   { name: "privacidad", path: "/legal/privacidad" },
   { name: "cookies", path: "/legal/cookies" },
-  { name: "seguridad", path: "/legal/seguridad" },
+  { name: "licencia", path: "/legal/licencia" },
   { name: "error-404", path: "/nonexistent-page" },
 ];
 

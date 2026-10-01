@@ -99,15 +99,10 @@ export function HomeContent({ latestArticles }: HomeContentProps) {
             <p
               className="section-desc"
               dangerouslySetInnerHTML={{
-                __html: t("sections.publicaciones.desc")
-                  .replace(
-                    "{proyectosLink}",
-                    `<a href="${withLocalePrefix(prefix, "/proyectos")}" class="brand-link">${t("sections.publicaciones.proyectosLabel")}</a>`,
-                  )
-                  .replace(
-                    "{opinionLink}",
-                    `<a href="${withLocalePrefix(prefix, "/opinion")}" class="brand-link">${t("sections.publicaciones.opinionLabel")}</a>`,
-                  ),
+                __html: t("sections.publicaciones.desc").replace(
+                  "{opinionLink}",
+                  `<a href="${withLocalePrefix(prefix, "/opinion")}" class="brand-link">${t("sections.publicaciones.opinionLabel")}</a>`,
+                ),
               }}
             />
           </div>
@@ -137,7 +132,7 @@ export function HomeContent({ latestArticles }: HomeContentProps) {
         </div>
       </section>
 
-      <div className="fab-stack" role="region" aria-label={t("contact.fabLabel")}>
+      <div role="region" aria-label={t("contact.fabLabel")}>
         <ContactFab />
       </div>
     </>

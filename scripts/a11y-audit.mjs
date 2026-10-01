@@ -37,9 +37,9 @@ const MIME = {
  * Resolve a request path to a Next.js static export file.
  * Next.js export produces e.g.:
  *   / → /index.html
- *   /proyectos → /proyectos.html
- *   /proyectos/alignux → /proyectos/alignux.html
- *   /proyectos/alignux/ → directory with extracted assets
+ *   /opinion → /opinion.html
+ *   /opinion/ejemplo → /opinion/ejemplo.html
+ *   /opinion/ejemplo/ → directory with extracted assets
  */
 function resolvePath(urlPath) {
   // Remove query string
@@ -113,9 +113,6 @@ function startServer() {
 // ── Routes to audit — covers all site pages ──
 const ROUTES = [
   { name: "home", path: "/" },
-  { name: "proyectos (collection)", path: "/proyectos" },
-  { name: "proyectos: alignux", path: "/proyectos/alignux" },
-  { name: "proyectos: neubat", path: "/proyectos/neubat" },
   { name: "opinion (collection)", path: "/opinion" },
   { name: "opinion: crítica tecnológica", path: "/opinion/critica-tecnologica" },
   { name: "opinion: manifiesto elígete a ti", path: "/opinion/manifiesto-eligete-a-ti" },
@@ -127,7 +124,7 @@ const ROUTES = [
   { name: "legal: aviso legal", path: "/legal/aviso-legal" },
   { name: "legal: privacidad", path: "/legal/privacidad" },
   { name: "legal: cookies", path: "/legal/cookies" },
-  { name: "legal: seguridad", path: "/legal/seguridad" },
+  { name: "legal: licencia", path: "/legal/licencia" },
   { name: "error 404", path: "/nonexistent-page" },
 ];
 

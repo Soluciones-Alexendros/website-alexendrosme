@@ -70,9 +70,6 @@ function start() {
 
 const ROUTES = [
   { n: "home", p: "/" },
-  { n: "proyectos", p: "/proyectos" },
-  { n: "article:alignux", p: "/proyectos/alignux" },
-  { n: "article:neubat", p: "/proyectos/neubat" },
   { n: "opinion", p: "/opinion" },
   { n: "article:critica-tecnologica", p: "/opinion/critica-tecnologica" },
   { n: "article:manifiesto", p: "/opinion/manifiesto-eligete-a-ti" },
@@ -84,7 +81,7 @@ const ROUTES = [
   { n: "legal:aviso-legal", p: "/legal/aviso-legal" },
   { n: "legal:privacidad", p: "/legal/privacidad" },
   { n: "legal:cookies", p: "/legal/cookies" },
-  { n: "legal:seguridad", p: "/legal/seguridad" },
+  { n: "legal:licencia", p: "/legal/licencia" },
   { n: "404", p: "/nonexistent" },
 ];
 

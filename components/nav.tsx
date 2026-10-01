@@ -40,7 +40,6 @@ export function Nav() {
   const activeHash = useScrollSpy(siteConfig.nav.map((item) => item.href.replace("#", "")));
   const onHome = pathname === "/" || pathname === "/en";
   const stripped = prefix ? pathname.slice(prefix.length) || "/" : pathname;
-  const onProyectos = stripped.startsWith("/proyectos");
   const onOpinion = stripped.startsWith("/opinion");
 
   useEffect(() => {
@@ -101,15 +100,6 @@ export function Nav() {
                 {t("nav.biografia")}
               </Link>
             )}
-          </li>
-          <li>
-            <Link
-              href={`${prefix}/proyectos`}
-              className={onProyectos ? "site-nav__link site-nav__link--active" : "site-nav__link"}
-              aria-current={onProyectos ? "page" : undefined}
-            >
-              {t("nav.proyectos")}
-            </Link>
           </li>
           <li>
             <Link

@@ -51,3 +51,6 @@ coverage/
 
 # Performance audit reports (regenerated on each run)
 perf-reports/
+
+# Lighthouse audit reports (regenerated on each run)
+lighthouse-reports/
