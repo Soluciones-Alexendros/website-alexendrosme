@@ -92,7 +92,7 @@ export default async function TagPage({ params }: Props) {
                   <p className="article-item__desc">{article.frontmatter.description}</p>
                 )}
                 <span className="ds-caption">
-                  <ReadingTime minutes={article.readingTime} />
+                  <ReadingTime minutes={article.readingTime} withSeparator={false} />
                 </span>
               </LocaleLink>
             </article>

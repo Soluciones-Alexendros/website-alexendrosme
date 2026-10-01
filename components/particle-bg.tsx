@@ -46,8 +46,6 @@ export function ParticleBg() {
       const h = window.innerHeight;
       canvas.width = w * dpr;
       canvas.height = h * dpr;
-      canvas.style.width = `${w}px`;
-      canvas.style.height = `${h}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
       const density = w < 640 ? 0.00004 : 0.00008;

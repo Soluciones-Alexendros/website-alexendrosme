@@ -68,6 +68,15 @@
     border-radius: var(--ax-radius-sm);
   }
 
+  /* forced-colors (alto contraste): box-shadow es invisible; outline sí pinta. */
+  @media (forced-colors: active) {
+    :focus-visible {
+      outline: 2px solid Highlight;
+      outline-offset: 2px;
+      box-shadow: none;
+    }
+  }
+
   /* Grain noise sutil — textura de pergamino, no ruido digital */
   body::after {
     content: "";

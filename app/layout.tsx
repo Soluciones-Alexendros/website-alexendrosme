@@ -13,6 +13,7 @@ import { AntiMonetizationBanner } from "@/components/anti-monetization-banner";
 import { siteConfig } from "@/lib/site";
 import { Analytics } from "@vercel/analytics/react";
 import { SwRegister } from "@/components/sw-register";
+import { SkipLink } from "@/components/skip-link";
 import { prePaintScriptString } from "@/lib/theme-pre-paint";
 
 const ParticleBg = dynamic(() => import("@/components/particle-bg").then((m) => m.ParticleBg));
@@ -97,12 +98,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 html{color-scheme:dark light}
 body{background:var(--ax-surface-0);color:var(--ax-text-primary)}
 .skip-link{position:absolute;left:-9999px;top:auto;width:0;height:0;overflow:hidden}
-.skip-link:focus,.skip-link:focus-visible{position:fixed;left:1rem;top:1rem;width:auto;height:auto;z-index:100;padding:.5rem 1rem;background:var(--primary);color:var(--primary-foreground);border-radius:var(--ax-radius-md)}
+.skip-link:focus,.skip-link:focus-visible{position:fixed;left:1rem;top:1rem;width:auto;height:auto;z-index:var(--ax-z-tooltip);padding:.5rem 1rem;background:var(--primary);color:var(--primary-foreground);border-radius:var(--ax-radius-md)}
 .site-shell{margin-inline:auto;width:100%;max-width:72rem;padding-inline:var(--ax-safe-inset)}
 html{--ax-banner-offset:0px}
 html[data-ax-banner="1"]{--ax-banner-offset:3.25rem}
 body{padding-top:var(--ax-banner-offset)}
-.site-nav{position:sticky;top:var(--ax-banner-offset);z-index:50;width:100%;height:3.5rem;border-bottom:1px solid var(--border);background:color-mix(in oklch, var(--background) 80%, transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.site-nav{position:sticky;top:var(--ax-banner-offset);z-index:var(--ax-z-sticky);width:100%;height:3.5rem;border-bottom:1px solid var(--border);background:color-mix(in oklch, var(--background) 88%, transparent)}
 @media(min-width:40rem){.site-nav{height:4rem}html[data-ax-banner="1"]{--ax-banner-offset:3.5rem}}
 .site-nav__inner{display:flex;align-items:center;justify-content:space-between;gap:1rem;height:100%;max-width:48rem}
 .site-nav__links{display:none;align-items:center;gap:.5rem}
@@ -148,10 +149,8 @@ h1.display,.hero h1{font-family:var(--font-display);font-weight:700;letter-spaci
         />
       </head>
       <body className="body-layout">
-        <a href="#main" className="skip-link">
-          Saltar al contenido
-        </a>
         <I18nProvider>
+          <SkipLink />
           <ThemeProvider>
             <SearchProvider>
               <JsonLd />

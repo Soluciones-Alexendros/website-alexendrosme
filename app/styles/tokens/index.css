@@ -59,11 +59,11 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  /* Radii */
-  --ax-radius-sm: calc(var(--radius) - 4px);
-  --ax-radius-md: calc(var(--radius) - 2px);
-  --ax-radius-lg: var(--radius);
-  --ax-radius-xl: calc(var(--radius) + 4px);
+  /* Radii — spacing.css es única fuente; aquí solo alias Tailwind/shadcn */
+  --radius-sm: var(--ax-radius-sm);
+  --radius-md: var(--ax-radius-md);
+  --radius-lg: var(--ax-radius-lg);
+  --radius-xl: var(--ax-radius-xl);
 
   /* Fonts — next/font inyecta --font-source-serif / --font-source-sans / --font-plex-mono */
   --font-sans: var(--font-source-sans), ui-sans-serif, system-ui, sans-serif;
@@ -90,11 +90,10 @@ h1.display,
   letter-spacing: -0.025em;
   line-height: 0.98;
   text-wrap: balance;
-  /* Solid fill for WCAG contrast; glow stays decorative on the box. */
+  /* Solid fill for WCAG contrast; sin glow: elevación por luminosidad pura. */
   color: var(--ax-text-primary);
   -webkit-text-fill-color: var(--ax-text-primary);
   background: none;
   background-clip: border-box;
   -webkit-background-clip: border-box;
-  filter: drop-shadow(0 0 36px color-mix(in oklch, var(--ax-accent) 18%, transparent));
 }

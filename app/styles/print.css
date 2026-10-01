@@ -33,6 +33,7 @@
   .particle-canvas,
   .atm,
   .toc,
+  .toc-mobile,
   canvas:not(.prose canvas),
   header[role="banner"],
   nav.site-nav,

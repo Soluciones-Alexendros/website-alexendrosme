@@ -16,11 +16,21 @@ const MobileMenu = dynamic(() => import("@/components/mobile-menu").then((m) => 
   ssr: false,
 });
 
+function scrollBehavior(): ScrollBehavior {
+  if (
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  ) {
+    return "auto";
+  }
+  return "smooth";
+}
+
 function scrollToAnchor(href: string) {
   if (!href.startsWith("#")) return;
   const el = document.querySelector(href);
   if (el) {
-    el.scrollIntoView({ behavior: "smooth" });
+    el.scrollIntoView({ behavior: scrollBehavior() });
     window.history.replaceState(null, "", href);
   }
 }
@@ -68,7 +78,7 @@ export function Nav() {
           onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
             if (onHome) {
               e.preventDefault();
-              window.scrollTo({ top: 0, behavior: "smooth" });
+              window.scrollTo({ top: 0, behavior: scrollBehavior() });
               window.history.replaceState(null, "", homeHref);
             }
           }}
