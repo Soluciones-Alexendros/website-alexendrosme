@@ -127,12 +127,9 @@ export interface TagArticle {
 import { slugifyTag } from "@/lib/seo/tags";
 
 export async function getAllTags(): Promise<string[]> {
-  const [proyectos, opinion] = await Promise.all([
-    getContentCollection("proyectos"),
-    getContentCollection("opinion"),
-  ]);
+  const opinion = await getContentCollection("opinion");
   const tags = new Set<string>();
-  for (const item of [...proyectos, ...opinion]) {
+  for (const item of opinion) {
     for (const tag of item.frontmatter.tags) tags.add(tag);
   }
   return Array.from(tags).sort((a, b) => a.localeCompare(b, "es"));
@@ -150,17 +147,8 @@ export async function resolveTagLabel(param: string): Promise<string | null> {
 
 export async function getArticlesByTag(tag: string): Promise<TagArticle[]> {
   const label = (await resolveTagLabel(tag)) ?? tag;
-  const [proyectos, opinion] = await Promise.all([
-    getContentCollection("proyectos"),
-    getContentCollection("opinion"),
-  ]);
+  const opinion = await getContentCollection("opinion");
   const tagged: TagArticle[] = [
-    ...proyectos
-      .filter((a) => a.frontmatter.tags.includes(label))
-      .map((a) => ({
-        ...a,
-        type: "proyectos" as const,
-      })),
     ...opinion
       .filter((a) => a.frontmatter.tags.includes(label))
       .map((a) => ({

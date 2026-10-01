@@ -18,14 +18,6 @@ export interface OGTheme {
 }
 
 /** Hex derivados de tokens OKLCH (Satori no pinta oklch de forma fiable). */
-export const PROYECTOS_THEME: OGTheme = {
-  background: "linear-gradient(135deg, #141016 0%, #1d191f 100%)",
-  accent: "#d4ab4f",
-  title: "#f7f4f9",
-  description: "#c0bcc3",
-  muted: "#756f7b",
-};
-
 export const OPINION_THEME: OGTheme = {
   background: "linear-gradient(135deg, #0f1714 0%, #182620 100%)",
   accent: "#68b88f",
@@ -35,7 +27,7 @@ export const OPINION_THEME: OGTheme = {
 };
 
 export interface OGImageProps {
-  collection: "proyectos" | "opinion";
+  collection: "opinion";
   slug: string;
   theme: OGTheme;
   sectionLabel: string;
@@ -43,8 +35,7 @@ export interface OGImageProps {
 
 /**
  * Genera una ImageResponse OG para un artículo de una colección.
- * Compartido entre app/proyectos/[slug]/opengraph-image.tsx
- * y app/opinion/[slug]/opengraph-image.tsx.
+ * Compartido entre app/opinion/[slug]/opengraph-image.tsx.
  */
 export async function ogImageResponse({
   collection,

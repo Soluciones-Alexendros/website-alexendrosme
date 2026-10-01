@@ -99,15 +99,6 @@ export function MobileMenu({ activeHash }: { activeHash: string }) {
             </li>
             <li>
               <Link
-                href={withLocalePrefix(prefix, "/proyectos")}
-                onClick={() => setOpen(false)}
-                className="sidebar-link"
-              >
-                {t("nav.proyectos")}
-              </Link>
-            </li>
-            <li>
-              <Link
                 href={withLocalePrefix(prefix, "/opinion")}
                 onClick={() => setOpen(false)}
                 className="sidebar-link"

@@ -4,7 +4,8 @@ import { siteConfig } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Política de cookies",
-  description: "Política de cookies de alexendros.me conforme a la Guía AEPD 2023.",
+  description:
+    "Política de cookies de alexendros.me conforme al artículo 22.2 de la LSSI-CE y la Guía de la AEPD.",
   alternates: { canonical: "/legal/cookies" },
 };
 
@@ -16,63 +17,30 @@ export default function CookiesPage() {
       />
       <h1>Política de cookies</h1>
 
-      {/* ── CAPA MANIFIESTO — divulgativa, para el humano ── */}
-      <section aria-labelledby="ck-manifiesto">
-        <h2 id="ck-manifiesto">Manifiesto</h2>
+      <p>
+        alexendros.me <strong>no utiliza cookies de análisis, publicidad ni de terceros</strong>. La
+        única información que se guarda en tu navegador es la necesaria para recordar tus
+        preferencias de visualización. Por ese motivo no se muestra un banner de consentimiento:
+        ninguna de las cookies empleadas requiere autorización previa según el artículo 22.2 de la
+        LSSI-CE.
+      </p>
 
-        <div className="manifiesto">
-          <p className="manifiesto-lead">
-            Cada vez que visitas una web con tracking, tu navegador entrega un parte silencioso:
-            sistema operativo, ubicación aproximada, qué viste antes, cuánto tiempo te quedaste. Ese
-            parte —la cookie— no es un simple archivo de texto: es el ladrillo básico de una
-            industria que ha hecho de la vigilancia su modelo de negocio.
-          </p>
-          <p>
-            No se trata de un intercambio inocuo. Cada cookie de terceros que aceptas financia una
-            infraestructura diseñada para predecir tu comportamiento, clasificarte en segmentos y
-            manipularte sin que lo sepas. La economía de la atención no pide permiso: lo da por
-            supuesto.
-          </p>
-          <p>
-            Este sitio no participa de ese pacto. No porque las cookies sean intrínsecamente
-            malignas —son, al fin y al cabo, piezas de software—, sino porque el ecosistema que han
-            normalizado erosiona la soberanía digital de las personas. Usar la web no debería
-            implicar ser medido, perfilado y vendido.
-          </p>
-        </div>
-      </section>
-
-      {/* ── Lo esencial ── */}
-      <section aria-labelledby="ck-esencial">
-        <h2 id="ck-esencial">Lo esencial</h2>
+      <section aria-labelledby="ck-que">
+        <h2 id="ck-que">¿Qué es una cookie?</h2>
         <p>
-          Este sitio <strong>no instala cookies de terceros</strong> ni activa ningún tracker. El
-          único almacenamiento que puede generarse es el técnico del CDN. No hay publicidad, no hay
-          perfiles, no hay remarketing.
-        </p>
-        <p>
-          No verás un banner de aceptación porque no hay cookies que requieran consentimiento previo
-          según la Guía de la AEPD 2023.
+          Una cookie es un pequeño archivo que un sitio web almacena en tu dispositivo para recordar
+          información entre visitas. Las cookies que no sean estrictamente necesarias para prestar
+          el servicio solicitado requieren consentimiento previo e informado.
         </p>
       </section>
 
-      {/* ── Detalle ── */}
-      <section aria-labelledby="ck-detalle">
-        <h2 id="ck-detalle">Detalle</h2>
-
-        <h3>¿Qué es una cookie?</h3>
-        <p>
-          Una cookie es un pequeño archivo de texto que un sitio web almacena en tu dispositivo. Las
-          cookies que no sean estrictamente necesarias para la prestación del servicio requieren
-          consentimiento previo e informado.
-        </p>
-
-        <h3>Inventario de cookies</h3>
+      <section aria-labelledby="ck-inventario">
+        <h2 id="ck-inventario">Cookies que utiliza este sitio</h2>
         <table className="legal-table">
           <thead>
             <tr>
               <th scope="col">Nombre</th>
-              <th scope="col">Proveedor</th>
+              <th scope="col">Titularidad</th>
               <th scope="col">Tipo</th>
               <th scope="col">Finalidad</th>
               <th scope="col">Duración</th>
@@ -80,37 +48,59 @@ export default function CookiesPage() {
           </thead>
           <tbody>
             <tr>
-              <td data-label="Nombre">__cf_bm</td>
-              <td data-label="Proveedor">Cloudflare</td>
+              <td data-label="Nombre">ax-th</td>
+              <td data-label="Titularidad">Propia</td>
               <td data-label="Tipo">Técnica necesaria</td>
-              <td data-label="Finalidad">Detección de bots, protección DDoS</td>
-              <td data-label="Duración">30 minutos</td>
+              <td data-label="Finalidad">
+                Recordar el tema visual elegido (claro, oscuro o sistema)
+              </td>
+              <td data-label="Duración">1 año</td>
             </tr>
             <tr>
-              <td data-label="Nombre">_vercel_no_cache</td>
-              <td data-label="Proveedor">Vercel</td>
+              <td data-label="Nombre">ax-rd</td>
+              <td data-label="Titularidad">Propia</td>
               <td data-label="Tipo">Técnica necesaria</td>
-              <td data-label="Finalidad">Control de caché en modo desarrollo</td>
-              <td data-label="Duración">Sesión</td>
+              <td data-label="Finalidad">Recordar la preferencia de movimiento reducido</td>
+              <td data-label="Duración">1 año</td>
             </tr>
           </tbody>
         </table>
-
         <p>
-          Ambas son técnicas y estrictamente necesarias. No requieren consentimiento previo conforme
-          al Art. 22.2 LSSI-CE y la Guía AEPD 2023.
+          Ambas son propias, técnicas y estrictamente necesarias para conservar preferencias que la
+          persona usuaria ha elegido expresamente. No identifican ni perfilan al visitante y no se
+          comparten con terceros.
         </p>
+      </section>
 
-        <h3>Sin analytics ni publicidad</h3>
+      <section aria-labelledby="ck-almacenamiento">
+        <h2 id="ck-almacenamiento">Otro almacenamiento local</h2>
         <p>
-          Este sitio no usa Google Analytics, Meta Pixel ni ningún sistema de seguimiento
-          publicitario. Si en el futuro se incorporase cualquier cookie no técnica, se actualizará
-          esta política y se implementará un mecanismo de consentimiento previo.
+          Además de las cookies anteriores, el sitio usa el almacenamiento local del navegador (
+          <code>localStorage</code>) con la misma finalidad funcional: preferencia de idioma,
+          preferencia de tema y el cierre del aviso informativo. Este almacenamiento no se transmite
+          a ningún servidor.
         </p>
-
-        <h3>Cómo gestionar las cookies</h3>
         <p>
-          Puedes bloquearlas o eliminarlas desde la configuración de tu navegador:{" "}
+          El sitio ofrece una versión instalable (PWA) que guarda en caché los archivos necesarios
+          para funcionar sin conexión. Esta caché contiene únicamente contenido del propio sitio.
+        </p>
+      </section>
+
+      <section aria-labelledby="ck-analitica">
+        <h2 id="ck-analitica">Analítica sin cookies</h2>
+        <p>
+          Las estadísticas de visitas se obtienen con Vercel Web Analytics, un sistema que{" "}
+          <strong>no instala cookies</strong> ni rastrea a las personas usuarias entre sitios. No se
+          emplea Google Analytics, Meta Pixel ni ninguna otra plataforma publicitaria. Puedes
+          consultar el detalle del tratamiento en la{" "}
+          <a href="/legal/privacidad">Política de privacidad</a>.
+        </p>
+      </section>
+
+      <section aria-labelledby="ck-gestion">
+        <h2 id="ck-gestion">Cómo gestionar las cookies</h2>
+        <p>
+          Puedes bloquear o eliminar las cookies desde la configuración de tu navegador:{" "}
           <a
             href="https://support.google.com/chrome/answer/95647"
             target="_blank"
@@ -134,38 +124,35 @@ export default function CookiesPage() {
           >
             Safari
           </a>
+          . Si las eliminas, el sitio seguirá funcionando, pero perderá tus preferencias de tema e
+          idioma.
+        </p>
+      </section>
+
+      <section aria-labelledby="ck-derechos">
+        <h2 id="ck-derechos">Tus derechos</h2>
+        <p>
+          Puedes ejercer tus derechos de acceso, rectificación, supresión, limitación, oposición y
+          portabilidad escribiendo a{" "}
+          <a href="mailto:contacto@alexendros.me">contacto@alexendros.me</a>. Tienes el detalle
+          completo en la <a href="/legal/privacidad">Política de privacidad</a> y puedes reclamar
+          ante la{" "}
+          <a href="https://www.aepd.es" target="_blank" rel="noopener noreferrer">
+            Agencia Española de Protección de Datos
+          </a>
           .
         </p>
       </section>
 
-      {/* ── Tus derechos ── */}
-      <section aria-labelledby="ck-derechos">
-        <h2 id="ck-derechos">Tus derechos</h2>
-        <p>
-          En relación con el tratamiento de datos derivado de las cookies técnicas (IP, logs),
-          puedes ejercer tus derechos ARCO y adicionales del RGPD escribiendo a{" "}
-          <a href="mailto:contacto@alexendros.me">contacto@alexendros.me</a>. Ver la{" "}
-          <a href="/legal/privacidad">Política de Privacidad</a> para el detalle completo.
-        </p>
-      </section>
-
-      {/* ── CAPA FORMAL — blindaje AEPD ── */}
-      <hr className="formal-divider" role="presentation" />
-      <span className="formal-label">Capa formal</span>
-
       <section aria-labelledby="ck-formal">
-        <h2 id="ck-formal">Texto formal</h2>
+        <h2 id="ck-formal">Marco normativo</h2>
         <p>
-          La presente Política de Cookies se elabora en cumplimiento del artículo 22.2 de la Ley
-          34/2002 (LSSI-CE), del Reglamento (UE) 2016/679 (RGPD) y de la Guía sobre el uso de las
-          cookies publicada por la AEPD en 2023.
+          Esta política se elabora conforme al artículo 22.2 de la Ley 34/2002 (LSSI-CE), al
+          Reglamento (UE) 2016/679 (RGPD) y a la Guía sobre el uso de las cookies publicada por la
+          AEPD en mayo de 2024.
         </p>
         <p>
-          Responsable del tratamiento: Alejandro Domingo Agustí, NIF 21002968N, Valencia, España.{" "}
-          <a href="mailto:contacto@alexendros.me">contacto@alexendros.me</a>.
-        </p>
-        <p>
-          <em>Última actualización: junio de 2026.</em>
+          <em>Última actualización: septiembre de 2026.</em>
         </p>
       </section>
     </>

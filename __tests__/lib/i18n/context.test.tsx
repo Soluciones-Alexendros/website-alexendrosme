@@ -112,10 +112,10 @@ describe("I18nProvider hydrated (createRoot)", () => {
   it("resuelve t() con path existente", async () => {
     await renderApp(
       <I18nProvider>
-        <Consumer path="nav.proyectos" />
+        <Consumer path="nav.opinion" />
       </I18nProvider>,
     );
-    expect(container.querySelector('[data-testid="t-result"]')?.textContent).toBe("Proyectos");
+    expect(container.querySelector('[data-testid="t-result"]')?.textContent).toBe("Opinión");
   });
 
   it("resuelve t() con path inexistente devuelve el path", async () => {
@@ -163,44 +163,44 @@ describe("I18nProvider hydrated (createRoot)", () => {
     expect(lenEl?.textContent).toBe("0");
   });
 
-  it("t() resuelve nav.proyectos y nav.opinion", async () => {
+  it("t() resuelve nav.opinion", async () => {
     await renderApp(
       <I18nProvider>
-        <Consumer path="nav.proyectos" />
+        <Consumer path="nav.opinion" />
       </I18nProvider>,
     );
-    expect(container.querySelector('[data-testid="t-result"]')?.textContent).toBe("Proyectos");
+    expect(container.querySelector('[data-testid="t-result"]')?.textContent).toBe("Opinión");
   });
 
   it("actualiza locale al llamar setLocale('en')", async () => {
     await renderApp(
       <I18nProvider>
-        <Consumer path="nav.proyectos" />
+        <Consumer path="nav.opinion" />
       </I18nProvider>,
     );
 
     await clickTestid("set-locale-en");
 
     expect(container.querySelector('[data-testid="locale"]')?.textContent).toBe("en");
-    expect(container.querySelector('[data-testid="t-result"]')?.textContent).toBe("Projects");
+    expect(container.querySelector('[data-testid="t-result"]')?.textContent).toBe("Opinion");
   });
 
   it("actualiza locale al llamar setLocale('es') desde en", async () => {
     localStorage.setItem(LOCALE_KEY, "en");
     await renderApp(
       <I18nProvider>
-        <Consumer path="nav.proyectos" />
+        <Consumer path="nav.opinion" />
       </I18nProvider>,
     );
 
     // After hydration effects, should be "en"
     expect(container.querySelector('[data-testid="locale"]')?.textContent).toBe("en");
-    expect(container.querySelector('[data-testid="t-result"]')?.textContent).toBe("Projects");
+    expect(container.querySelector('[data-testid="t-result"]')?.textContent).toBe("Opinion");
 
     await clickTestid("set-locale-es");
 
     expect(container.querySelector('[data-testid="locale"]')?.textContent).toBe("es");
-    expect(container.querySelector('[data-testid="t-result"]')?.textContent).toBe("Proyectos");
+    expect(container.querySelector('[data-testid="t-result"]')?.textContent).toBe("Opinión");
   });
 
   it("lee locale de localStorage al montar", async () => {
@@ -208,17 +208,17 @@ describe("I18nProvider hydrated (createRoot)", () => {
 
     await renderApp(
       <I18nProvider>
-        <Consumer path="nav.proyectos" />
+        <Consumer path="nav.opinion" />
       </I18nProvider>,
     );
 
-    expect(container.querySelector('[data-testid="t-result"]')?.textContent).toBe("Projects");
+    expect(container.querySelector('[data-testid="t-result"]')?.textContent).toBe("Opinion");
   });
 
   it("persiste locale en localStorage al cambiar", async () => {
     await renderApp(
       <I18nProvider>
-        <Consumer path="nav.proyectos" />
+        <Consumer path="nav.opinion" />
       </I18nProvider>,
     );
 
@@ -230,7 +230,7 @@ describe("I18nProvider hydrated (createRoot)", () => {
   it("actualiza document.documentElement.lang al cambiar locale", async () => {
     await renderApp(
       <I18nProvider>
-        <Consumer path="nav.proyectos" />
+        <Consumer path="nav.opinion" />
       </I18nProvider>,
     );
 
@@ -258,7 +258,7 @@ describe("I18nProvider hydrated (createRoot)", () => {
 
     await renderApp(
       <I18nProvider>
-        <Consumer path="nav.proyectos" />
+        <Consumer path="nav.opinion" />
       </I18nProvider>,
     );
 
@@ -273,7 +273,7 @@ describe("I18nProvider hydrated (createRoot)", () => {
 
     await renderApp(
       <I18nProvider>
-        <Consumer path="nav.proyectos" />
+        <Consumer path="nav.opinion" />
       </I18nProvider>,
     );
 
@@ -287,15 +287,15 @@ describe("I18nProvider hydrated (createRoot)", () => {
   it("cambia locale dos veces (es→en→es)", async () => {
     await renderApp(
       <I18nProvider>
-        <Consumer path="nav.proyectos" />
+        <Consumer path="nav.opinion" />
       </I18nProvider>,
     );
 
     await clickTestid("set-locale-en");
-    expect(container.querySelector('[data-testid="t-result"]')?.textContent).toBe("Projects");
+    expect(container.querySelector('[data-testid="t-result"]')?.textContent).toBe("Opinion");
 
     await clickTestid("set-locale-es");
-    expect(container.querySelector('[data-testid="t-result"]')?.textContent).toBe("Proyectos");
+    expect(container.querySelector('[data-testid="t-result"]')?.textContent).toBe("Opinión");
   });
 });
 

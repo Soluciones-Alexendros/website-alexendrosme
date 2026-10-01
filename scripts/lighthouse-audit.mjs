@@ -6,63 +6,22 @@
  * Usage: node scripts/lighthouse-audit.mjs
  */
 
-import { execSync } from "node:child_process";
+import { execSync, spawn } from "node:child_process";
 import { existsSync, readFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
-import { createServer } from "node:http";
 
 const PORT = 4224;
 const OUT_DIR = new URL("../out", import.meta.url).pathname;
 const BASE_URL = `http://localhost:${PORT}`;
 const REPORT_DIR = new URL("../lighthouse-reports", import.meta.url).pathname;
 
-// Minimal MIME map
-const MIME = {
-  ".html": "text/html",
-  ".css": "text/css",
-  ".js": "application/javascript",
-  ".png": "image/png",
-  ".svg": "image/svg+xml",
-  ".woff2": "font/woff2",
-};
-
-function resolvePath(urlPath) {
-  const path = decodeURIComponent(urlPath.split("?")[0]);
-  const fp = join(OUT_DIR, path);
-  for (const tryPath of [
-    fp,
-    fp + ".html",
-    join(fp, "index.html"),
-    join(OUT_DIR, "index.html"),
-    join(OUT_DIR, "404.html"),
-  ]) {
-    if (existsSync(tryPath)) return tryPath;
-  }
-  return null;
-}
-
-// Static server
-const server = createServer((req, res) => {
-  const fp = resolvePath(req.url);
-  if (!fp) {
-    res.writeHead(404);
-    res.end("");
-    return;
-  }
-  const ext = fp.split(".").pop();
-  res.writeHead(200, { "Content-Type": MIME["." + ext] ?? "octet-stream" });
-  res.end(readFileSync(fp));
-});
-
 // Site-type representative routes (1 per page type for speed)
 const ROUTES = [
   { name: "home", path: "/" },
   { name: "collection: opinion", path: "/opinion" },
   { name: "article: crítica tecnológica", path: "/opinion/critica-tecnologica" },
-  { name: "proyectos", path: "/proyectos" },
   { name: "tags index", path: "/tags" },
   { name: "legal: privacidad", path: "/legal/privacidad" },
-  { name: "error 404", path: "/nonexistent" },
 ];
 
 function audit(url, reportPath) {
@@ -72,14 +31,17 @@ function audit(url, reportPath) {
     url,
     "--output=json",
     `--output-path=${reportPath}`,
-    "--chrome-flags=--headless --no-sandbox",
+    '--chrome-flags="--headless --no-sandbox --disable-gpu"',
     "--quiet",
     "--only-categories=performance,accessibility,best-practices,seo",
   ].join(" ");
   try {
     execSync(cmd, { stdio: "pipe", timeout: 120_000 });
-  } catch {
-    /* Lighthouse may exit code 1 even on success */
+  } catch (err) {
+    const stderr = err?.stderr?.toString?.().trim();
+    if (stderr && !existsSync(reportPath)) {
+      console.error(`\n    lighthouse error: ${stderr.split("\n").slice(-3).join(" | ")}`);
+    }
   }
   try {
     return JSON.parse(readFileSync(reportPath, "utf-8"));
@@ -94,7 +56,23 @@ async function main() {
     process.exit(1);
   }
   mkdirSync(REPORT_DIR, { recursive: true });
-  server.listen(PORT);
+
+  // Start static server detached (execSync would block forever)
+  const server = spawn("npx", ["serve", OUT_DIR, "-l", String(PORT)], {
+    stdio: "ignore",
+    detached: true,
+  });
+  server.unref();
+  // Wait for server to be ready (poll)
+  for (let i = 0; i < 30; i++) {
+    try {
+      const res = await fetch(BASE_URL);
+      if (res.ok || res.status === 404) break;
+    } catch {
+      // server not ready yet, keep polling
+    }
+    await new Promise((resolve) => setTimeout(resolve, 500));
+  }
   console.log(`Server on ${BASE_URL}`);
 
   const results = [];
@@ -120,7 +98,17 @@ async function main() {
     }
   }
 
-  server.close();
+  // Kill the serve process
+  try {
+    execSync(`pkill -f "serve ${OUT_DIR} -l ${PORT}"`, { stdio: "ignore" });
+  } catch {
+    // pkill may find no match if server already exited
+  }
+  try {
+    process.kill(-server.pid, "SIGTERM");
+  } catch {
+    // group already terminated
+  }
 
   // Summary
   console.log("\n" + "=".repeat(70));

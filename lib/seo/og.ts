@@ -9,6 +9,6 @@ export function rootOgImageUrl(): string {
  * Per-article OG — static export emits `opengraph-image` (no extension).
  * Metadata must match the file on disk or social crawlers get 404.
  */
-export function articleOgImageUrl(collection: "opinion" | "proyectos", slug: string): string {
+export function articleOgImageUrl(collection: "opinion", slug: string): string {
   return `${siteConfig.url}/${collection}/${slug}/opengraph-image`;
 }

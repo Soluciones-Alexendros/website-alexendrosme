@@ -12,15 +12,14 @@ export const metadata: Metadata = {
     absolute: "Alexendros · thought, freedom and digital life",
   },
   description:
-    "Alexendros' personal, money-free space: opinion, projects and reflections on freedom and digital life from Valencia. No ads, no capture.",
+    "Alexendros' personal, money-free space: opinion and reflections on freedom and digital life from Valencia. No ads, no capture.",
   alternates: {
     canonical: "/en",
     languages: alts.languages,
   },
   openGraph: {
     title: "Alexendros · thought, freedom and digital life",
-    description:
-      "Alexendros' personal, money-free space: opinion, projects and reflections from Valencia.",
+    description: "Alexendros' personal, money-free space: opinion and reflections from Valencia.",
     type: "website",
     locale: "en_US",
     siteName: siteConfig.name,
@@ -34,13 +33,9 @@ export const metadata: Metadata = {
 };
 
 export default async function EnHome() {
-  const [proyectos, opinion] = await Promise.all([
-    getContentCollection("proyectos"),
-    getContentCollection("opinion"),
-  ]);
+  const opinion = await getContentCollection("opinion");
 
   const latestArticles = [
-    ...proyectos.slice(0, 3).map((item) => ({ ...item, type: "proyectos" as const })),
     ...opinion.slice(0, 3).map((item) => ({ ...item, type: "opinion" as const })),
   ].sort((a, b) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime());
 

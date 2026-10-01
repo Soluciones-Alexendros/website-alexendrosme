@@ -8,7 +8,6 @@ const es: TranslationDict = {
 
   nav: {
     biografia: "(Auto)biografía",
-    proyectos: "Proyectos",
     opinion: "Opinión",
     productos: "Productos",
     productosLabel: "Hub de productos — alexendros.dev",
@@ -39,8 +38,7 @@ const es: TranslationDict = {
     },
     publicaciones: {
       title: "Últimas piezas",
-      desc: "Lo último en {proyectosLink} y {opinionLink}.",
-      proyectosLabel: "Proyectos",
+      desc: "Lo último en {opinionLink}.",
       opinionLabel: "Opinión",
       empty: "No hay publicaciones aún.",
     },
@@ -51,12 +49,10 @@ const es: TranslationDict = {
     avisoLegal: "Aviso legal",
     privacidad: "Privacidad",
     cookies: "Cookies",
-    seguridad: "Seguridad",
+    licencia: "Licencia",
     hubProductos: "Hub de productos → alexendros.dev",
     hubLabel: "Hub de productos — alexendros.dev",
-    copyright:
-      "· Alejandro Domingo Agustí · Anticomercial: cópialo, úsalo, compártelo. No comercies con ello. F.A.F.O.",
-    quote: "¿De qué sirve el dinero a quien no sabe usarlo? Ya lo tengo yo.",
+    copyright: "CC BY-NC-SA 4.0",
   },
 
   antiMonetization: {
@@ -85,7 +81,6 @@ const es: TranslationDict = {
   },
 
   article: {
-    backProyectos: "← Volver a Proyectos",
     backOpinion: "← Volver a Opinión",
     tagsLabel: "Etiquetas",
     minutesShort: "min de lectura",
@@ -121,7 +116,6 @@ const es: TranslationDict = {
     placeholder: "Busca en artículos...",
     noResults: 'No se encontraron resultados para "{query}".',
     results: '{count} resultado(s) para "{query}"',
-    sectionProyectos: "Proyectos",
     sectionOpinion: "Opinión",
     shortcut: "Buscar (Ctrl/⌘K)",
     loadError: "No se pudo cargar el índice de búsqueda. Intenta de nuevo más tarde.",
@@ -141,9 +135,6 @@ const es: TranslationDict = {
   contact: {
     fabLabel: "Acciones de contacto",
     emailLabel: "Enviar correo",
-    telegramLabel: "Telegram",
-    statusPreparacion: "En preparación",
-    statusProximamente: "Próximamente",
     contactame: "Contáctame",
   },
 };

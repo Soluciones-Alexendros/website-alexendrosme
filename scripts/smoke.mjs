@@ -9,7 +9,7 @@ import { setTimeout as delay } from "node:timers/promises";
 
 const PORT = Number(process.env.SMOKE_PORT ?? 4173);
 const BASE = `http://127.0.0.1:${PORT}`;
-const ROUTES = ["/", "/proyectos", "/opinion", "/en"];
+const ROUTES = ["/", "/opinion", "/en"];
 const READY_ATTEMPTS = 30;
 
 if (!existsSync("out")) {

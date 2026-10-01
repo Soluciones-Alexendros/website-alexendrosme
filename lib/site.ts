@@ -3,7 +3,7 @@ export const siteConfig = {
   fullName: "Alejandro Domingo Agustí",
   title: "Alexendros · pensamiento, libertad y vida digital",
   description:
-    "Espacio personal y libre de dinero de Alexendros: opinión, proyectos y reflexiones sobre libertad y vida digital desde Valencia. Sin anuncios ni captación.",
+    "Espacio personal y libre de dinero de Alexendros: opinión y reflexiones sobre libertad y vida digital desde Valencia. Sin anuncios ni captación.",
   url: "https://alexendros.me",
   email: "contacto@alexendros.me",
   location: "Valencia, España",
@@ -18,12 +18,10 @@ export const siteConfig = {
     { label: "Aviso legal", href: "/legal/aviso-legal" },
     { label: "Privacidad", href: "/legal/privacidad" },
     { label: "Cookies", href: "/legal/cookies" },
-    { label: "Seguridad", href: "/legal/seguridad" },
+    { label: "Licencia", href: "/legal/licencia" },
   ],
   contact: {
     email: "contacto@alexendros.me",
-    telegram: { handle: "@alexendros", status: "preparacion" as const },
-    matrix: { handle: "@alexendros:matrix.org", status: "proximamente" as const },
   },
 } as const;
 
@@ -33,6 +31,4 @@ if (process.env.NODE_ENV === "development") {
   Object.freeze(siteConfig.legalNav);
   Object.freeze(siteConfig.links);
   Object.freeze(siteConfig.contact);
-  Object.freeze(siteConfig.contact.telegram);
-  Object.freeze(siteConfig.contact.matrix);
 }

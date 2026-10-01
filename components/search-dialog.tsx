@@ -9,7 +9,7 @@ import { useI18n } from "@/lib/i18n";
 
 interface SearchIndexItem {
   slug: string;
-  type: "proyectos" | "opinion";
+  type: "opinion";
   title: string;
   description: string;
   tags: string[];
@@ -130,7 +130,6 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
   };
 
   const scored = results();
-  const proyectosResults = scored.filter((r) => r.item.type === "proyectos");
   const opinionResults = scored.filter((r) => r.item.type === "opinion");
 
   return (
@@ -213,49 +212,6 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
               <p className="px-3 py-8 text-center text-sm text-muted-foreground">
                 {t("search.shortcut")}
               </p>
-            )}
-
-            {proyectosResults.length > 0 && (
-              <div className="mb-2">
-                <p className="px-3 py-1.5 text-xs font-mono uppercase tracking-wider text-muted-foreground">
-                  {t("search.sectionProyectos")}
-                </p>
-                {proyectosResults.map(({ item }) => (
-                  <button
-                    key={`proyectos-${item.slug}`}
-                    type="button"
-                    onClick={() => handleSelect(item.slug, item.type)}
-                    className={cn(
-                      "flex w-full flex-col gap-1 rounded-lg px-3 py-2.5 text-left",
-                      "transition-colors duration-100",
-                      "hover:bg-muted focus-visible:bg-muted",
-                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                    )}
-                  >
-                    <div className="flex items-center gap-2">
-                      <FileText className="size-4 shrink-0 text-primary" aria-hidden="true" />
-                      <span className="font-medium text-foreground text-sm">
-                        {highlightMatches(item.title, query)}
-                      </span>
-                    </div>
-                    <p className="text-xs text-muted-foreground line-clamp-1">
-                      {highlightMatches(getContentSnippet(item.content, query), query)}
-                    </p>
-                    {item.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-1">
-                        {item.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="inline-flex text-[10px] font-mono text-muted-foreground/60"
-                          >
-                            #{highlightMatches(tag, query)}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </button>
-                ))}
-              </div>
             )}
 
             {opinionResults.length > 0 && (

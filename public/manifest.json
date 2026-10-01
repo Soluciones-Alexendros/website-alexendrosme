@@ -1,7 +1,7 @@
 {
   "name": "Alexendros",
   "short_name": "Alexendros",
-  "description": "Espacio personal libre de dinero — opinión, proyectos y pensamiento desde Valencia.",
+  "description": "Espacio personal libre de dinero — opinión y pensamiento desde Valencia.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

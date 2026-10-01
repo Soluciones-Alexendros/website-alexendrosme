@@ -20,12 +20,6 @@ export function BackHomeLabel() {
   return <>{t("collection.backHome")}</>;
 }
 
-/** Renders "← Volver a Proyectos" / "← Back to Projects" */
-export function BackProyectosLabel() {
-  const { t } = useI18n();
-  return <>{t("article.backProyectos")}</>;
-}
-
 /** Renders "← Volver a Opinión" / "← Back to Opinion" */
 export function BackOpinionLabel() {
   const { t } = useI18n();

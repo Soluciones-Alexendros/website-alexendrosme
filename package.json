@@ -3,7 +3,7 @@
   "version": "0.8.0",
   "private": true,
   "type": "module",
-  "description": "Sitio web personal de Alexendros — espacio libre de dinero para opinión, proyectos y pensamiento. Next.js 16, Tailwind v4, TypeScript strict, export estático.",
+  "description": "Sitio web personal de Alexendros — espacio libre de dinero para opinión y pensamiento. Next.js 16, Tailwind v4, TypeScript strict, export estático.",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "npm run generate-sitemap && npm run generate-search-index && npm run generate-feeds && next build",
@@ -82,7 +82,7 @@
     "node": ">=22"
   },
   "packageManager": "npm@10.9.0",
-  "license": "CC-BY-NC-SA-4.0",
+  "license": "MIT",
   "author": "Alexendros <contacto@alexendros.me>",
   "repository": {
     "type": "git",

@@ -13,6 +13,29 @@ Todos los cambios destacables de este proyecto se documentan en este archivo.
 El formato sigue [Keep a Changelog 1.1.0](https://keepachangelog.com/es-ES/1.1.0/),
 y este proyecto se adhiere a [SemVer 2.0.0](https://semver.org/lang/es/).
 
+## [Unreleased] · Consolidación contenido + legal (ADR-0006)
+
+### Añadido
+
+- Página `/legal/licencia` (ES/EN): contenidos CC BY-NC-SA 4.0, código MIT, exclusiones.
+- ADR-0006 (colección única `opinion`, retirada de `proyectos` y `/legal/seguridad`).
+- Test de contrato `prohibited-state` (13 tests: sin proyectos/Telegram/Matrix/€Ç/F.A.F.O., un solo `mailto:` en footer).
+
+### Cambiado
+
+- Colección única `opinion`: tipos, loader, nav, home, sitemap, feeds, search-index, OG, sitemap/feeds regenerados.
+- Legal ES/EN reescrito con datos reales (NIF, domicilio, Hostinger/Vercel/Proton Mail, Vercel Analytics descrita).
+- Footer formal (sin €Ç/F.A.F.O./cita/email como texto) + icono Mail `mailto:`; ContactFab simplificado a email.
+- Split de licencia: contenido CC BY-NC-SA 4.0, código MIT (`LICENSE`, `package.json`).
+- Docs raíz alineadas (`README`, `ARCHITECTURE`, `ROADMAP`, `TASKS`).
+
+### Eliminado
+
+- Rutas/contenido `proyectos` (app, content, feeds, sitemaps, redirección `/projects`).
+- Contacto Telegram/Matrix (config, UI, i18n).
+- Ruta `/legal/seguridad` (sustituida por `/legal/licencia`).
+- Sello €Ç, texto anticomercial informal, cita y `F.A.F.O.` del footer.
+
 ## [Unreleased] · Alineación al canon P1+P2
 
 ### Añadido

@@ -40,7 +40,7 @@ Lista viva de pendientes del repositorio standalone `website-alexendrosme`
 
 - [x] Preload de fuentes Geist (`next/font/local`).
 - [x] `sameAs` JSON-LD verificado (GitHub, LinkedIn, X/Twitter).
-- [ ] Analytics privacy-first (Plausible EU / Umami) con consentimiento explícito.
+- [x] Vercel Web Analytics como analítica sin cookies (decisión P3-B; descrita con exactitud en Privacidad/Cookies).
 - [ ] Link real al hub `alexendros.dev` cuando esté deployado (bloqueado externo).
 - [x] Microanimaciones con `tw-animate-css` (motion-safe).
 - [x] StackMarquee "Mi caja de herramientas" entre Misiones y Experiencias.
@@ -123,12 +123,11 @@ Lista viva de pendientes del repositorio standalone `website-alexendrosme`
 
 ## 12. Próximas subfases (v0.8.x → v0.9.0)
 
-### 12.1 Contenido Ideas / Acciones
+### 12.1 Contenido Opinión
 
 - [ ] Aplicar la batería de preguntas (tesis en una frase, objeción más fuerte y respuesta, evidencia concreta, conexión con el espacio libre de dinero, acción concreta, título honesto) a cada nueva pieza.
 - [ ] Contraste de cada pieza contra la IA de Notion antes de publicar (validar realismo y atacar la tesis).
-- [ ] Primera pieza nueva de `Ideas` siguiendo el método (MDX en `content/ideas/`).
-- [ ] Primera pieza nueva de `Acciones` siguiendo el método (MDX en `content/acciones/`).
+- [ ] Primera pieza nueva de `Opinión` siguiendo el método (MDX en `content/opinion/`).
 
 ### 12.2 Calidad y CI
 
@@ -137,10 +136,20 @@ Lista viva de pendientes del repositorio standalone `website-alexendrosme`
 
 ### 12.3 Privacidad y hub
 
-- [ ] Decidir y, en su caso, integrar analytics privacy-first con consentimiento.
+- [x] Analítica decidida: Vercel Web Analytics sin cookies (P3-B; descrita en Privacidad/Cookies).
 - [ ] Validación manual JSON-LD (validator.schema.org).
 - [ ] Sincronización de contenido con `alexendros.dev` (bloqueado externo).
 
 ---
 
-_Última actualización: 2026-09-03 — v0.8.0 · Renombre Ideas y Acciones, página Notion creada, licencia CC BY-NC-SA 4.0, docs corregidas. CI en verde (typecheck, lint, 259 tests, build). Salud del proyecto: 9.8/10._
+## 13. Consolidación contenido + legal ✅ (2026-09-30 · ADR-0006)
+
+- [x] Colección única `opinion` (retirada `proyectos` sin redirección; ver ADR-0006).
+- [x] Legal formal ES/EN: Aviso/Privacidad/Cookies reescritos, nueva página Licencia, retirada Seguridad.
+- [x] Footer formal (sin €Ç/F.A.F.O./cita/email como texto) + icono Mail `mailto:`; ContactFab simplificado a email.
+- [x] Split de licencia: contenido CC BY-NC-SA 4.0, código MIT.
+- [x] Test de contrato `prohibited-state` + 36 snapshots visuales regenerados; Lighthouse 90/100/96/92 (avg 5 rutas).
+
+---
+
+_Última actualización: 2026-09-30 — Consolidación (ADR-0006): colección única Opinión, legal formal ES/EN + Licencia, footer formal, split CC/MIT. CI en verde (typecheck, lint, 323 tests, build, smoke). Salud del proyecto: 9.8/10._

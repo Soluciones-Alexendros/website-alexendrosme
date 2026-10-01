@@ -27,13 +27,9 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
-  const [proyectos, opinion] = await Promise.all([
-    getContentCollection("proyectos"),
-    getContentCollection("opinion"),
-  ]);
+  const opinion = await getContentCollection("opinion");
 
   const latestArticles = [
-    ...proyectos.slice(0, 3).map((item) => ({ ...item, type: "proyectos" as const })),
     ...opinion.slice(0, 3).map((item) => ({ ...item, type: "opinion" as const })),
   ].sort((a, b) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime());
 

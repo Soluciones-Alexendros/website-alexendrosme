@@ -45,7 +45,7 @@ describe("pathForLocaleSwitch", () => {
   it("prefixes /en for Spanish paths", async () => {
     const { pathForLocaleSwitch } = await import("@/lib/i18n/locale-path");
     expect(pathForLocaleSwitch("/", "en")).toBe("/en");
-    expect(pathForLocaleSwitch("/proyectos", "en")).toBe("/en/proyectos");
+    expect(pathForLocaleSwitch("/opinion", "en")).toBe("/en/opinion");
     expect(pathForLocaleSwitch("/en/opinion", "en")).toBeNull();
   });
 });

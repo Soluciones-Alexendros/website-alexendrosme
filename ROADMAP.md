@@ -1,8 +1,8 @@
 # Roadmap de website-alexendrosme
 
-Espacio libre de dinero · alexendros.me · colecciones **🧠 Ideas** y **⚡ Acciones**.
+Espacio libre de dinero · alexendros.me · colección única **Opinión** (ver ADR-0006).
 
-Roadmap por fases y componentes, actualizado a **v0.8.0 (2026-09-03)**.
+Roadmap por fases y componentes, actualizado a **consolidación 2026-09-30 (ADR-0006)**.
 
 ## Completado
 
@@ -15,7 +15,7 @@ Roadmap por fases y componentes, actualizado a **v0.8.0 (2026-09-03)**.
 ### Anti-monetización y sello
 
 - [x] **v0.3.0** — Banner anti-monetización descartable, política de no-monetización visible, tags Git firmados (GPG) + GitHub Releases.
-- [x] **v0.8.0** — Licencia unificada **CC BY-NC-SA 4.0** (LICENSE + package.json + README) con sello €Ç en el footer ("cópialo, úsalo, compártelo. No comercies con ello").
+- [x] **v0.8.0** — Licencia unificada **CC BY-NC-SA 4.0** (LICENSE + package.json + README). El sello €Ç del footer se retiró en la consolidación 2026-09-30 (ADR-0006).
 
 ### Auditoría y calidad (v0.5.0 · 2026-07-17)
 
@@ -45,21 +45,23 @@ Roadmap por fases y componentes, actualizado a **v0.8.0 (2026-09-03)**.
 - [x] Página Notion **"Website Alexendros.Me · Espacio libre de dinero"** con método de desarrollo por baterías de preguntas + contraste con la IA de Notion.
 - [x] Tests reparados bajo Node 26 (`vitest.setup.ts` mock localStorage): 259/259 passed, typecheck, lint, build y verify:vercel en verde.
 
+- [x] **Consolidación 2026-09-30 (ADR-0006)** — Colección única `opinion` (retirada `proyectos` sin redirección); legal formal ES/EN (Aviso/Privacidad/Cookies + nueva Licencia, retirada Seguridad); footer formal con icono Mail; split de licencia (contenido CC BY-NC-SA 4.0, código MIT).
+
 ## En progreso
 
-- [ ] **Contenido Ideas/Acciones**: aplicar el método de la página Notion (batería de preguntas + contraste IA) para nuevas piezas en `/ideas` y `/acciones`.
+- [ ] **Contenido Opinión**: aplicar el método de la página Notion (batería de preguntas + contraste IA) para nuevas piezas en `/opinion`.
 - [ ] **v0.8.x** — Desarrollar el primer bloque de artículos según el gate de calidad (sin monetización, estático primero, minimalismo, WCAG 2.1 AA, CI verde).
 
 ## Futuro (por componente)
 
 ### Contenido
 
-- [ ] Nuevas piezas `Ideas` y `Acciones` con la batería de preguntas (tesis en una frase, objeción más fuerte y respuesta, evidencia concreta, conexión con el espacio libre de dinero, acción concreta, título honesto).
+- [ ] Nuevas piezas `Opinión` con la batería de preguntas (tesis en una frase, objeción más fuerte y respuesta, evidencia concreta, conexión con el espacio libre de dinero, acción concreta, título honesto).
 - [ ] Contraste sistemático de cada pieza contra la IA de Notion antes de publicar.
 
 ### Privacidad
 
-- [ ] Analytics privacy-first (Plausible EU / Umami) con consentimiento explícito, si se decide activar.
+- [ ] Vercel Web Analytics como analítica sin cookies (decisión P3-B; descrita con exactitud en Privacidad/Cookies).
 - [ ] Validación manual de JSON-LD en validator.schema.org (paso opcional pre-deploy).
 
 ### Hub y ecosistema

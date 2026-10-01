@@ -21,7 +21,6 @@ describe("SEO metadata", () => {
   it("description contiene las keywords objetivo", () => {
     const d = siteConfig.description.toLowerCase();
     expect(d).toContain("opinión");
-    expect(d).toContain("proyectos");
     expect(d).toContain("libertad");
     expect(d).toContain("valencia");
   });

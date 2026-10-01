@@ -53,22 +53,17 @@ ${entries}
 }
 
 async function main() {
-  const [proyectos, opinion] = await Promise.all([
-    getContentCollection("proyectos"),
-    getContentCollection("opinion"),
-  ]);
+  const opinion = await getContentCollection("opinion");
 
   const pages = [
     urlEntry(`${BASE}/`, NOW, "monthly", "1.0"),
-    urlEntry(`${BASE}/proyectos`, NOW, "weekly", "0.8"),
     urlEntry(`${BASE}/opinion`, NOW, "weekly", "0.8"),
     urlEntry(`${BASE}/tags`, NOW, "monthly", "0.6"),
     urlEntry(`${BASE}/legal/aviso-legal`, NOW, "yearly", "0.2"),
     urlEntry(`${BASE}/legal/privacidad`, NOW, "yearly", "0.2"),
     urlEntry(`${BASE}/legal/cookies`, NOW, "yearly", "0.2"),
-    urlEntry(`${BASE}/legal/seguridad`, NOW, "yearly", "0.3"),
+    urlEntry(`${BASE}/legal/licencia`, NOW, "yearly", "0.3"),
     urlEntry(`${BASE}/en`, NOW, "monthly", "0.9"),
-    urlEntry(`${BASE}/en/proyectos`, NOW, "weekly", "0.7"),
     urlEntry(`${BASE}/en/opinion`, NOW, "weekly", "0.7"),
     urlEntry(`${BASE}/en/tags`, NOW, "monthly", "0.5"),
   ].join("\n");
@@ -76,27 +71,6 @@ async function main() {
   await fs.writeFile(
     path.join(process.cwd(), "public", "sitemap-pages.xml"),
     sitemapXml(pages),
-    "utf-8",
-  );
-
-  const proyectosUrls = [
-    urlEntry(`${BASE}/proyectos`, NOW, "weekly", "0.8"),
-    urlEntry(`${BASE}/en/proyectos`, NOW, "weekly", "0.7"),
-    ...proyectos.flatMap((a) => [
-      urlEntryWithImage(
-        `${BASE}/proyectos/${a.slug}`,
-        a.frontmatter.date ?? NOW,
-        "monthly",
-        "0.7",
-        `${BASE}/proyectos/${a.slug}/opengraph-image`,
-      ),
-      urlEntry(`${BASE}/en/proyectos/${a.slug}`, a.frontmatter.date ?? NOW, "monthly", "0.6"),
-    ]),
-  ].join("\n");
-
-  await fs.writeFile(
-    path.join(process.cwd(), "public", "sitemap-proyectos.xml"),
-    sitemapXml(proyectosUrls, true),
     "utf-8",
   );
 
@@ -123,7 +97,6 @@ async function main() {
 
   const index = [
     `<sitemap><loc>${BASE}/sitemap-pages.xml</loc><lastmod>${NOW}</lastmod></sitemap>`,
-    `<sitemap><loc>${BASE}/sitemap-proyectos.xml</loc><lastmod>${NOW}</lastmod></sitemap>`,
     `<sitemap><loc>${BASE}/sitemap-opinion.xml</loc><lastmod>${NOW}</lastmod></sitemap>`,
   ].join("\n");
 
@@ -134,7 +107,7 @@ async function main() {
   );
 
   console.log(
-    "Sitemaps generated:\n  public/sitemap.xml (index)\n  public/sitemap-pages.xml\n  public/sitemap-proyectos.xml (with images)\n  public/sitemap-opinion.xml (with images)",
+    "Sitemaps generated:\n  public/sitemap.xml (index)\n  public/sitemap-pages.xml\n  public/sitemap-opinion.xml (with images)",
   );
 }
 
