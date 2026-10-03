@@ -145,7 +145,8 @@ export function refreshReadmeSection(
   if (start === -1 || end === -1 || end < start) return { readme, updated: false };
   const before = readme.slice(0, start);
   const after = readme.slice(end + END_MARKER.length);
-  return { readme: `${before}${snippet.trim()}\n${after}`, updated: true };
+  // Sin separador añadido: `before` termina en "\n" y `after` empieza en "\n".
+  return { readme: `${before}${snippet.trim()}${after}`, updated: true };
 }
 
 function sh(cmd: string, args: string[], quiet = false): string {

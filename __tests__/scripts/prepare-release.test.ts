@@ -109,6 +109,29 @@ describe("refreshReadmeSection", () => {
     expect(out.match(/<!-- RELEASE_SECTION_END -->/g)).toHaveLength(1);
   });
 
+  it("es byte-idéntico al reescribir una región ya canónica (idempotente)", () => {
+    const canon = [
+      "# T",
+      "",
+      "<!-- RELEASE_SECTION_START -->",
+      "<details>",
+      "</details>",
+      "<!-- RELEASE_SECTION_END -->",
+      "",
+      "Fin",
+      "",
+    ].join("\n");
+    const snippet = [
+      "<!-- RELEASE_SECTION_START -->",
+      "<details>",
+      "</details>",
+      "<!-- RELEASE_SECTION_END -->",
+    ].join("\n");
+    const { readme: out, updated } = refreshReadmeSection(canon, snippet);
+    expect(updated).toBe(true);
+    expect(out).toBe(canon);
+  });
+
   it("no-op sin marcadores", () => {
     const { readme: out, updated } = refreshReadmeSection("# Sin marcas\n", SNIPPET);
     expect(updated).toBe(false);
