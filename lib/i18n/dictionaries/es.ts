@@ -38,9 +38,28 @@ const es: TranslationDict = {
     },
     publicaciones: {
       title: "Últimas piezas",
-      desc: "Lo último en {opinionLink}.",
+      desc: "Textos breves, sin relleno. Lo último en {opinionLink}.",
       opinionLabel: "Opinión",
-      empty: "No hay publicaciones aún.",
+      empty: "Todavía no hay piezas publicadas. Vuelve pronto.",
+    },
+    principios: {
+      title: "Lo que defiendo",
+      desc: "Tres ideas que atraviesan todo lo que escribo.",
+      atencion: {
+        title: "Atención",
+        body: "Tu atención es tuya. Cuando algo no cuesta dinero, suele costar horas.",
+        cta: "Leer sobre atención",
+      },
+      soberania: {
+        title: "Soberanía",
+        body: "Lo crítico, en tus manos: identidad, archivos, conversaciones. Delegar está bien; no saber a quién, no.",
+        cta: "Leer sobre soberanía",
+      },
+      protocolos: {
+        title: "Protocolos",
+        body: "Caminos abiertos antes que jardines amurallados. Si un servicio desaparece, tu voz no debería hacerlo.",
+        cta: "Leer sobre protocolos",
+      },
     },
     contacto: {
       title: "¿Hablamos?",
@@ -60,12 +79,21 @@ const es: TranslationDict = {
   },
 
   antiMonetization: {
-    text: "Este espacio es libre de {strong}. Sin anuncios, sin afiliados, sin tracking.",
+    text: "Este espacio es libre de {strong}.",
     strong: "monetización",
-    link: "Lo comercial vive en alexendros.dev",
+    chips: ["0 anuncios", "0 afiliados", "0 ventas"],
+    chipsLabel: "Lo que no encontrarás aquí",
+    link: "Ir a alexendros.dev",
     dismissLabel: "Cerrar aviso de espacio libre de monetización",
     regionLabel: "Aviso de espacio libre de monetización",
   },
+
+  motion: {
+    pause: "Pausar animaciones del fondo",
+    play: "Reanudar animaciones del fondo",
+  },
+
+  backToTop: "Volver arriba",
 
   theme: {
     system: "Sistema",
@@ -89,6 +117,7 @@ const es: TranslationDict = {
     tagsLabel: "Etiquetas",
     minutesShort: "min de lectura",
     tocTitle: "En este artículo",
+    related: "Sigue leyendo",
   },
 
   opinion: {
@@ -129,10 +158,10 @@ const es: TranslationDict = {
 
   errors: {
     notFoundTitle: "Página no encontrada",
-    notFoundDesc: "Esta página no existe o fue movida.",
+    notFoundDesc: "Este enlace no lleva a ninguna parte: la página no existe o se ha mudado.",
     notFoundCta: "Volver al inicio",
-    errorTitle: "Algo salió mal",
-    errorDesc: "Ha ocurrido un error inesperado. Intenta de nuevo.",
+    errorTitle: "Algo ha fallado",
+    errorDesc: "Ha ocurrido un error inesperado. Vuelve a intentarlo o regresa al inicio.",
     errorCta: "Volver al inicio",
   },
 
@@ -140,6 +169,9 @@ const es: TranslationDict = {
     fabLabel: "Acciones de contacto",
     emailLabel: "Enviar correo",
     contactame: "Contáctame",
+    copy: "Copiar correo",
+    copied: "Correo copiado",
+    copyError: "No se pudo copiar el correo",
   },
 };
 

@@ -1,0 +1,2618 @@
+diff --git a/__tests__/components/anti-monetization-banner.test.tsx b/__tests__/components/anti-monetization-banner.test.tsx
+new file mode 100644
+index 0000000..af49718
+--- /dev/null
++++ b/__tests__/components/anti-monetization-banner.test.tsx
+@@ -0,0 +1,97 @@
++import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
++import { AntiMonetizationBanner } from "@/components/anti-monetization-banner";
++import { act, mount } from "./helpers";
++
++beforeEach(() => {
++  localStorage.clear();
++  vi.stubGlobal(
++    "matchMedia",
++    vi.fn().mockImplementation((q: string) => ({
++      matches: false,
++      media: q,
++      addEventListener: () => {},
++      removeEventListener: () => {},
++    })),
++  );
++});
++
++afterEach(() => {
++  vi.unstubAllGlobals();
++  vi.useRealTimers();
++  document.documentElement.removeAttribute("data-ax-banner");
++  document.documentElement.style.removeProperty("--ax-banner-offset");
++  vi.restoreAllMocks();
++});
++
++describe("AntiMonetizationBanner v2", () => {
++  it("renderiza la frase con <strong>, los chips y el CTA sin innerHTML", async () => {
++    const { container, unmount } = await mount(<AntiMonetizationBanner />);
++    const text = container.querySelector(".anti-monetization-banner__text");
++    expect(text?.textContent).toBe("Este espacio es libre de monetización.");
++    expect(text?.querySelector("strong")?.textContent).toBe("monetización");
++    const chips = [...container.querySelectorAll(".anti-monetization-banner__chip")].map(
++      (c) => c.textContent,
++    );
++    expect(chips).toEqual(["0 anuncios", "0 afiliados", "0 ventas"]);
++    const link = container.querySelector<HTMLAnchorElement>(".anti-monetization-banner__link");
++    expect(link?.getAttribute("href")).toBe("https://alexendros.dev");
++    expect(link?.getAttribute("rel")).toBe("noopener noreferrer");
++    expect(container.querySelector("svg.lucide-shield")).not.toBeNull();
++    unmount();
++  });
++
++  it("cerrar persiste al instante, colapsa y luego desmonta", async () => {
++    vi.useFakeTimers();
++    const { container, unmount } = await mount(<AntiMonetizationBanner />);
++    const btn = container.querySelector<HTMLButtonElement>(".anti-monetization-banner__dismiss");
++    await act(async () => {
++      btn?.click();
++    });
++    expect(localStorage.getItem("anti-monetization-dismissed")).toBe("true");
++    expect(container.querySelector(".anti-monetization-banner")?.getAttribute("data-state")).toBe(
++      "closing",
++    );
++    await act(async () => {
++      vi.advanceTimersByTime(500);
++    });
++    expect(container.querySelector(".anti-monetization-banner")).toBeNull();
++    expect(document.documentElement.getAttribute("data-ax-banner")).toBe("0");
++    unmount();
++  });
++
++  it("Escape cierra el aviso", async () => {
++    vi.useFakeTimers();
++    const { container, unmount } = await mount(<AntiMonetizationBanner />);
++    const banner = container.querySelector(".anti-monetization-banner");
++    await act(async () => {
++      banner?.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
++    });
++    expect(localStorage.getItem("anti-monetization-dismissed")).toBe("true");
++    unmount();
++  });
++
++  it("no se muestra si ya se descartó", async () => {
++    localStorage.setItem("anti-monetization-dismissed", "true");
++    const { container, unmount } = await mount(<AntiMonetizationBanner />);
++    expect(container.querySelector(".anti-monetization-banner")).toBeNull();
++    unmount();
++  });
++
++  it("no rompe si localStorage lanza", async () => {
++    vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
++      throw new Error("denied");
++    });
++    vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
++      throw new Error("denied");
++    });
++    vi.useFakeTimers();
++    const { container, unmount } = await mount(<AntiMonetizationBanner />);
++    expect(container.querySelector(".anti-monetization-banner")).not.toBeNull();
++    await act(async () => {
++      container.querySelector<HTMLButtonElement>(".anti-monetization-banner__dismiss")?.click();
++      vi.advanceTimersByTime(500);
++    });
++    expect(container.querySelector(".anti-monetization-banner")).toBeNull();
++    unmount();
++  });
++});
+diff --git a/__tests__/components/copy-email.test.tsx b/__tests__/components/copy-email.test.tsx
+new file mode 100644
+index 0000000..5956f1b
+--- /dev/null
++++ b/__tests__/components/copy-email.test.tsx
+@@ -0,0 +1,51 @@
++import { afterEach, describe, expect, it, vi } from "vitest";
++import { CopyEmail } from "@/components/copy-email";
++import { siteConfig } from "@/lib/site";
++import { act, mount } from "./helpers";
++
++afterEach(() => {
++  vi.useRealTimers();
++  vi.restoreAllMocks();
++});
++
++function stubClipboard(impl: () => Promise<void>) {
++  const writeText = vi.fn(impl);
++  Object.defineProperty(navigator, "clipboard", { value: { writeText }, configurable: true });
++  return writeText;
++}
++
++describe("CopyEmail", () => {
++  it("copia el correo, confirma y vuelve al estado inicial", async () => {
++    vi.useFakeTimers();
++    const writeText = stubClipboard(() => Promise.resolve());
++    const { container, unmount } = await mount(<CopyEmail />);
++    const btn = container.querySelector<HTMLButtonElement>("button");
++    expect(btn?.textContent).toContain("Copiar correo");
++
++    await act(async () => {
++      btn?.click();
++    });
++    expect(writeText).toHaveBeenCalledWith(siteConfig.contact.email);
++    expect(btn?.textContent).toContain("Correo copiado");
++    expect(container.querySelector('[role="status"]')?.textContent).toBe("Correo copiado");
++
++    await act(async () => {
++      vi.advanceTimersByTime(3000);
++    });
++    expect(btn?.textContent).toContain("Copiar correo");
++    expect(container.querySelector('[role="status"]')?.textContent).toBe("");
++    unmount();
++  });
++
++  it("anuncia el error si el portapapeles falla", async () => {
++    stubClipboard(() => Promise.reject(new Error("denied")));
++    const { container, unmount } = await mount(<CopyEmail />);
++    await act(async () => {
++      container.querySelector<HTMLButtonElement>("button")?.click();
++    });
++    expect(container.querySelector('[role="status"]')?.textContent).toBe(
++      "No se pudo copiar el correo",
++    );
++    unmount();
++  });
++});
+diff --git a/__tests__/components/helpers.tsx b/__tests__/components/helpers.tsx
+new file mode 100644
+index 0000000..5722098
+--- /dev/null
++++ b/__tests__/components/helpers.tsx
+@@ -0,0 +1,27 @@
++import React from "react";
++import { act } from "react";
++import { createRoot, type Root } from "react-dom/client";
++import { I18nProvider } from "@/lib/i18n";
++
++// Habilita act() en el entorno de test de React.
++(globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
++
++export async function mount(
++  node: React.ReactNode,
++): Promise<{ container: HTMLElement; unmount: () => void }> {
++  const container = document.createElement("div");
++  document.body.appendChild(container);
++  const root: Root = createRoot(container);
++  await act(async () => {
++    root.render(<I18nProvider>{node}</I18nProvider>);
++  });
++  return {
++    container,
++    unmount: () => {
++      act(() => root.unmount());
++      container.remove();
++    },
++  };
++}
++
++export { act };
+diff --git a/__tests__/components/motion-toggle.test.tsx b/__tests__/components/motion-toggle.test.tsx
+new file mode 100644
+index 0000000..e4026fd
+--- /dev/null
++++ b/__tests__/components/motion-toggle.test.tsx
+@@ -0,0 +1,60 @@
++import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
++import { MotionToggle } from "@/components/motion-toggle";
++import { act, mount } from "./helpers";
++
++function stubMedia(reduce: boolean) {
++  vi.stubGlobal(
++    "matchMedia",
++    vi.fn().mockImplementation((q: string) => ({
++      matches: q.includes("reduce") ? reduce : false,
++      media: q,
++      addEventListener: () => {},
++      removeEventListener: () => {},
++    })),
++  );
++}
++
++beforeEach(() => {
++  localStorage.clear();
++  document.documentElement.removeAttribute("data-motion");
++  document.documentElement.removeAttribute("data-reduce");
++});
++afterEach(() => {
++  vi.unstubAllGlobals();
++});
++
++describe("MotionToggle", () => {
++  it("por defecto ofrece pausar y alterna data-motion + persistencia", async () => {
++    stubMedia(false);
++    const { container, unmount } = await mount(<MotionToggle />);
++    const btn = container.querySelector<HTMLButtonElement>("button");
++    expect(btn?.getAttribute("aria-label")).toBe("Pausar animaciones del fondo");
++    expect(btn?.getAttribute("aria-pressed")).toBe("false");
++
++    await act(async () => {
++      btn?.click();
++    });
++    expect(document.documentElement.getAttribute("data-motion")).toBe("off");
++    expect(localStorage.getItem("motion")).toBe("off");
++    expect(btn?.getAttribute("aria-label")).toBe("Reanudar animaciones del fondo");
++    expect(btn?.getAttribute("aria-pressed")).toBe("true");
++
++    await act(async () => {
++      btn?.click();
++    });
++    expect(document.documentElement.getAttribute("data-motion")).toBe("on");
++    unmount();
++  });
++
++  it("con prefers-reduced-motion arranca en pausa y deja reanudar", async () => {
++    stubMedia(true);
++    const { container, unmount } = await mount(<MotionToggle />);
++    const btn = container.querySelector<HTMLButtonElement>("button");
++    expect(btn?.getAttribute("aria-label")).toBe("Reanudar animaciones del fondo");
++    await act(async () => {
++      btn?.click();
++    });
++    expect(document.documentElement.getAttribute("data-motion")).toBe("on");
++    unmount();
++  });
++});
+diff --git a/__tests__/lib/motion.test.ts b/__tests__/lib/motion.test.ts
+new file mode 100644
+index 0000000..400e004
+--- /dev/null
++++ b/__tests__/lib/motion.test.ts
+@@ -0,0 +1,78 @@
++import { afterEach, describe, expect, it, vi } from "vitest";
++import {
++  MOTION_EVENT,
++  applyMotionPref,
++  isMotionPref,
++  motionAllowed,
++  readMotionPref,
++  writeMotionPref,
++} from "@/lib/motion";
++
++describe("motionAllowed (orden: elección del visitante > sistema > data-reduce)", () => {
++  it("permite movimiento por defecto", () => {
++    expect(motionAllowed({ attr: null, systemReduce: false, dataReduce: false })).toBe(true);
++  });
++  it("respeta prefers-reduced-motion del sistema", () => {
++    expect(motionAllowed({ attr: null, systemReduce: true, dataReduce: false })).toBe(false);
++  });
++  it("respeta la pista data-reduce", () => {
++    expect(motionAllowed({ attr: null, systemReduce: false, dataReduce: true })).toBe(false);
++  });
++  it('"off" pausa aunque el sistema permita movimiento', () => {
++    expect(motionAllowed({ attr: "off", systemReduce: false, dataReduce: false })).toBe(false);
++  });
++  it('"on" reactiva aunque el sistema pida reducirlo (decisión explícita)', () => {
++    expect(motionAllowed({ attr: "on", systemReduce: true, dataReduce: true })).toBe(true);
++  });
++});
++
++describe("preferencia persistida", () => {
++  afterEach(() => {
++    localStorage.clear();
++    document.documentElement.removeAttribute("data-motion");
++    vi.restoreAllMocks();
++  });
++
++  it("isMotionPref valida los tres valores", () => {
++    expect(isMotionPref("auto")).toBe(true);
++    expect(isMotionPref("on")).toBe(true);
++    expect(isMotionPref("off")).toBe(true);
++    expect(isMotionPref("sí")).toBe(false);
++    expect(isMotionPref(null)).toBe(false);
++  });
++
++  it("lee 'auto' sin valor o con basura guardada", () => {
++    expect(readMotionPref()).toBe("auto");
++    localStorage.setItem("motion", "zzz");
++    expect(readMotionPref()).toBe("auto");
++  });
++
++  it("guarda y lee 'off'; 'auto' borra la clave", () => {
++    writeMotionPref("off");
++    expect(readMotionPref()).toBe("off");
++    writeMotionPref("auto");
++    expect(localStorage.getItem("motion")).toBeNull();
++  });
++
++  it("no lanza si localStorage falla (Safari privado)", () => {
++    vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
++      throw new Error("denied");
++    });
++    vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
++      throw new Error("denied");
++    });
++    expect(readMotionPref()).toBe("auto");
++    expect(() => writeMotionPref("off")).not.toThrow();
++  });
++
++  it("applyMotionPref escribe data-motion y emite el evento", () => {
++    const listener = vi.fn();
++    window.addEventListener(MOTION_EVENT, listener);
++    applyMotionPref("off");
++    expect(document.documentElement.getAttribute("data-motion")).toBe("off");
++    applyMotionPref("auto");
++    expect(document.documentElement.hasAttribute("data-motion")).toBe(false);
++    expect(listener).toHaveBeenCalledTimes(2);
++    window.removeEventListener(MOTION_EVENT, listener);
++  });
++});
+diff --git a/__tests__/lib/principles.test.ts b/__tests__/lib/principles.test.ts
+new file mode 100644
+index 0000000..15e5a6c
+--- /dev/null
++++ b/__tests__/lib/principles.test.ts
+@@ -0,0 +1,26 @@
++// @vitest-environment node
++import { describe, expect, it } from "vitest";
++import { getAllSlugs } from "@/lib/content/loader";
++import { PRINCIPLE_LINKS } from "@/lib/principles";
++import es from "@/lib/i18n/dictionaries/es";
++import en from "@/lib/i18n/dictionaries/en";
++
++describe("principios de la home", () => {
++  it("cada principio enlaza a un artículo que existe", async () => {
++    const slugs = await getAllSlugs("opinion");
++    for (const { slug } of PRINCIPLE_LINKS) expect(slugs).toContain(slug);
++  });
++
++  it("cada principio tiene título, texto y CTA en ES y EN", () => {
++    for (const dict of [es, en]) {
++      const principios = (
++        dict as unknown as { sections: { principios: Record<string, Record<string, string>> } }
++      ).sections.principios;
++      for (const { key } of PRINCIPLE_LINKS) {
++        expect(principios[key]?.title).toBeTruthy();
++        expect(principios[key]?.body).toBeTruthy();
++        expect(principios[key]?.cta).toBeTruthy();
++      }
++    }
++  });
++});
+diff --git a/app/layout.tsx b/app/layout.tsx
+index b4b491b..d46dde2 100644
+--- a/app/layout.tsx
++++ b/app/layout.tsx
+@@ -4,6 +4,7 @@ import "./globals.css";
+ import type { Metadata, Viewport } from "next";
+ import { Nav } from "@/components/nav";
+ import { Footer } from "@/components/footer";
++import { BackToTop } from "@/components/back-to-top";
+ import { Atmosphere } from "@/components/atmosphere";
+ import { JsonLd } from "@/components/json-ld";
+ import { ThemeProvider } from "@/components/theme-provider";
+@@ -163,6 +164,7 @@ h1.display,.hero h1{font-family:var(--font-display);font-weight:700;letter-spaci
+                 {children}
+               </main>
+               <Footer />
++              <BackToTop />
+               {/* Vercel Web Analytics — privacy-first, no cookies. Activate in Vercel Dashboard → Analytics → Enable */}
+               <Analytics />
+               <SwRegister />
+diff --git a/app/opinion/[slug]/page.tsx b/app/opinion/[slug]/page.tsx
+index 676eb9c..4a25513 100644
+--- a/app/opinion/[slug]/page.tsx
++++ b/app/opinion/[slug]/page.tsx
+@@ -1,5 +1,5 @@
+ import { notFound } from "next/navigation";
+-import { getRawContent, getContentCollection } from "@/lib/content/loader";
++import { getRawContent, getRelatedContent, getContentCollection } from "@/lib/content/loader";
+ import { MarkdownRenderer } from "@/components/mdx";
+ import { BreadcrumbJsonLd } from "@/components/breadcrumb-json-ld";
+ import { ArticleMeta } from "@/components/article-meta";
+@@ -10,6 +10,7 @@ import { articleOgImageUrl } from "@/lib/seo/og";
+ import { hreflangAlternates } from "@/lib/seo/hreflang";
+ import { BackOpinionLabel } from "@/components/translated-labels";
+ import { LocaleLink } from "@/components/locale-link";
++import { RelatedArticles } from "@/components/related-articles";
+ import type { Metadata } from "next";
+ 
+ interface Props {
+@@ -63,6 +64,12 @@ export default async function OpinionArticle({ params }: Props) {
+ 
+   if (!article) notFound();
+ 
++  const related = (await getRelatedContent("opinion", slug, 2)).map((item) => ({
++    slug: item.slug,
++    title: item.frontmatter.title,
++    description: item.frontmatter.description,
++    readingTime: item.readingTime,
++  }));
+   const tocItems = extractToc(article.content);
+   const ogImage = articleOgImageUrl("opinion", slug);
+   const published = article.frontmatter.date;
+@@ -134,6 +141,7 @@ export default async function OpinionArticle({ params }: Props) {
+             </header>
+ 
+             <MarkdownRenderer content={article.content} />
++            <RelatedArticles items={related} />
+           </article>
+         </div>
+ 
+diff --git a/app/styles/components.css b/app/styles/components.css
+index a7af28b..c9eb527 100644
+--- a/app/styles/components.css
++++ b/app/styles/components.css
+@@ -1284,6 +1284,379 @@
+     align-items: flex-start;
+   }
+ 
++  /* ═══ Ronda 2 ═══════════════════════════════════════════════════════════ */
++
++  /* ── Atmósfera: aurora que gira despacio + pausa manual ── */
++  .atm__aurora {
++    position: absolute;
++    left: 50%;
++    top: -30%;
++    width: 140vmax;
++    height: 140vmax;
++    margin-left: -70vmax;
++    background: conic-gradient(
++      from 0deg at 50% 50%,
++      transparent 0deg,
++      color-mix(in oklch, var(--ax-atmo-haze) 24%, transparent) 70deg,
++      transparent 150deg,
++      color-mix(in oklch, var(--primary) 13%, transparent) 230deg,
++      transparent 300deg
++    );
++    -webkit-mask-image: radial-gradient(closest-side, #000 18%, transparent 72%);
++    mask-image: radial-gradient(closest-side, #000 18%, transparent 72%);
++    opacity: 0.85;
++    animation: atm-spin 110s linear infinite;
++    will-change: transform;
++  }
++  :root[data-theme="light"] .atm__aurora {
++    opacity: 0.45;
++  }
++  @keyframes atm-spin {
++    to {
++      transform: rotate(360deg);
++    }
++  }
++  :root[data-motion="off"] .atm__aurora,
++  :root[data-motion="off"] .atm__haze,
++  :root[data-motion="off"] .atm__spark,
++  :root[data-motion="off"] .atm__dust {
++    animation-play-state: paused;
++  }
++  @media (prefers-reduced-motion: reduce) {
++    .atm__aurora {
++      animation: none;
++    }
++  }
++
++  /* ── Selección, acento nativo y scrollbar con la marca ── */
++  ::selection {
++    background: color-mix(in oklch, var(--ax-accent) 32%, transparent);
++    color: var(--foreground);
++  }
++  html {
++    accent-color: var(--ax-accent);
++    scrollbar-color: color-mix(in oklch, var(--ax-accent) 45%, transparent) transparent;
++  }
++
++  /* ── Botones: brillo, sombra de latón, pulsación y flechas con intención ── */
++  .btn-sheen {
++    position: relative;
++    overflow: hidden;
++    isolation: isolate;
++  }
++  .btn-sheen::after {
++    content: "";
++    position: absolute;
++    inset: 0;
++    z-index: -1;
++    pointer-events: none;
++    background: linear-gradient(
++      105deg,
++      transparent 35%,
++      color-mix(in oklch, white 30%, transparent) 50%,
++      transparent 65%
++    );
++    transform: translateX(-120%);
++    transition: transform 0.7s var(--ax-ease-out-expo);
++  }
++  [data-slot="button"][data-variant="default"]:hover {
++    box-shadow: 0 8px 26px -10px color-mix(in oklch, var(--primary) 70%, transparent);
++  }
++  [data-slot="button"][data-variant="outline"]:hover {
++    border-color: color-mix(in oklch, var(--primary) 55%, var(--border));
++  }
++  [data-slot="button"]:active:not(:disabled) {
++    transform: translateY(1px) scale(0.985);
++  }
++  .btn-arrow {
++    transition: transform var(--ax-duration-base) var(--ax-ease-out-expo);
++  }
++  [data-slot="button"]:hover .btn-arrow--down {
++    transform: translateY(3px);
++  }
++  [data-slot="button"]:hover .btn-arrow--mail {
++    transform: rotate(-8deg) scale(1.1);
++  }
++  @media (hover: hover) {
++    .btn-sheen:hover::after {
++      transform: translateX(120%);
++    }
++  }
++  @media (prefers-reduced-motion: reduce) {
++    .btn-sheen::after {
++      display: none;
++    }
++    .btn-arrow {
++      transition: none;
++    }
++    [data-slot="button"]:hover .btn-arrow--down,
++    [data-slot="button"]:hover .btn-arrow--mail {
++      transform: none;
++    }
++    [data-slot="button"]:active:not(:disabled) {
++      transform: none;
++    }
++  }
++
++  /* ── FAB y «copiar correo»: el hover antes no cambiaba nada ── */
++  .fab-btn {
++    background: color-mix(in oklch, var(--primary) 10%, var(--background));
++    border-color: color-mix(in oklch, var(--primary) 45%, var(--border));
++  }
++  .fab-btn:hover {
++    background: color-mix(in oklch, var(--primary) 18%, var(--background));
++    border-color: color-mix(in oklch, var(--primary) 70%, var(--border));
++    transform: translateY(-2px);
++    box-shadow: 0 10px 28px -12px color-mix(in oklch, var(--primary) 70%, transparent);
++  }
++  .fab-btn svg {
++    transition: transform var(--ax-duration-base) var(--ax-ease-spring);
++  }
++  .fab-btn:hover svg {
++    transform: rotate(-8deg) scale(1.12);
++  }
++  .fab-btn--ghost {
++    background: transparent;
++  }
++  .fab-btn[data-state="copied"] {
++    border-color: var(--ax-accent);
++  }
++  .fab-btn[data-state="error"] {
++    border-color: var(--destructive);
++  }
++  @media (prefers-reduced-motion: reduce) {
++    .fab-btn:hover,
++    .fab-btn:hover svg {
++      transform: none;
++    }
++  }
++
++  .motion-toggle {
++    background: none;
++    border: 0;
++    padding: 0;
++    cursor: pointer;
++  }
++
++  /* ── Tarjetas con foco de luz (principios y «sigue leyendo») ── */
++  .principles-grid {
++    display: grid;
++    gap: 1rem;
++    grid-template-columns: minmax(0, 1fr);
++  }
++  @media (min-width: 48rem) {
++    .principles-grid {
++      grid-template-columns: repeat(3, minmax(0, 1fr));
++    }
++  }
++  .spot-card {
++    position: relative;
++    isolation: isolate;
++    display: flex;
++    flex-direction: column;
++    gap: 0.625rem;
++    padding: 1.25rem;
++    border: 1px solid var(--border);
++    border-radius: var(--ax-radius-lg);
++    background: color-mix(in oklch, var(--background) 78%, transparent);
++    -webkit-backdrop-filter: blur(6px);
++    backdrop-filter: blur(6px);
++    color: inherit;
++    text-decoration: none;
++    transition:
++      border-color var(--ax-duration-base) var(--ax-ease-out-expo),
++      transform var(--ax-duration-base) var(--ax-ease-out-expo);
++  }
++  .spot-card::before {
++    content: "";
++    position: absolute;
++    inset: 0;
++    z-index: -1;
++    border-radius: inherit;
++    opacity: 0;
++    pointer-events: none;
++    background: radial-gradient(
++      18rem circle at var(--mx, 50%) var(--my, 30%),
++      color-mix(in oklch, var(--ax-accent) 14%, transparent),
++      transparent 70%
++    );
++    transition: opacity var(--ax-duration-slow) var(--ax-ease-out-expo);
++  }
++  .spot-card:hover,
++  .spot-card:focus-visible {
++    border-color: color-mix(in oklch, var(--ax-accent) 50%, var(--border));
++    transform: translateY(-3px);
++  }
++  .spot-card:hover::before,
++  .spot-card:focus-visible::before {
++    opacity: 1;
++  }
++  .spot-card:focus-visible {
++    outline: none;
++    box-shadow: var(--ax-ring-focus);
++  }
++  @media (hover: none) {
++    .spot-card::before {
++      display: none;
++    }
++    .spot-card:hover {
++      transform: none;
++    }
++  }
++  @media (prefers-reduced-motion: reduce) {
++    .spot-card,
++    .spot-card:hover {
++      transform: none;
++    }
++  }
++  .spot-card__meta {
++    font-family: var(--font-mono);
++    font-size: var(--text-xs);
++    letter-spacing: 0.08em;
++    color: var(--ax-accent-dim);
++  }
++  .spot-card__icon {
++    width: 1.5rem;
++    height: 1.5rem;
++    color: var(--ax-accent);
++  }
++  .spot-card__title {
++    font-family: var(--font-display);
++    font-size: var(--text-xl);
++    font-weight: 600;
++    line-height: 1.25;
++    color: var(--foreground);
++  }
++  .spot-card__body {
++    font-size: var(--text-sm);
++    line-height: 1.6;
++    color: var(--muted-foreground);
++  }
++  .spot-card__cta {
++    display: inline-flex;
++    align-items: center;
++    gap: 0.25rem;
++    margin-top: auto;
++    padding-top: 0.25rem;
++    font-size: var(--text-sm);
++    font-weight: 600;
++    color: var(--ax-accent-bright);
++  }
++  .spot-card:hover .spot-card__cta svg {
++    transform: translate(2px, -2px);
++  }
++  .spot-card__cta svg {
++    transition: transform var(--ax-duration-base) var(--ax-ease-out-expo);
++  }
++
++  /* ── «Sigue leyendo» ── */
++  .related {
++    margin-top: 3.5rem;
++    padding-top: 2rem;
++    border-top: 1px solid var(--border);
++  }
++  .related__title {
++    font-family: var(--font-display);
++    font-size: var(--text-2xl);
++    font-weight: 600;
++    letter-spacing: var(--tracking-heading);
++  }
++  .related__grid {
++    display: grid;
++    gap: 1rem;
++    margin-top: 1.25rem;
++    grid-template-columns: minmax(0, 1fr);
++  }
++  @media (min-width: 40rem) {
++    .related__grid {
++      grid-template-columns: repeat(2, minmax(0, 1fr));
++    }
++  }
++
++  /* ── Volver arriba con anillo de progreso ── */
++  .back-to-top {
++    position: fixed;
++    right: max(1rem, env(safe-area-inset-right));
++    bottom: max(1rem, env(safe-area-inset-bottom));
++    z-index: var(--ax-z-sticky);
++    display: grid;
++    place-items: center;
++    width: 3rem;
++    height: 3rem;
++    padding: 0;
++    border: 0;
++    border-radius: var(--ax-radius-full);
++    background: color-mix(in oklch, var(--background) 86%, transparent);
++    -webkit-backdrop-filter: blur(10px);
++    backdrop-filter: blur(10px);
++    color: var(--foreground);
++    cursor: pointer;
++    opacity: 0;
++    transform: translateY(10px) scale(0.9);
++    pointer-events: none;
++    transition:
++      opacity var(--ax-duration-base) var(--ax-ease-out-expo),
++      transform var(--ax-duration-base) var(--ax-ease-spring),
++      color var(--ax-duration-fast) var(--ax-ease-out-expo);
++  }
++  .back-to-top[data-visible="true"] {
++    opacity: 1;
++    transform: none;
++    pointer-events: auto;
++  }
++  .back-to-top:hover {
++    color: var(--ax-accent);
++    transform: translateY(-2px);
++  }
++  .back-to-top:focus-visible {
++    outline: none;
++    box-shadow: var(--ax-ring-focus);
++  }
++  .back-to-top__ring {
++    position: absolute;
++    inset: 0;
++    width: 100%;
++    height: 100%;
++    transform: rotate(-90deg);
++  }
++  .back-to-top__track,
++  .back-to-top__bar {
++    fill: none;
++    stroke-width: 2;
++  }
++  .back-to-top__track {
++    stroke: var(--border);
++  }
++  .back-to-top__bar {
++    stroke: var(--ax-accent);
++    stroke-linecap: round;
++    stroke-dasharray: 1;
++    stroke-dashoffset: 0;
++  }
++  @supports (animation-timeline: scroll()) {
++    .back-to-top__bar {
++      stroke-dashoffset: 1;
++      animation: ring-fill linear both;
++      animation-timeline: scroll(root block);
++    }
++  }
++  @media (prefers-reduced-motion: reduce) {
++    .back-to-top,
++    .back-to-top:hover {
++      transition: opacity var(--ax-duration-fast) linear;
++      transform: none;
++    }
++    .back-to-top__bar {
++      animation: none;
++      stroke-dashoffset: 0;
++    }
++  }
++  @media print {
++    .back-to-top {
++      display: none;
++    }
++  }
++
+   /* Motion: nav link underline + FAB con spring */
+   .site-nav__link::after {
+     transition: transform var(--ax-duration-base) var(--ax-ease-spring);
+@@ -1358,81 +1731,171 @@
+   }
+ }
+ 
+-/* ── Anti-monetization banner ───────────────────────── */
++/* ── Anti-monetization banner v2 ─────────────────────────────────────────────
++   Compacto (una línea en escritorio), con chips «0 anuncios · 0 afiliados · 0 ventas»,
++   CTA tipo botón, línea de latón que barre el borde inferior y colapso animado al cerrar
++   (la altura real se publica en --ax-banner-offset desde el componente). */
+ .anti-monetization-banner {
++  --banner-tint: 4%;
+   position: fixed;
+   top: 0;
+   left: 0;
+   right: 0;
+   z-index: var(--ax-z-sticky);
+   width: 100%;
++  display: grid;
++  grid-template-rows: 1fr;
++  overflow: hidden;
+   border-bottom: 1px solid var(--ax-border-default);
+   background: linear-gradient(
+     90deg,
+-    color-mix(in oklch, var(--ax-surface-100) 98%, transparent),
+-    color-mix(in oklch, var(--ax-brand-primary) 3%, var(--ax-surface-100) 95%),
+-    color-mix(in oklch, var(--ax-surface-100) 98%, transparent)
++    color-mix(in oklch, var(--ax-surface-100) 96%, transparent),
++    color-mix(in oklch, var(--ax-brand-primary) var(--banner-tint), var(--ax-surface-100)),
++    color-mix(in oklch, var(--ax-surface-100) 96%, transparent)
+   );
++  -webkit-backdrop-filter: blur(12px) saturate(140%);
++  backdrop-filter: blur(12px) saturate(140%);
+   box-shadow: var(--ax-shadow-inner-highlight);
++  transition:
++    grid-template-rows var(--ax-duration-slow) var(--ax-ease-out-expo),
++    opacity var(--ax-duration-slow) var(--ax-ease-out-expo);
+   animation: anti-monetization-banner--slide-down var(--ax-duration-slow) var(--ax-ease-spring);
+ }
+-
+-@media (prefers-reduced-motion: reduce) {
+-  .anti-monetization-banner {
+-    animation: none;
++[data-theme="light"] .anti-monetization-banner {
++  --banner-tint: 7%;
++}
++@media (prefers-color-scheme: light) {
++  :root:not([data-theme="dark"]) .anti-monetization-banner {
++    --banner-tint: 7%;
+   }
+ }
++.anti-monetization-banner[data-state="closing"] {
++  grid-template-rows: 0fr;
++  opacity: 0;
++  border-bottom-width: 0;
++}
++
++/* Línea de latón que recorre el borde inferior. */
++.anti-monetization-banner::after {
++  content: "";
++  position: absolute;
++  left: 0;
++  right: 0;
++  bottom: 0;
++  height: 1px;
++  pointer-events: none;
++  background: linear-gradient(90deg, transparent, var(--ax-accent), transparent) no-repeat;
++  background-size: 28% 100%;
++  background-position: -40% 0;
++  animation: anti-monetization-banner--sweep 8s ease-in-out 1.2s infinite;
++}
++
++.anti-monetization-banner__inner {
++  min-height: 0;
++  overflow: hidden;
++}
+ 
+ .anti-monetization-banner__content {
+   display: flex;
+   align-items: center;
+-  gap: 0.875rem;
+-  padding: 0.875rem var(--ax-safe-inset);
+-  padding-right: calc(var(--ax-tap-target) + var(--ax-safe-inset) + 0.5rem);
++  flex-wrap: wrap;
++  gap: 0.375rem 0.875rem;
++  padding: 0.625rem var(--ax-safe-inset);
++  padding-right: calc(var(--ax-tap-target) + var(--ax-safe-inset) + 0.25rem);
+   max-width: 72rem;
+   margin: 0 auto;
+ }
+ 
+ .anti-monetization-banner__icon {
+-  flex-shrink: 0;
+-  width: 1.375rem;
+-  height: 1.375rem;
++  flex: none;
++  width: 1.25rem;
++  height: 1.25rem;
+   color: var(--ax-brand-primary);
++  filter: drop-shadow(0 0 6px color-mix(in oklch, var(--ax-brand-primary) 55%, transparent));
++  animation: anti-monetization-banner--breathe 3.4s ease-in-out infinite;
+ }
+ 
+ .anti-monetization-banner__text {
+-  flex: 1;
++  margin: 0;
+   font-size: var(--text-sm);
+   font-weight: 500;
+   color: var(--ax-text-primary);
+-  line-height: 1.55;
++  line-height: 1.5;
++}
++.anti-monetization-banner__text strong {
++  font-weight: 700;
++  color: var(--ax-accent-bright);
++}
++
++.anti-monetization-banner__chips {
++  display: flex;
++  flex-wrap: wrap;
++  gap: 0.375rem;
++  margin: 0;
++  padding: 0;
++  list-style: none;
++}
++.anti-monetization-banner__chip {
++  font-family: var(--font-mono);
++  font-size: var(--text-xs);
++  line-height: 1;
++  padding: 0.3125rem 0.5rem;
++  border: 1px solid color-mix(in oklch, var(--ax-accent) 35%, var(--ax-border-default));
++  border-radius: var(--ax-radius-full);
++  background: color-mix(in oklch, var(--ax-accent) 8%, transparent);
++  color: var(--ax-text-secondary);
++  white-space: nowrap;
++  animation: anti-monetization-banner--chip-in var(--ax-duration-slow) var(--ax-ease-out-expo) both;
++}
++.anti-monetization-banner__chip:nth-child(1) {
++  animation-delay: 140ms;
++}
++.anti-monetization-banner__chip:nth-child(2) {
++  animation-delay: 230ms;
++}
++.anti-monetization-banner__chip:nth-child(3) {
++  animation-delay: 320ms;
+ }
+ 
++/* CTA: botón píldora (antes, un enlace subrayado). */
+ .anti-monetization-banner__link {
+-  flex-shrink: 0;
+-  min-height: var(--ax-tap-target);
++  display: inline-flex;
++  align-items: center;
++  gap: 0.25rem;
++  flex: none;
++  margin-left: auto;
++  min-height: 2.25rem;
++  padding: 0.25rem 0.75rem;
+   font-size: var(--text-sm);
+   font-weight: 600;
+-  color: var(--ax-brand-primary);
+-  text-decoration: underline;
+-  text-underline-offset: 0.15em;
+-  text-decoration-color: color-mix(in oklch, var(--ax-brand-primary) 40%, transparent);
+-  padding: 0.25rem 0.5rem;
+-  border-radius: var(--ax-radius-sm);
++  color: var(--ax-text-primary);
++  text-decoration: none;
++  border: 1px solid color-mix(in oklch, var(--ax-accent) 45%, var(--ax-border-default));
++  border-radius: var(--ax-radius-full);
++  background: color-mix(in oklch, var(--ax-accent) 10%, transparent);
+   transition:
+-    color var(--ax-duration-fast) var(--ax-ease-out-expo),
+-    text-decoration-color var(--ax-duration-fast) var(--ax-ease-out-expo),
+-    background-color var(--ax-duration-fast) var(--ax-ease-out-expo);
++    background-color var(--ax-duration-fast) var(--ax-ease-out-expo),
++    border-color var(--ax-duration-fast) var(--ax-ease-out-expo),
++    transform var(--ax-duration-fast) var(--ax-ease-out-expo);
++}
++.anti-monetization-banner__link-icon {
++  color: var(--ax-accent);
++  transition: transform var(--ax-duration-base) var(--ax-ease-out-expo);
+ }
+ .anti-monetization-banner__link:hover {
+-  color: var(--ax-accent-bright);
+-  text-decoration-color: var(--ax-brand-primary);
+-  background: color-mix(in oklch, var(--ax-brand-primary) 8%, transparent);
++  background: color-mix(in oklch, var(--ax-accent) 20%, transparent);
++  border-color: var(--ax-accent);
++  transform: translateY(-1px);
++}
++.anti-monetization-banner__link:hover .anti-monetization-banner__link-icon {
++  transform: translate(2px, -2px);
++}
++.anti-monetization-banner__link:active {
++  transform: translateY(0) scale(0.98);
+ }
+ .anti-monetization-banner__link:focus-visible {
+   outline: none;
+   box-shadow: var(--ax-ring-focus);
+-  background: color-mix(in oklch, var(--ax-brand-primary) 12%, transparent);
+ }
+ 
+ .anti-monetization-banner__dismiss {
+@@ -1445,22 +1908,25 @@
+   justify-content: center;
+   width: var(--ax-tap-target);
+   height: var(--ax-tap-target);
+-  border: none;
++  border: 1px solid transparent;
+   background: transparent;
+   color: var(--ax-text-tertiary);
+-  font-size: 1.5rem;
+-  line-height: 1;
+   cursor: pointer;
+   border-radius: var(--ax-radius-full);
+   transition:
+     color var(--ax-duration-fast) var(--ax-ease-out-expo),
+     background-color var(--ax-duration-fast) var(--ax-ease-out-expo),
+-    transform var(--ax-duration-fast) var(--ax-ease-spring);
++    border-color var(--ax-duration-fast) var(--ax-ease-out-expo),
++    transform var(--ax-duration-base) var(--ax-ease-spring);
+ }
+ .anti-monetization-banner__dismiss:hover {
+   color: var(--ax-text-primary);
+-  background: color-mix(in oklch, var(--foreground) 10%, transparent);
+-  transform: translateY(-50%) scale(1.05);
++  background: color-mix(in oklch, var(--foreground) 9%, transparent);
++  border-color: var(--ax-border-default);
++  transform: translateY(-50%) rotate(90deg);
++}
++.anti-monetization-banner__dismiss:active {
++  transform: translateY(-50%) rotate(90deg) scale(0.92);
+ }
+ .anti-monetization-banner__dismiss:focus-visible {
+   outline: none;
+@@ -1478,60 +1944,73 @@
+     transform: translateY(0);
+   }
+ }
++@keyframes anti-monetization-banner--sweep {
++  to {
++    background-position: 140% 0;
++  }
++}
++@keyframes anti-monetization-banner--breathe {
++  50% {
++    filter: drop-shadow(0 0 10px color-mix(in oklch, var(--ax-brand-primary) 80%, transparent));
++  }
++}
++@keyframes anti-monetization-banner--chip-in {
++  from {
++    opacity: 0;
++    transform: translateY(4px);
++  }
++  to {
++    opacity: 1;
++    transform: none;
++  }
++}
+ 
++/* Móvil: fila 1 = icono + texto; fila 2 = chips + CTA compacto. */
+ @media (max-width: 40rem) {
+   .anti-monetization-banner__content {
+-    flex-wrap: wrap;
+-    gap: 0.5rem;
++    gap: 0.375rem 0.5rem;
++    padding-top: 0.5rem;
++    padding-bottom: 0.5rem;
+   }
+   .anti-monetization-banner__text {
+-    order: 1;
+-    width: 100%;
++    flex: 1 1 0;
++    min-width: 0;
+     font-size: var(--text-xs);
+   }
+-  .anti-monetization-banner__link {
++  .anti-monetization-banner__chips {
+     order: 2;
+-    width: 100%;
+-    text-align: center;
+-    padding-top: 0.25rem;
+-    border-top: 1px solid var(--ax-border-subtle);
++    flex: 1 1 auto;
++  }
++  .anti-monetization-banner__link {
++    order: 3;
++    min-height: 2rem;
++    padding-inline: 0.625rem;
++    font-size: var(--text-xs);
+   }
+   .anti-monetization-banner__dismiss {
+-    right: 0.75rem;
+-    top: 0.75rem;
++    top: 0.25rem;
+     transform: none;
+   }
+   .anti-monetization-banner__dismiss:hover {
+-    transform: scale(1.05);
++    transform: rotate(90deg);
+   }
+-}
+-
+-/* Light mode adjustments */
+-@media (prefers-color-scheme: light) {
+-  .anti-monetization-banner {
+-    background: linear-gradient(
+-      90deg,
+-      color-mix(in oklch, var(--ax-surface-100) 98%, transparent),
+-      color-mix(in oklch, var(--ax-brand-primary) 5%, var(--ax-surface-100) 93%),
+-      color-mix(in oklch, var(--ax-surface-100) 98%, transparent)
+-    );
+-    box-shadow: var(--ax-shadow-inner-highlight);
++  .anti-monetization-banner__dismiss:active {
++    transform: rotate(90deg) scale(0.92);
+   }
+ }
+ 
+-[data-theme="light"] .anti-monetization-banner {
+-  background: linear-gradient(
+-    90deg,
+-    color-mix(in oklch, var(--ax-surface-100) 98%, transparent),
+-    color-mix(in oklch, var(--ax-brand-primary) 5%, var(--ax-surface-100) 93%),
+-    color-mix(in oklch, var(--ax-surface-100) 98%, transparent)
+-  );
+-  box-shadow: var(--ax-shadow-inner-highlight);
+-}
+-
+ @media (prefers-reduced-motion: reduce) {
+-  .anti-monetization-banner {
++  .anti-monetization-banner,
++  .anti-monetization-banner__icon,
++  .anti-monetization-banner__chip {
++    animation: none;
++    transition: none;
++  }
++  .anti-monetization-banner::after {
+     animation: none;
++    background-size: 100% 100%;
++    background-position: 0 0;
++    opacity: 0.35;
+   }
+ }
+ 
+@@ -1566,3 +2045,9 @@
+     transform: scaleX(1);
+   }
+ }
++
++@keyframes ring-fill {
++  to {
++    stroke-dashoffset: 0;
++  }
++}
+diff --git a/components/anti-monetization-banner.tsx b/components/anti-monetization-banner.tsx
+index d80be5c..16c07d1 100644
+--- a/components/anti-monetization-banner.tsx
++++ b/components/anti-monetization-banner.tsx
+@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils";
+ import { useI18n } from "@/lib/i18n";
+ 
+ const DISMISS_KEY = "anti-monetization-dismissed";
++/** Debe coincidir con --ax-duration-slow (colapso animado antes de desmontar). */
++const COLLAPSE_MS = 360;
+ 
+ /** localStorage puede lanzar (Safari privado, cookies bloqueadas): nunca debe romper la UI. */
+ function readDismissed(): boolean {
+@@ -27,10 +29,12 @@ function writeDismissed(): void {
+ export function AntiMonetizationBanner() {
+   // SSR + first client paint assume visible (matches pre-paint data-ax-banner=1) to avoid CLS.
+   const [dismissed, setDismissed] = useState(false);
++  const [closing, setClosing] = useState(false);
+   const [reduceMotion, setReduceMotion] = useState(false);
+   const [isHovered, setIsHovered] = useState(false);
+   const bannerRef = useRef<HTMLDivElement | null>(null);
+-  const { t } = useI18n();
++  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
++  const { t, tArray } = useI18n();
+ 
+   useLayoutEffect(() => {
+     const isDismissed = readDismissed();
+@@ -48,9 +52,9 @@ export function AntiMonetizationBanner() {
+     return () => mediaQuery.removeEventListener("change", handleChange);
+   }, []);
+ 
+-  // El offset CSS (3.25rem/3.5rem) es solo una estimación inicial anti-CLS. Si el texto
+-  // salta a 2–3 líneas (móvil, zoom, idioma EN) el banner mide más y tapaba la nav sticky:
+-  // aquí se publica la altura real. Se usa CSSOM (no atributo style) → compatible con la CSP.
++  // El offset CSS (3.25rem/3.5rem) es solo una estimación inicial anti-CLS. Se publica la altura
++  // real (también durante el colapso animado, así el contenido sube suavemente). Se usa CSSOM
++  // (no atributo style) → compatible con la CSP.
+   useEffect(() => {
+     const root = document.documentElement;
+     const el = bannerRef.current;
+@@ -69,54 +73,88 @@ export function AntiMonetizationBanner() {
+     };
+   }, [dismissed]);
+ 
++  useEffect(
++    () => () => {
++      if (closeTimer.current) clearTimeout(closeTimer.current);
++    },
++    [],
++  );
++
+   if (dismissed) {
+     return null;
+   }
+ 
+-  const bannerClass = cn(
+-    "anti-monetization-banner",
+-    reduceMotion && "anti-monetization-banner--reduced-motion",
+-    isHovered && "anti-monetization-banner--hovered",
+-  );
+-
+-  const handleDismiss = () => {
++  const finish = () => {
+     setDismissed(true);
+-    writeDismissed();
+     document.documentElement.setAttribute("data-ax-banner", "0");
+   };
+ 
+-  const textParts = t("antiMonetization.text").split("{strong}");
++  const handleDismiss = () => {
++    if (closing) return;
++    writeDismissed(); // se persiste al instante, aunque la animación no llegue a terminar
++    if (reduceMotion) {
++      finish();
++      return;
++    }
++    setClosing(true);
++    closeTimer.current = setTimeout(finish, COLLAPSE_MS);
++  };
++
++  const [before = "", after = ""] = t("antiMonetization.text").split("{strong}");
++  const chips = tArray("antiMonetization.chips");
+ 
+   return (
+     <div
+       ref={bannerRef}
+-      className={bannerClass}
++      className={cn(
++        "anti-monetization-banner",
++        reduceMotion && "anti-monetization-banner--reduced-motion",
++        isHovered && "anti-monetization-banner--hovered",
++      )}
+       role="region"
+       aria-label={t("antiMonetization.regionLabel")}
+       data-reduced-motion={reduceMotion ? "true" : "false"}
++      data-state={closing ? "closing" : "open"}
+       onMouseEnter={() => setIsHovered(true)}
+       onMouseLeave={() => setIsHovered(false)}
++      onKeyDown={(e) => {
++        if (e.key === "Escape") handleDismiss();
++      }}
+     >
+-      <div className="anti-monetization-banner__content">
+-        <Shield className="anti-monetization-banner__icon" aria-hidden="true" />
+-        <p className="anti-monetization-banner__text">
+-          {textParts[0]}
+-          <strong>{t("antiMonetization.strong")}</strong>
+-          {textParts.slice(1).join("{strong}")}
+-        </p>
+-        <a
+-          href="https://alexendros.dev"
+-          target="_blank"
+-          rel="noopener noreferrer"
+-          className="anti-monetization-banner__link"
+-        >
+-          {t("antiMonetization.link")}
+-          <ArrowUpRight
+-            className="anti-monetization-banner__link-icon"
+-            aria-hidden="true"
+-            size={14}
+-          />
+-        </a>
++      <div className="anti-monetization-banner__inner">
++        <div className="anti-monetization-banner__content">
++          <Shield className="anti-monetization-banner__icon" aria-hidden="true" />
++          <p className="anti-monetization-banner__text">
++            {before}
++            <strong>{t("antiMonetization.strong")}</strong>
++            {after}
++          </p>
++          {chips.length > 0 ? (
++            <ul
++              className="anti-monetization-banner__chips"
++              aria-label={t("antiMonetization.chipsLabel")}
++            >
++              {chips.map((chip) => (
++                <li key={chip} className="anti-monetization-banner__chip">
++                  {chip}
++                </li>
++              ))}
++            </ul>
++          ) : null}
++          <a
++            href="https://alexendros.dev"
++            target="_blank"
++            rel="noopener noreferrer"
++            className="anti-monetization-banner__link"
++          >
++            {t("antiMonetization.link")}
++            <ArrowUpRight
++              className="anti-monetization-banner__link-icon"
++              aria-hidden="true"
++              size={14}
++            />
++          </a>
++        </div>
+       </div>
+       <button
+         type="button"
+diff --git a/components/atmosphere.tsx b/components/atmosphere.tsx
+index 82dda6a..7ec536e 100644
+--- a/components/atmosphere.tsx
++++ b/components/atmosphere.tsx
+@@ -1,6 +1,7 @@
+ export function Atmosphere() {
+   return (
+     <div aria-hidden="true" className="atm" data-nosnippet>
++      <div className="atm__aurora" aria-hidden="true" />
+       <div className="atm__haze" aria-hidden="true" />
+       <div className="atm__spark" aria-hidden="true" />
+       <div className="atm__dust" aria-hidden="true" />
+diff --git a/components/back-to-top.tsx b/components/back-to-top.tsx
+new file mode 100644
+index 0000000..4646a3a
+--- /dev/null
++++ b/components/back-to-top.tsx
+@@ -0,0 +1,59 @@
++"use client";
++
++import { useEffect, useState } from "react";
++import { ArrowUp } from "lucide-react";
++import { useI18n } from "@/lib/i18n";
++
++/** Distancia de scroll a partir de la cual aparece el botón. */
++const SHOW_AFTER = 640;
++
++/**
++ * Botón «volver arriba» con anillo de progreso de lectura.
++ * El anillo se rellena con CSS puro (animation-timeline: scroll()); el JS solo decide la
++ * visibilidad (listener pasivo + rAF) y hace el scroll respetando prefers-reduced-motion.
++ */
++export function BackToTop() {
++  const { t } = useI18n();
++  const [visible, setVisible] = useState(false);
++
++  useEffect(() => {
++    let raf = 0;
++    const update = () => {
++      raf = 0;
++      setVisible(window.scrollY > SHOW_AFTER);
++    };
++    const onScroll = () => {
++      if (!raf) raf = requestAnimationFrame(update);
++    };
++    update();
++    window.addEventListener("scroll", onScroll, { passive: true });
++    return () => {
++      window.removeEventListener("scroll", onScroll);
++      if (raf) cancelAnimationFrame(raf);
++    };
++  }, []);
++
++  const goTop = () => {
++    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
++    window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
++  };
++
++  return (
++    <button
++      type="button"
++      className="back-to-top"
++      data-visible={visible}
++      onClick={goTop}
++      aria-label={t("backToTop")}
++      title={t("backToTop")}
++      tabIndex={visible ? 0 : -1}
++      aria-hidden={!visible}
++    >
++      <svg className="back-to-top__ring" viewBox="0 0 48 48" aria-hidden="true">
++        <circle className="back-to-top__track" cx="24" cy="24" r="22" pathLength="1" />
++        <circle className="back-to-top__bar" cx="24" cy="24" r="22" pathLength="1" />
++      </svg>
++      <ArrowUp className="back-to-top__icon" aria-hidden="true" size={18} />
++    </button>
++  );
++}
+diff --git a/components/copy-email.tsx b/components/copy-email.tsx
+new file mode 100644
+index 0000000..f39047a
+--- /dev/null
++++ b/components/copy-email.tsx
+@@ -0,0 +1,65 @@
++"use client";
++
++import { useEffect, useRef, useState } from "react";
++import { Check, Copy } from "lucide-react";
++import { siteConfig } from "@/lib/site";
++import { useI18n } from "@/lib/i18n";
++import { cn } from "@/lib/utils";
++
++type Status = "idle" | "copied" | "error";
++const RESET_MS = 2400;
++
++/** Copia el correo al portapapeles con confirmación visible Y anunciada (aria-live). */
++export function CopyEmail() {
++  const { t } = useI18n();
++  const [status, setStatus] = useState<Status>("idle");
++  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
++
++  useEffect(
++    () => () => {
++      if (timer.current) clearTimeout(timer.current);
++    },
++    [],
++  );
++
++  const copy = async () => {
++    let next: Status = "copied";
++    try {
++      await navigator.clipboard.writeText(siteConfig.contact.email);
++    } catch {
++      next = "error";
++    }
++    setStatus(next);
++    if (timer.current) clearTimeout(timer.current);
++    timer.current = setTimeout(() => setStatus("idle"), RESET_MS);
++  };
++
++  const label =
++    status === "copied"
++      ? t("contact.copied")
++      : status === "error"
++        ? t("contact.copyError")
++        : t("contact.copy");
++
++  return (
++    <>
++      <button
++        type="button"
++        className={cn("fab-btn fab-btn--ghost")}
++        data-state={status}
++        onClick={copy}
++      >
++        {status === "copied" ? (
++          <Check className="icn-sm" aria-hidden="true" />
++        ) : (
++          <Copy className="icn-sm" aria-hidden="true" />
++        )}
++        <span>{label}</span>
++      </button>
++      {/* Región viva visible solo para lectores de pantalla: anuncia el resultado. */}
++      <span className="sr-only" role="status" aria-live="polite">
++        {status === "idle" ? "" : label}
++      </span>
++    </>
++  );
++}
+diff --git a/components/footer.tsx b/components/footer.tsx
+index aa9f813..56ae3b1 100644
+--- a/components/footer.tsx
++++ b/components/footer.tsx
+@@ -4,6 +4,7 @@ import Link from "next/link";
+ import { siteConfig } from "@/lib/site";
+ import { ExternalLink, Mail } from "lucide-react";
+ import { useI18n } from "@/lib/i18n";
++import { MotionToggle } from "@/components/motion-toggle";
+ 
+ export function Footer() {
+   const year = new Date().getFullYear();
+@@ -83,6 +84,7 @@ export function Footer() {
+             >
+               <Mail className="icn-md" aria-hidden="true" />
+             </a>
++            <MotionToggle />
+           </div>
+ 
+           <p className="footer-legal">
+diff --git a/components/home-content.tsx b/components/home-content.tsx
+index e999bc0..0570f4d 100644
+--- a/components/home-content.tsx
++++ b/components/home-content.tsx
+@@ -1,11 +1,14 @@
+ "use client";
+ 
+ import Link from "next/link";
++import { ArrowDown, ArrowUpRight, Eye, KeyRound, Mail, Network } from "lucide-react";
+ import { Button } from "@/components/ui/button";
+ import { ContactFab } from "@/components/contact-fab";
++import { CopyEmail } from "@/components/copy-email";
+ import { useI18n } from "@/lib/i18n";
+ import { useLocalePrefix, withLocalePrefix } from "@/lib/i18n/locale-path";
+ import { siteConfig } from "@/lib/site";
++import { PRINCIPLE_LINKS } from "@/lib/principles";
+ import type { getContentCollection } from "@/lib/content/loader";
+ import type { CollectionType } from "@/lib/content/types";
+ 
+@@ -25,6 +28,8 @@ function formatDate(dateStr: string, locale: string) {
+   });
+ }
+ 
++const PRINCIPLE_ICONS = { atencion: Eye, soberania: KeyRound, protocolos: Network } as const;
++
+ /** Publica la posición del puntero en --mx/--my para el foco de luz de la tarjeta (CSS puro). */
+ function trackPointer(e: React.PointerEvent<HTMLElement>) {
+   const el = e.currentTarget;
+@@ -73,10 +78,24 @@ export function HomeContent({ latestArticles }: HomeContentProps) {
+         <p className="hero-tagline">{t("hero.tagline")}</p>
+         <div className="cluster">
+           <Button asChild>
+-            <a href={`mailto:${siteConfig.contact.email}`}>{t("hero.ctaContact")}</a>
++            <a href={`mailto:${siteConfig.contact.email}`}>
++              <Mail
++                data-icon="inline-start"
++                className="btn-arrow btn-arrow--mail"
++                aria-hidden="true"
++              />
++              {t("hero.ctaContact")}
++            </a>
+           </Button>
+           <Button variant="outline" asChild>
+-            <a href="#biografia">{t("hero.ctaAbout")}</a>
++            <a href="#biografia">
++              {t("hero.ctaAbout")}
++              <ArrowDown
++                data-icon="inline-end"
++                className="btn-arrow btn-arrow--down"
++                aria-hidden="true"
++              />
++            </a>
+           </Button>
+         </div>
+       </section>
+@@ -109,6 +128,45 @@ export function HomeContent({ latestArticles }: HomeContentProps) {
+ 
+       <hr className="site-shell shrink-0 bg-border h-px w-full border-0" />
+ 
++      <section
++        id="principios"
++        className="site-shell section section-below-fold scroll-section"
++        aria-labelledby="h2-principios"
++      >
++        <div className="content-container stack-lg">
++          <div className="section-head reveal">
++            <h2 id="h2-principios" className="headline">
++              {t("sections.principios.title")}
++            </h2>
++            <p className="section-desc">{t("sections.principios.desc")}</p>
++          </div>
++          <div className="principles-grid">
++            {PRINCIPLE_LINKS.map(({ key, slug }, i) => {
++              const Icon = PRINCIPLE_ICONS[key];
++              return (
++                <Link
++                  key={key}
++                  href={withLocalePrefix(prefix, `/opinion/${slug}`)}
++                  className="spot-card reveal"
++                  onPointerMove={trackPointer}
++                >
++                  <span className="spot-card__meta">0{i + 1}</span>
++                  <Icon className="spot-card__icon" aria-hidden="true" />
++                  <span className="spot-card__title">{t(`sections.principios.${key}.title`)}</span>
++                  <span className="spot-card__body">{t(`sections.principios.${key}.body`)}</span>
++                  <span className="spot-card__cta">
++                    {t(`sections.principios.${key}.cta`)}
++                    <ArrowUpRight size={14} aria-hidden="true" />
++                  </span>
++                </Link>
++              );
++            })}
++          </div>
++        </div>
++      </section>
++
++      <hr className="site-shell shrink-0 bg-border h-px w-full border-0" />
++
+       <section
+         id="publicaciones"
+         className="site-shell section section-below-fold scroll-section"
+@@ -164,6 +222,7 @@ export function HomeContent({ latestArticles }: HomeContentProps) {
+           <p className="section-desc">{t("sections.contacto.desc")}</p>
+           <div className="cluster" role="group" aria-label={t("contact.fabLabel")}>
+             <ContactFab />
++            <CopyEmail />
+           </div>
+         </div>
+       </section>
+diff --git a/components/mesh-bg.tsx b/components/mesh-bg.tsx
+index 9b1b2b5..63aa720 100644
+--- a/components/mesh-bg.tsx
++++ b/components/mesh-bg.tsx
+@@ -1,29 +1,52 @@
+ "use client";
+ 
+ import { useEffect, useRef } from "react";
++import { MOTION_EVENT, motionAllowed } from "@/lib/motion";
+ 
+ /**
+- * MeshBg — fondo de identidad de alexendros.me.
++ * MeshBg v2 — fondo de identidad de alexendros.me.
+  *
+- * Una red de nodos latón sobre la atmósfera violeta: cada nodo es un punto
+- * soberano y los enlaces aparecen solo cuando dos nodos se encuentran. Es la
+- * imagen literal de «menos plataformas, más protocolos»: nadie en el centro,
+- * todo conectado por caminos abiertos. Ocasionalmente un paquete viaja por un
+- * enlace (un mensaje entre pares) y el cursor se une a la red como un nodo más.
++ * Una red de nodos latón sin centro: cada nodo es soberano y los enlaces solo aparecen cuando
++ * dos nodos se encuentran («menos plataformas, más protocolos»). Esta versión está VIVA en todos
++ * los dispositivos, también en móvil:
+  *
+- * Reglas de oro (mismas que el resto del sistema):
+- * - Sin dependencias, sin red, sin tracking: solo Canvas 2D.
+- * - Colores leídos de los tokens `--ax-*` y re-leídos al cambiar de tema.
+- * - prefers-reduced-motion / data-reduce / viewport estrecho → un único frame
+- *   estático (la personalidad se mantiene, el movimiento no).
+- * - Pausa en pestañas ocultas. DPR limitado a 2. Coste O(n²) con n ≤ 90.
++ * - 3 capas de profundidad (lejos / medio / cerca) con parallax al hacer scroll.
++ * - Nodos «hub» con halo que respira; el resto titila con fase propia.
++ * - Paquetes con estela viajando entre pares (mensajes entre iguales).
++ * - El cursor (ratón) atrae y se une a la red; un toque/clic lanza una onda y despierta
++ *   paquetes desde los nodos cercanos.
++ * - Gobernador de rendimiento: si los fotogramas tardan, reduce nodos de forma gradual;
++ *   en móvil/equipos modestos limita a ~30 fps.
++ *
++ * Accesibilidad (WCAG 2.2.2): `prefers-reduced-motion` → un único fotograma estático, y el
++ * visitante puede decidir lo contrario con el control de pausa/reanudar del pie
++ * (`<html data-motion="on|off">`, ver lib/motion.ts).
++ *
++ * Reglas de oro: sin dependencias, sin red, sin tracking. Colores leídos de `--ax-*` y
++ * re-leídos al cambiar de tema. Pausa en pestañas ocultas. DPR ≤ 2.
+  */
+ 
+-type Node = { x: number; y: number; vx: number; vy: number; r: number };
++type Node = {
++  x: number;
++  y: number;
++  vx: number;
++  vy: number;
++  r: number;
++  depth: 0 | 1 | 2; // 0 lejos · 1 medio · 2 cerca
++  phase: number;
++  hub: boolean;
++};
+ type Packet = { a: number; b: number; t: number; speed: number };
++type Ripple = { x: number; y: number; age: number };
+ type Palette = { line: string; node: string; packet: string };
++type Link = [number, number, number];
+ 
+ const MOBILE_MAX = 768;
++/** Cuánto se desplaza cada capa con el scroll (px de parallax por px de scroll). */
++const PARALLAX = [0.03, 0.07, 0.13] as const;
++const DEPTH_ALPHA = [0.32, 0.5, 0.78] as const;
++const DEPTH_SPEED = [0.6, 1, 1.5] as const;
++const RIPPLE_MS = 900;
+ const FALLBACK_DARK: Palette = { line: "#c9a24a", node: "#c9a24a", packet: "#f0d98a" };
+ const FALLBACK_LIGHT: Palette = { line: "#7a5a12", node: "#7a5a12", packet: "#5b4009" };
+ 
+@@ -63,6 +86,7 @@ export function MeshBg() {
+     const ctx = canvas.getContext("2d");
+     if (!ctx) return;
+ 
++    const root = document.documentElement;
+     const reduceQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+     const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
+ 
+@@ -71,19 +95,61 @@ export function MeshBg() {
+     let dpr = 1;
+     let nodes: Node[] = [];
+     let packets: Packet[] = [];
++    let ripples: Ripple[] = [];
+     let palette = readPalette(ctx);
+     let linkDist = 140;
+     let raf = 0;
+     let running = false;
+     let last = 0;
++    let clock = 0;
+     let sinceSpawn = 0;
+     let resizeRaf = 0;
++    let scrollRaf = 0;
++    let scrollY = window.scrollY;
++    let lastLinks: Link[] = [];
++    // Gobernador: media móvil exponencial del coste de fotograma.
++    let avgDt = 16.7;
++    let slowMs = 0;
++    let lastDraw = 0;
+     const pointer = { x: -9999, y: -9999, active: false };
+ 
+-    const isStatic = () =>
+-      reduceQuery.matches ||
+-      document.documentElement.getAttribute("data-reduce") === "true" ||
+-      window.innerWidth < MOBILE_MAX;
++    const lowPower = () =>
++      window.innerWidth < MOBILE_MAX || (navigator.hardwareConcurrency ?? 8) <= 4;
++    /** Intervalo mínimo entre fotogramas: ~30 fps en móvil / equipos modestos, nativo en el resto. */
++    const frameInterval = () => (lowPower() ? 32 : 0);
++
++    const allowed = () =>
++      motionAllowed({
++        attr: root.getAttribute("data-motion"),
++        systemReduce: reduceQuery.matches,
++        dataReduce: root.getAttribute("data-reduce") === "true",
++      });
++
++    const makeNode = (hub: boolean): Node => {
++      const roll = Math.random();
++      const depth: 0 | 1 | 2 = hub ? 2 : roll < 0.4 ? 0 : roll < 0.8 ? 1 : 2;
++      const sp = DEPTH_SPEED[depth];
++      return {
++        x: Math.random() * w,
++        y: Math.random() * h,
++        vx: (Math.random() - 0.5) * 0.22 * sp,
++        vy: (Math.random() - 0.5) * 0.22 * sp,
++        r: (Math.random() * 1.0 + 0.6) * (0.8 + depth * 0.3),
++        depth,
++        phase: Math.random() * Math.PI * 2,
++        hub,
++      };
++    };
++
++    const populate = () => {
++      const small = w < MOBILE_MAX;
++      const count = small ? 34 : Math.max(40, Math.min(96, Math.floor((w * h) / 20000)));
++      linkDist = small ? 125 : Math.max(125, Math.min(175, w / 9));
++      const hubs = small ? 3 : 6;
++      nodes = Array.from({ length: count }, (_, i) => makeNode(i < hubs));
++      packets = [];
++      ripples = [];
++    };
+ 
+     const layout = () => {
+       dpr = Math.min(window.devicePixelRatio || 1, 2);
+@@ -92,29 +158,24 @@ export function MeshBg() {
+       canvas.width = Math.round(w * dpr);
+       canvas.height = Math.round(h * dpr);
+       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
++      populate();
++    };
+ 
+-      const small = w < MOBILE_MAX;
+-      const count = small ? 26 : Math.max(34, Math.min(90, Math.floor((w * h) / 21000)));
+-      linkDist = small ? 120 : Math.max(120, Math.min(170, w / 9));
+-      nodes = Array.from({ length: count }, () => ({
+-        x: Math.random() * w,
+-        y: Math.random() * h,
+-        vx: (Math.random() - 0.5) * 0.22,
+-        vy: (Math.random() - 0.5) * 0.22,
+-        r: Math.random() * 1.1 + 0.7,
+-      }));
+-      packets = [];
++    /** Posición vertical de dibujo: parallax por capa, envuelta en el alto de la ventana. */
++    const py = (n: Node) => {
++      const y = n.y - scrollY * PARALLAX[n.depth];
++      return ((y % h) + h) % h;
+     };
+ 
+     const step = (k: number) => {
+       for (const n of nodes) {
+         if (pointer.active) {
+           const dx = pointer.x - n.x;
+-          const dy = pointer.y - n.y;
++          const dy = pointer.y - py(n);
+           const d2 = dx * dx + dy * dy;
+-          if (d2 < 190 * 190 && d2 > 1) {
++          if (d2 < 200 * 200 && d2 > 1) {
+             const d = Math.sqrt(d2);
+-            const pull = ((190 - d) / 190) * 0.012 * k;
++            const pull = ((200 - d) / 200) * 0.012 * k * DEPTH_SPEED[n.depth];
+             n.vx += (dx / d) * pull;
+             n.vy += (dy / d) * pull;
+           }
+@@ -122,10 +183,11 @@ export function MeshBg() {
+         // Amortiguación suave y tope de velocidad: deriva, nunca enjambre.
+         n.vx *= 0.995;
+         n.vy *= 0.995;
++        const cap = 0.45 * DEPTH_SPEED[n.depth];
+         const sp = Math.hypot(n.vx, n.vy);
+-        if (sp > 0.45) {
+-          n.vx = (n.vx / sp) * 0.45;
+-          n.vy = (n.vy / sp) * 0.45;
++        if (sp > cap) {
++          n.vx = (n.vx / sp) * cap;
++          n.vy = (n.vy / sp) * cap;
+         }
+         n.x += n.vx * k;
+         n.y += n.vy * k;
+@@ -136,8 +198,8 @@ export function MeshBg() {
+       }
+     };
+ 
+-    const links = (): Array<[number, number, number]> => {
+-      const out: Array<[number, number, number]> = [];
++    const links = (ys: number[]): Link[] => {
++      const out: Link[] = [];
+       const max2 = linkDist * linkDist;
+       for (let i = 0; i < nodes.length; i++) {
+         const a = nodes[i];
+@@ -145,8 +207,10 @@ export function MeshBg() {
+         for (let j = i + 1; j < nodes.length; j++) {
+           const b = nodes[j];
+           if (!b) continue;
++          // Solo se enlazan capas contiguas: da sensación de profundidad real.
++          if (Math.abs(a.depth - b.depth) > 1) continue;
+           const dx = a.x - b.x;
+-          const dy = a.y - b.y;
++          const dy = (ys[i] ?? 0) - (ys[j] ?? 0);
+           const d2 = dx * dx + dy * dy;
+           if (d2 < max2) out.push([i, j, 1 - Math.sqrt(d2) / linkDist]);
+         }
+@@ -154,9 +218,10 @@ export function MeshBg() {
+       return out;
+     };
+ 
+-    const draw = (animated: boolean) => {
++    const draw = (animated: boolean): Link[] => {
+       ctx.clearRect(0, 0, w, h);
+-      const ls = links();
++      const ys = nodes.map(py);
++      const ls = links(ys);
+ 
+       ctx.lineWidth = 1;
+       ctx.strokeStyle = palette.line;
+@@ -164,79 +229,164 @@ export function MeshBg() {
+         const a = nodes[i];
+         const b = nodes[j];
+         if (!a || !b) continue;
+-        ctx.globalAlpha = strength * 0.22;
++        ctx.globalAlpha = strength * 0.24 * (0.6 + 0.2 * (a.depth + b.depth));
+         ctx.beginPath();
+-        ctx.moveTo(a.x, a.y);
+-        ctx.lineTo(b.x, b.y);
++        ctx.moveTo(a.x, ys[i] ?? 0);
++        ctx.lineTo(b.x, ys[j] ?? 0);
+         ctx.stroke();
+       }
+ 
+       // El visitante se une a la red: enlaces desde el cursor a los nodos cercanos.
+       if (animated && pointer.active) {
+-        for (const n of nodes) {
+-          const d = Math.hypot(pointer.x - n.x, pointer.y - n.y);
+-          if (d < 170) {
+-            ctx.globalAlpha = (1 - d / 170) * 0.42;
++        ctx.lineWidth = 1.2;
++        for (let i = 0; i < nodes.length; i++) {
++          const n = nodes[i];
++          if (!n) continue;
++          const d = Math.hypot(pointer.x - n.x, pointer.y - (ys[i] ?? 0));
++          if (d < 175) {
++            ctx.globalAlpha = (1 - d / 175) * 0.5;
+             ctx.beginPath();
+             ctx.moveTo(pointer.x, pointer.y);
+-            ctx.lineTo(n.x, n.y);
++            ctx.lineTo(n.x, ys[i] ?? 0);
+             ctx.stroke();
+           }
+         }
+       }
+ 
+       ctx.fillStyle = palette.node;
+-      for (const n of nodes) {
+-        ctx.globalAlpha = 0.5;
+-        ctx.beginPath();
+-        ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+-        ctx.fill();
++      for (let i = 0; i < nodes.length; i++) {
++        const n = nodes[i];
++        if (!n) continue;
++        const y = ys[i] ?? 0;
++        // Titileo con fase propia; en estático, brillo fijo.
++        const tw = animated
++          ? 0.82 + 0.18 * Math.sin(clock * 0.0015 * (1 + n.depth * 0.4) + n.phase)
++          : 1;
++        if (n.hub) {
++          // Halo que respira alrededor de los hubs («protocolos»).
++          const breathe = animated ? 0.5 + 0.5 * Math.sin(clock * 0.0011 + n.phase) : 0.5;
++          ctx.globalAlpha = 0.07 + 0.09 * breathe;
++          ctx.beginPath();
++          ctx.arc(n.x, y, 9 + 6 * breathe, 0, Math.PI * 2);
++          ctx.fill();
++          ctx.globalAlpha = 0.85 * tw;
++          ctx.beginPath();
++          ctx.arc(n.x, y, n.r + 1.1, 0, Math.PI * 2);
++          ctx.fill();
++        } else {
++          ctx.globalAlpha = DEPTH_ALPHA[n.depth] * tw;
++          ctx.beginPath();
++          ctx.arc(n.x, y, n.r, 0, Math.PI * 2);
++          ctx.fill();
++        }
+       }
+ 
+       if (animated) {
++        // Paquetes con estela: un segmento corto que sigue a la cabeza.
++        ctx.strokeStyle = palette.packet;
+         ctx.fillStyle = palette.packet;
+         for (const p of packets) {
+           const a = nodes[p.a];
+           const b = nodes[p.b];
+           if (!a || !b) continue;
++          const ay = ys[p.a] ?? 0;
++          const by = ys[p.b] ?? 0;
+           const x = a.x + (b.x - a.x) * p.t;
+-          const y = a.y + (b.y - a.y) * p.t;
++          const y = ay + (by - ay) * p.t;
++          const t0 = Math.max(0, p.t - 0.16);
++          const tx = a.x + (b.x - a.x) * t0;
++          const ty = ay + (by - ay) * t0;
+           const fade = Math.sin(p.t * Math.PI);
+-          ctx.globalAlpha = 0.25 * fade;
++          ctx.globalAlpha = 0.5 * fade;
++          ctx.lineWidth = 1.6;
++          ctx.beginPath();
++          ctx.moveTo(tx, ty);
++          ctx.lineTo(x, y);
++          ctx.stroke();
++          ctx.globalAlpha = 0.22 * fade;
+           ctx.beginPath();
+           ctx.arc(x, y, 5, 0, Math.PI * 2);
+           ctx.fill();
+-          ctx.globalAlpha = 0.9 * fade;
++          ctx.globalAlpha = 0.95 * fade;
+           ctx.beginPath();
+-          ctx.arc(x, y, 1.8, 0, Math.PI * 2);
++          ctx.arc(x, y, 1.9, 0, Math.PI * 2);
+           ctx.fill();
+         }
++
++        // Ondas al tocar/clicar.
++        ctx.lineWidth = 1.4;
++        for (const r of ripples) {
++          const life = r.age / RIPPLE_MS;
++          ctx.globalAlpha = 0.5 * (1 - life);
++          ctx.beginPath();
++          ctx.arc(r.x, r.y, 6 + life * 120, 0, Math.PI * 2);
++          ctx.stroke();
++        }
+       }
+       ctx.globalAlpha = 1;
+       return ls;
+     };
+ 
++    const spawnPacket = (ls: Link[], near?: { x: number; y: number }) => {
++      if (ls.length === 0) return;
++      let pick = ls[Math.floor(Math.random() * ls.length)];
++      if (near) {
++        // Prefiere el enlace más cercano al punto del toque.
++        let best = Infinity;
++        for (const l of ls) {
++          const a = nodes[l[0]];
++          if (!a) continue;
++          const d = Math.hypot(a.x - near.x, py(a) - near.y);
++          if (d < best) {
++            best = d;
++            pick = l;
++          }
++        }
++      }
++      if (pick) {
++        packets.push({ a: pick[0], b: pick[1], t: 0, speed: 1 / (900 + Math.random() * 500) });
++      }
++    };
++
++    /** Gobernador: si el coste medio de fotograma supera el presupuesto, se aligera la red. */
++    const govern = (dt: number) => {
++      avgDt = avgDt * 0.92 + dt * 0.08;
++      const budget = Math.max(24, frameInterval() + 10);
++      if (avgDt > budget) slowMs += dt;
++      else slowMs = Math.max(0, slowMs - dt);
++      if (slowMs > 1500 && nodes.length > 20) {
++        slowMs = 0;
++        const drop = Math.max(2, Math.floor(nodes.length * 0.15));
++        nodes.splice(nodes.length - drop, drop);
++        packets = packets.filter((p) => p.a < nodes.length && p.b < nodes.length);
++      }
++    };
++
+     const frame = (now: number) => {
+       if (!running) return;
+-      const dt = Math.min(48, now - last || 16.7);
+-      last = now;
+-      const k = dt / 16.7;
++      raf = requestAnimationFrame(frame);
++      const minGap = frameInterval();
++      if (minGap && now - lastDraw < minGap - 2) return;
++      lastDraw = now;
+ 
+-      step(k);
++      const dt = Math.min(64, now - last || 16.7);
++      last = now;
++      clock += dt;
+ 
+-      // Avanza paquetes y descarta los que llegaron.
++      step(dt / 16.7);
+       for (const p of packets) p.t += p.speed * dt;
+       packets = packets.filter((p) => p.t < 1);
++      for (const r of ripples) r.age += dt;
++      ripples = ripples.filter((r) => r.age < RIPPLE_MS);
+ 
+-      const ls = draw(true);
++      lastLinks = draw(true);
+ 
+       sinceSpawn += dt;
+-      if (sinceSpawn > 1400 && packets.length < 4 && ls.length > 0) {
++      if (sinceSpawn > 1100 && packets.length < 5) {
+         sinceSpawn = 0;
+-        const pick = ls[Math.floor(Math.random() * ls.length)];
+-        if (pick) packets.push({ a: pick[0], b: pick[1], t: 0, speed: 1 / 1100 });
++        spawnPacket(lastLinks);
+       }
+-      raf = requestAnimationFrame(frame);
++      govern(dt);
+     };
+ 
+     const stop = () => {
+@@ -249,12 +399,13 @@ export function MeshBg() {
+       if (running) return;
+       running = true;
+       last = 0;
++      lastDraw = 0;
+       raf = requestAnimationFrame(frame);
+     };
+ 
+-    /** Decide entre animar o pintar un solo frame, según preferencias y visibilidad. */
++    /** Decide entre animar o pintar un solo fotograma, según preferencias y visibilidad. */
+     const sync = () => {
+-      if (isStatic()) {
++      if (!allowed()) {
+         stop();
+         draw(false);
+         return;
+@@ -283,6 +434,17 @@ export function MeshBg() {
+       });
+     };
+ 
++    const onScroll = () => {
++      scrollY = window.scrollY;
++      // En estático el parallax también se refleja, sin bucle de animación.
++      if (!running && !scrollRaf) {
++        scrollRaf = requestAnimationFrame(() => {
++          scrollRaf = 0;
++          draw(false);
++        });
++      }
++    };
++
+     const onPointerMove = (e: PointerEvent) => {
+       if (!finePointer.matches || e.pointerType !== "mouse") return;
+       pointer.x = e.clientX;
+@@ -292,30 +454,46 @@ export function MeshBg() {
+     const onPointerLeave = () => {
+       pointer.active = false;
+     };
++    const onPointerDown = (e: PointerEvent) => {
++      if (!running) return;
++      ripples.push({ x: e.clientX, y: e.clientY, age: 0 });
++      if (ripples.length > 4) ripples.shift();
++      for (let i = 0; i < 2 && packets.length < 8; i++) {
++        spawnPacket(lastLinks, { x: e.clientX, y: e.clientY });
++      }
++    };
+ 
+-    // Re-lee los tokens cuando cambia el tema (data-theme / class en <html>).
+-    const themeObserver = new MutationObserver(() => {
++    // Re-lee los tokens cuando cambia el tema; reacciona al control de pausa.
++    const attrObserver = new MutationObserver(() => {
+       palette = readPalette(ctx);
+       if (!running) draw(false);
++      sync();
+     });
+-    themeObserver.observe(document.documentElement, {
++    attrObserver.observe(root, {
+       attributes: true,
+-      attributeFilter: ["data-theme", "class", "data-reduce"],
++      attributeFilter: ["data-theme", "class", "data-reduce", "data-motion"],
+     });
+ 
+     window.addEventListener("resize", onResize);
++    window.addEventListener("scroll", onScroll, { passive: true });
+     window.addEventListener("pointermove", onPointerMove, { passive: true });
+-    document.documentElement.addEventListener("pointerleave", onPointerLeave);
++    window.addEventListener("pointerdown", onPointerDown, { passive: true });
++    window.addEventListener(MOTION_EVENT, sync);
++    root.addEventListener("pointerleave", onPointerLeave);
+     document.addEventListener("visibilitychange", sync);
+     reduceQuery.addEventListener("change", sync);
+ 
+     return () => {
+       stop();
+       if (resizeRaf) cancelAnimationFrame(resizeRaf);
+-      themeObserver.disconnect();
++      if (scrollRaf) cancelAnimationFrame(scrollRaf);
++      attrObserver.disconnect();
+       window.removeEventListener("resize", onResize);
++      window.removeEventListener("scroll", onScroll);
+       window.removeEventListener("pointermove", onPointerMove);
+-      document.documentElement.removeEventListener("pointerleave", onPointerLeave);
++      window.removeEventListener("pointerdown", onPointerDown);
++      window.removeEventListener(MOTION_EVENT, sync);
++      root.removeEventListener("pointerleave", onPointerLeave);
+       document.removeEventListener("visibilitychange", sync);
+       reduceQuery.removeEventListener("change", sync);
+     };
+diff --git a/components/motion-toggle.tsx b/components/motion-toggle.tsx
+new file mode 100644
+index 0000000..77ce463
+--- /dev/null
++++ b/components/motion-toggle.tsx
+@@ -0,0 +1,58 @@
++"use client";
++
++import { useEffect, useState } from "react";
++import { Pause, Play } from "lucide-react";
++import { useI18n } from "@/lib/i18n";
++import {
++  applyMotionPref,
++  motionAllowed,
++  readMotionPref,
++  writeMotionPref,
++  type MotionPref,
++} from "@/lib/motion";
++
++/**
++ * Control para pausar/reanudar las animaciones decorativas del fondo.
++ * Estado derivado de lo que realmente ocurre (preferencia guardada + sistema), no solo de lo guardado.
++ */
++export function MotionToggle() {
++  const { t } = useI18n();
++  const [playing, setPlaying] = useState(true);
++
++  useEffect(() => {
++    const stored = readMotionPref();
++    if (stored !== "auto") applyMotionPref(stored);
++    const root = document.documentElement;
++    setPlaying(
++      motionAllowed({
++        attr: root.getAttribute("data-motion"),
++        systemReduce: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
++        dataReduce: root.getAttribute("data-reduce") === "true",
++      }),
++    );
++  }, []);
++
++  const toggle = () => {
++    const next: MotionPref = playing ? "off" : "on";
++    writeMotionPref(next);
++    applyMotionPref(next);
++    setPlaying(!playing);
++  };
++
++  return (
++    <button
++      type="button"
++      className="icon-link motion-toggle"
++      onClick={toggle}
++      aria-pressed={!playing}
++      aria-label={playing ? t("motion.pause") : t("motion.play")}
++      title={playing ? t("motion.pause") : t("motion.play")}
++    >
++      {playing ? (
++        <Pause className="icn-md" aria-hidden="true" />
++      ) : (
++        <Play className="icn-md" aria-hidden="true" />
++      )}
++    </button>
++  );
++}
+diff --git a/components/related-articles.tsx b/components/related-articles.tsx
+new file mode 100644
+index 0000000..2e891b1
+--- /dev/null
++++ b/components/related-articles.tsx
+@@ -0,0 +1,52 @@
++"use client";
++
++import { ArrowUpRight } from "lucide-react";
++import { LocaleLink } from "@/components/locale-link";
++import { useI18n } from "@/lib/i18n";
++
++export interface RelatedItem {
++  slug: string;
++  title: string;
++  description?: string;
++  readingTime: number;
++}
++
++function trackPointer(e: React.PointerEvent<HTMLElement>) {
++  const el = e.currentTarget;
++  const rect = el.getBoundingClientRect();
++  el.style.setProperty("--mx", `${e.clientX - rect.left}px`);
++  el.style.setProperty("--my", `${e.clientY - rect.top}px`);
++}
++
++/** «Sigue leyendo»: cierra el artículo con dos piezas afines (por etiquetas, luego recientes). */
++export function RelatedArticles({ items }: { items: RelatedItem[] }) {
++  const { t } = useI18n();
++  if (items.length === 0) return null;
++
++  return (
++    <aside className="related" aria-labelledby="related-title">
++      <h2 id="related-title" className="related__title">
++        {t("article.related")}
++      </h2>
++      <div className="related__grid">
++        {items.map((item) => (
++          <LocaleLink
++            key={item.slug}
++            href={`/opinion/${item.slug}`}
++            className="spot-card"
++            onPointerMove={trackPointer}
++          >
++            <span className="spot-card__meta">
++              {item.readingTime} {t("article.minutesShort")}
++            </span>
++            <span className="spot-card__title">{item.title}</span>
++            {item.description ? <span className="spot-card__body">{item.description}</span> : null}
++            <span className="spot-card__cta" aria-hidden="true">
++              <ArrowUpRight size={16} />
++            </span>
++          </LocaleLink>
++        ))}
++      </div>
++    </aside>
++  );
++}
+diff --git a/components/ui/button.tsx b/components/ui/button.tsx
+index cb6f7bf..eaf1067 100644
+--- a/components/ui/button.tsx
++++ b/components/ui/button.tsx
+@@ -12,12 +12,12 @@ import { cn } from "@/lib/utils";
+    - Transitions: --ax-duration-fast --ax-ease-out-expo */
+ 
+ const buttonVariants = cva(
+-  "group/button inline-flex shrink-0 items-center justify-center [border-radius:var(--ax-radius-sm)] border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap outline-none select-none [transition:background-color_var(--ax-duration-fast)_var(--ax-ease-out-expo),color_var(--ax-duration-fast)_var(--ax-ease-out-expo),border-color_var(--ax-duration-fast)_var(--ax-ease-out-expo)] focus-visible:[box-shadow:var(--ax-ring-focus)] disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
++  "group/button inline-flex shrink-0 items-center justify-center [border-radius:var(--ax-radius-sm)] border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap outline-none select-none [transition:background-color_var(--ax-duration-fast)_var(--ax-ease-out-expo),color_var(--ax-duration-fast)_var(--ax-ease-out-expo),border-color_var(--ax-duration-fast)_var(--ax-ease-out-expo),box-shadow_var(--ax-duration-base)_var(--ax-ease-out-expo),transform_var(--ax-duration-fast)_var(--ax-ease-out-expo)] focus-visible:[box-shadow:var(--ax-ring-focus)] disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+   {
+     variants: {
+       variant: {
+         default:
+-          "bg-primary text-primary-foreground hover:[background:color-mix(in_oklch,var(--primary)_94%,white_6%)] active:[background:color-mix(in_oklch,var(--primary)_96%,black_4%)]",
++          "btn-sheen bg-primary text-primary-foreground hover:[background:color-mix(in_oklch,var(--primary)_94%,white_6%)] active:[background:color-mix(in_oklch,var(--primary)_96%,black_4%)]",
+         outline:
+           "border-border bg-transparent text-foreground hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground",
+         secondary:
+@@ -33,7 +33,7 @@ const buttonVariants = cva(
+           "h-11 gap-1.5 px-4 in-data-[slot=button-group]:[border-radius:var(--ax-radius-sm)] has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3",
+         xs: "h-6 gap-1 [border-radius:var(--ax-radius-sm)] px-2 text-xs in-data-[slot=button-group]:[border-radius:var(--ax-radius-sm)] has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
+         sm: "h-8 gap-1 [border-radius:var(--ax-radius-md)] px-2.5 in-data-[slot=button-group]:[border-radius:var(--ax-radius-sm)] has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5",
+-        lg: "h-10 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
++        lg: "h-12 gap-2 px-6 text-base has-data-[icon=inline-end]:pr-5 has-data-[icon=inline-start]:pl-5",
+         icon: "size-11 active:translate-y-px",
+         "icon-xs":
+           "size-6 [border-radius:var(--ax-radius-sm)] in-data-[slot=button-group]:[border-radius:var(--ax-radius-sm)] [&_svg:not([class*='size-'])]:size-3 active:translate-y-px",
+diff --git a/content/opinion/escape-del-feudo-algoritmico.mdx b/content/opinion/escape-del-feudo-algoritmico.mdx
+index 21114a4..c2ee6cb 100644
+--- a/content/opinion/escape-del-feudo-algoritmico.mdx
++++ b/content/opinion/escape-del-feudo-algoritmico.mdx
+@@ -37,6 +37,8 @@ No hace falta desaparecer del mundo. Basta con cambiar el consumo pasivo por uno
+ - Reserva ratos cortos y concretos para mirar, si miras.
+ - Publica de vez en cuando: escribir cambia tu relación con el medio.
+ 
++Si quieres un primer experimento, prueba siete días con una sola regla: ninguna app sin propósito. Abre solo lo que hayas decidido abrir y anota qué cambia.
++
+ Salir no se hace en un día. Cada paso cuenta. La recompensa no es solo tiempo: es paz mental y la capacidad de pensar con menos ruido.
+ 
+ > No eres flojo por engancharte al feed. Eres humano en un sistema pensado para que no dejes de mirar.
+diff --git a/content/opinion/protocolos-vs-plataformas.mdx b/content/opinion/protocolos-vs-plataformas.mdx
+index 18def6d..a1a2b5b 100644
+--- a/content/opinion/protocolos-vs-plataformas.mdx
++++ b/content/opinion/protocolos-vs-plataformas.mdx
+@@ -11,7 +11,7 @@ La confusión entre plataforma y protocolo es uno de los grandes triunfos del ma
+ 
+ Un protocolo es un conjunto de reglas abiertas que cualquiera puede usar. No tiene dueño, no pide permiso y no cambia las reglas a solas.
+ 
+-El correo funciona así: puedes hablar con quien uses otro proveedor. La web también: cualquier navegador puede abrir casi cualquier página. Un feed abierto permite que leas a quien quieras sin pasar por el filtro de una empresa.
++El correo funciona así: puedes hablar con quien uses otro proveedor. La web también: cualquier navegador puede abrir casi cualquier página. Un feed abierto permite que leas a quien quieras sin pasar por el filtro de una empresa. ActivityPub, el protocolo detrás de Mastodon, aplica la misma idea a las redes sociales.
+ 
+ ## Qué es una plataforma
+ 
+diff --git a/content/opinion/soberania-digital.mdx b/content/opinion/soberania-digital.mdx
+index cd56b35..12b9758 100644
+--- a/content/opinion/soberania-digital.mdx
++++ b/content/opinion/soberania-digital.mdx
+@@ -21,7 +21,11 @@ Cuando controlas lo crítico —identidad, conversaciones, archivos— la ecuaci
+ 
+ ## Empieza por lo importante
+ 
+-No hace falta migrar todo de golpe. Empieza por lo que más te importa: el correo, las fotos, las conversaciones, el sitio donde publicas.
++No hace falta migrar todo de golpe. Elige una sola cosa esta semana:
++
++1. **Correo**: una dirección que puedas llevarte contigo si algún día cambias de servicio.
++2. **Copias**: lo que no puedes perder, guardado en dos sitios distintos, y uno de ellos fuera de la nube de otro.
++3. **Publicación**: tu texto vive primero en un sitio tuyo; las redes son solo el eco.
+ 
+ Cada paso pequeño cuenta. La soberanía no se compra de una vez; se practica.
+ 
+diff --git a/lib/i18n/dictionaries/en.ts b/lib/i18n/dictionaries/en.ts
+index c8515f7..743e314 100644
+--- a/lib/i18n/dictionaries/en.ts
++++ b/lib/i18n/dictionaries/en.ts
+@@ -38,9 +38,28 @@ const en: TranslationDict = {
+     },
+     publicaciones: {
+       title: "Latest pieces",
+-      desc: "The latest from {opinionLink}.",
++      desc: "Short pieces, no filler. The latest from {opinionLink}.",
+       opinionLabel: "Opinion",
+-      empty: "No posts yet.",
++      empty: "No pieces published yet. Check back soon.",
++    },
++    principios: {
++      title: "What I stand for",
++      desc: "Three ideas running through everything I write.",
++      atencion: {
++        title: "Attention",
++        body: "Your attention is yours. When something costs no money, it usually costs hours.",
++        cta: "Read about attention",
++      },
++      soberania: {
++        title: "Sovereignty",
++        body: "Keep what's critical in your hands: identity, files, conversations. Delegating is fine; not knowing to whom isn't.",
++        cta: "Read about sovereignty",
++      },
++      protocolos: {
++        title: "Protocols",
++        body: "Open roads before walled gardens. If a service disappears, your voice shouldn't.",
++        cta: "Read about protocols",
++      },
+     },
+     contacto: {
+       title: "Shall we talk?",
+@@ -60,13 +79,22 @@ const en: TranslationDict = {
+   },
+ 
+   antiMonetization: {
+-    text: "This space is free of {strong}. No ads, no affiliates, no tracking.",
++    text: "This space is free of {strong}.",
+     strong: "monetization",
+-    link: "The commercial stuff lives at alexendros.dev",
++    chips: ["0 ads", "0 affiliates", "0 sales"],
++    chipsLabel: "What you won't find here",
++    link: "Go to alexendros.dev",
+     dismissLabel: "Close monetization-free notice",
+     regionLabel: "Monetization-free space notice",
+   },
+ 
++  motion: {
++    pause: "Pause background animations",
++    play: "Resume background animations",
++  },
++
++  backToTop: "Back to top",
++
+   theme: {
+     system: "System",
+     light: "Light",
+@@ -89,6 +117,7 @@ const en: TranslationDict = {
+     tagsLabel: "Tags",
+     minutesShort: "min read",
+     tocTitle: "On this page",
++    related: "Keep reading",
+   },
+ 
+   opinion: {
+@@ -129,10 +158,10 @@ const en: TranslationDict = {
+ 
+   errors: {
+     notFoundTitle: "Page not found",
+-    notFoundDesc: "This page doesn't exist or has moved.",
++    notFoundDesc: "This link leads nowhere: the page doesn't exist or has moved.",
+     notFoundCta: "Back to home",
+     errorTitle: "Something went wrong",
+-    errorDesc: "An unexpected error occurred. Please try again.",
++    errorDesc: "An unexpected error occurred. Try again or head back home.",
+     errorCta: "Back to home",
+   },
+ 
+@@ -140,6 +169,9 @@ const en: TranslationDict = {
+     fabLabel: "Contact actions",
+     emailLabel: "Send email",
+     contactame: "Contact me",
++    copy: "Copy email",
++    copied: "Email copied",
++    copyError: "Couldn't copy the email",
+   },
+ };
+ 
+diff --git a/lib/i18n/dictionaries/es.ts b/lib/i18n/dictionaries/es.ts
+index e1752d1..6232bbe 100644
+--- a/lib/i18n/dictionaries/es.ts
++++ b/lib/i18n/dictionaries/es.ts
+@@ -38,9 +38,28 @@ const es: TranslationDict = {
+     },
+     publicaciones: {
+       title: "Últimas piezas",
+-      desc: "Lo último en {opinionLink}.",
++      desc: "Textos breves, sin relleno. Lo último en {opinionLink}.",
+       opinionLabel: "Opinión",
+-      empty: "No hay publicaciones aún.",
++      empty: "Todavía no hay piezas publicadas. Vuelve pronto.",
++    },
++    principios: {
++      title: "Lo que defiendo",
++      desc: "Tres ideas que atraviesan todo lo que escribo.",
++      atencion: {
++        title: "Atención",
++        body: "Tu atención es tuya. Cuando algo no cuesta dinero, suele costar horas.",
++        cta: "Leer sobre atención",
++      },
++      soberania: {
++        title: "Soberanía",
++        body: "Lo crítico, en tus manos: identidad, archivos, conversaciones. Delegar está bien; no saber a quién, no.",
++        cta: "Leer sobre soberanía",
++      },
++      protocolos: {
++        title: "Protocolos",
++        body: "Caminos abiertos antes que jardines amurallados. Si un servicio desaparece, tu voz no debería hacerlo.",
++        cta: "Leer sobre protocolos",
++      },
+     },
+     contacto: {
+       title: "¿Hablamos?",
+@@ -60,13 +79,22 @@ const es: TranslationDict = {
+   },
+ 
+   antiMonetization: {
+-    text: "Este espacio es libre de {strong}. Sin anuncios, sin afiliados, sin tracking.",
++    text: "Este espacio es libre de {strong}.",
+     strong: "monetización",
+-    link: "Lo comercial vive en alexendros.dev",
++    chips: ["0 anuncios", "0 afiliados", "0 ventas"],
++    chipsLabel: "Lo que no encontrarás aquí",
++    link: "Ir a alexendros.dev",
+     dismissLabel: "Cerrar aviso de espacio libre de monetización",
+     regionLabel: "Aviso de espacio libre de monetización",
+   },
+ 
++  motion: {
++    pause: "Pausar animaciones del fondo",
++    play: "Reanudar animaciones del fondo",
++  },
++
++  backToTop: "Volver arriba",
++
+   theme: {
+     system: "Sistema",
+     light: "Claro",
+@@ -89,6 +117,7 @@ const es: TranslationDict = {
+     tagsLabel: "Etiquetas",
+     minutesShort: "min de lectura",
+     tocTitle: "En este artículo",
++    related: "Sigue leyendo",
+   },
+ 
+   opinion: {
+@@ -129,10 +158,10 @@ const es: TranslationDict = {
+ 
+   errors: {
+     notFoundTitle: "Página no encontrada",
+-    notFoundDesc: "Esta página no existe o fue movida.",
++    notFoundDesc: "Este enlace no lleva a ninguna parte: la página no existe o se ha mudado.",
+     notFoundCta: "Volver al inicio",
+-    errorTitle: "Algo salió mal",
+-    errorDesc: "Ha ocurrido un error inesperado. Intenta de nuevo.",
++    errorTitle: "Algo ha fallado",
++    errorDesc: "Ha ocurrido un error inesperado. Vuelve a intentarlo o regresa al inicio.",
+     errorCta: "Volver al inicio",
+   },
+ 
+@@ -140,6 +169,9 @@ const es: TranslationDict = {
+     fabLabel: "Acciones de contacto",
+     emailLabel: "Enviar correo",
+     contactame: "Contáctame",
++    copy: "Copiar correo",
++    copied: "Correo copiado",
++    copyError: "No se pudo copiar el correo",
+   },
+ };
+ 
+diff --git a/lib/motion.ts b/lib/motion.ts
+new file mode 100644
+index 0000000..40c9aa9
+--- /dev/null
++++ b/lib/motion.ts
+@@ -0,0 +1,59 @@
++/**
++ * Preferencia de movimiento del visitante para las animaciones decorativas (fondo, atmósfera).
++ *
++ * - "auto"  → se respeta `prefers-reduced-motion` del sistema (comportamiento por defecto).
++ * - "on"    → el visitante pide movimiento aunque su sistema pida reducirlo.
++ * - "off"   → el visitante pausa las animaciones aunque su sistema las permita.
++ *
++ * Se publica en `<html data-motion="on|off">` (sin atributo = auto). WCAG 2.2.2 (Pause, Stop,
++ * Hide): todo movimiento que dura >5 s necesita un control para pausarlo.
++ */
++export type MotionPref = "auto" | "on" | "off";
++
++export const MOTION_KEY = "motion";
++export const MOTION_EVENT = "ax:motion";
++
++export function isMotionPref(value: unknown): value is MotionPref {
++  return value === "auto" || value === "on" || value === "off";
++}
++
++/** localStorage puede lanzar (modo privado, cookies bloqueadas): nunca debe romper la UI. */
++export function readMotionPref(): MotionPref {
++  try {
++    const raw = localStorage.getItem(MOTION_KEY);
++    return isMotionPref(raw) ? raw : "auto";
++  } catch {
++    return "auto";
++  }
++}
++
++export function writeMotionPref(pref: MotionPref): void {
++  try {
++    if (pref === "auto") localStorage.removeItem(MOTION_KEY);
++    else localStorage.setItem(MOTION_KEY, pref);
++  } catch {
++    // sin almacenamiento: la preferencia dura solo la sesión
++  }
++}
++
++/** Aplica la preferencia al <html> y avisa a quien escuche (el canvas del fondo). */
++export function applyMotionPref(pref: MotionPref): void {
++  const root = document.documentElement;
++  if (pref === "auto") root.removeAttribute("data-motion");
++  else root.setAttribute("data-motion", pref);
++  window.dispatchEvent(new CustomEvent(MOTION_EVENT, { detail: pref }));
++}
++
++/**
++ * ¿Debe animarse ahora el fondo?
++ * Orden: elección explícita del visitante > preferencia del sistema > pista `data-reduce`.
++ */
++export function motionAllowed(opts: {
++  attr: string | null;
++  systemReduce: boolean;
++  dataReduce: boolean;
++}): boolean {
++  if (opts.attr === "off") return false;
++  if (opts.attr === "on") return true;
++  return !(opts.systemReduce || opts.dataReduce);
++}
+diff --git a/lib/principles.ts b/lib/principles.ts
+new file mode 100644
+index 0000000..4bb951f
+--- /dev/null
++++ b/lib/principles.ts
+@@ -0,0 +1,8 @@
++/** Principios de la home y la pieza que desarrolla cada uno (slugs verificados en tests). */
++export const PRINCIPLE_LINKS = [
++  { key: "atencion", slug: "escape-del-feudo-algoritmico" },
++  { key: "soberania", slug: "soberania-digital" },
++  { key: "protocolos", slug: "protocolos-vs-plataformas" },
++] as const;
++
++export type PrincipleKey = (typeof PRINCIPLE_LINKS)[number]["key"];
+diff --git a/tests/anti-monetization-banner.spec.ts b/tests/anti-monetization-banner.spec.ts
+index f08bfd6..c2a43d3 100644
+--- a/tests/anti-monetization-banner.spec.ts
++++ b/tests/anti-monetization-banner.spec.ts
+@@ -20,13 +20,20 @@ test.describe("Anti-monetization banner", () => {
+ 
+     // Check text content
+     await expect(banner.locator(".anti-monetization-banner__text")).toContainText(
+-      "Este espacio es libre de monetización. Sin anuncios, sin afiliados, sin tracking.",
++      "Este espacio es libre de monetización.",
+     );
+ 
++    // Chips: lo que no hay aquí
++    await expect(banner.locator(".anti-monetization-banner__chip")).toHaveText([
++      "0 anuncios",
++      "0 afiliados",
++      "0 ventas",
++    ]);
++
+     // Check link
+     const link = banner.locator(".anti-monetization-banner__link");
+     await expect(link).toBeVisible();
+-    await expect(link).toContainText("Lo comercial vive en alexendros.dev");
++    await expect(link).toContainText("Ir a alexendros.dev");
+     await expect(link).toHaveAttribute("href", "https://alexendros.dev");
+     await expect(link).toHaveAttribute("target", "_blank");
+     await expect(link).toHaveAttribute("rel", "noopener noreferrer");
+diff --git a/tests/visual-regression.spec.ts b/tests/visual-regression.spec.ts
+index c4417a3..3369fda 100644
+--- a/tests/visual-regression.spec.ts
++++ b/tests/visual-regression.spec.ts
+@@ -42,7 +42,7 @@ test.describe("Visual Regression", { tag: "@visual" }, () => {
+           // Hide dynamic elements that cause flaky screenshots
+           await page.addStyleTag({
+             content: `
+-            .particle-bg, .mesh-canvas, .atm__haze, .atm__spark, .atm__dust,
++            .particle-bg, .mesh-canvas, .atm__aurora, .atm__haze, .atm__spark, .atm__dust,
+             .marquee-track, [data-testid="particle-bg"] {
+               display: none !important;
+             }
