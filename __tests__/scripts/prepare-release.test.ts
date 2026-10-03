@@ -67,6 +67,7 @@ describe("finalizeChangelog", () => {
     expect(blocks).toBe(2);
     expect(suffix).toBe("Primera parte + Segunda parte");
     expect(changelog).toContain("## [0.13.1] — 2026-10-03 · Primera parte + Segunda parte");
+    expect(changelog.startsWith("# Changelog\n\nTexto introductorio.\n\n## [0.13.1]")).toBe(true);
     expect(changelog).toContain("- Algo nuevo.");
     expect(changelog).toContain("- Un fix.");
     expect(changelog).toContain("## [0.13.0] — 2026-10-01 · Anterior");

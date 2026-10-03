@@ -81,12 +81,14 @@ export function finalizeChangelog(md: string, version: string, date: string): Fi
   const lines = md.split("\n");
   const blocks: { suffix: string; body: string[] }[] = [];
   let restStart = 0;
+  let prefixEnd = 0;
   let current: { suffix: string; body: string[] } | null = null;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i] as string;
     const un = UNRELEASED_RE.exec(line);
     if (un && blocks.length === 0 && current === null) {
+      prefixEnd = i;
       current = { suffix: (un[1] ?? "").trim(), body: [] };
       continue;
     }
@@ -119,7 +121,9 @@ export function finalizeChangelog(md: string, version: string, date: string): Fi
   // Recorta líneas en blanco iniciales del cuerpo fusionado, conserva el resto.
   while (mergedBody.length > 0 && mergedBody[0]?.trim() === "") mergedBody.shift();
   const rest = lines.slice(restStart).join("\n");
-  const changelog = `${header}\n\n${mergedBody.join("\n").trimEnd()}\n\n${rest.trimStart()}`;
+  // Todo lo anterior al primer bloque Unreleased (título, prefacio) se conserva.
+  const prefix = lines.slice(0, prefixEnd).join("\n").trimEnd();
+  const changelog = `${prefix}\n\n${header}\n\n${mergedBody.join("\n").trimEnd()}\n\n${rest.trimStart()}`;
   return { changelog, suffix, blocks: blocks.length };
 }
 
