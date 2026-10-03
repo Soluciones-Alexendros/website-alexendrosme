@@ -21,9 +21,9 @@ const es: TranslationDict = {
   hero: {
     eyebrow: "Valencia · pensamiento, libertad y vida digital",
     signature: "Alexendros. Grandes soluciones de un ingenio no previsto.",
-    lead: "Espacio personal y libre de dinero. Aquí escribo y pienso en voz alta. Lo que se vende vive en {link}.",
+    lead: "Espacio personal, al margen del dinero. Aquí escribo y pienso en voz alta; la actividad comercial vive en {link}.",
     leadLink: "alexendros.dev",
-    tagline: "Ánimo de todo tipo. Lucro ni idea de quién es.",
+    tagline: "Entusiasmo por las ideas claras, sin ningún afán de lucro.",
     ctaContact: "Escríbeme",
     ctaAbout: "Conóceme",
   },
@@ -31,10 +31,10 @@ const es: TranslationDict = {
   sections: {
     biografia: {
       title: "(Auto)biografía",
-      p1: "Me llamo Alejandro Domingo Agustí. En la red respondo a Alexendros. Nací en Valencia y he pasado por oficios distintos: hostelería, gestión y, más tarde, el trabajo con pantallas. Aprendí a leer personas y negocios antes que a hablar de herramientas.",
-      p2: "Este sitio es mi espacio libre de dinero: aquí no se vende nada. Escribo sobre libertad, atención, soberanía personal y la vida digital sin filtros. Si buscas lo comercial, está en {link}. Si quieres lo que pienso, quédate.",
+      p1: "Me llamo Alejandro Domingo Agustí y en la red me conocen como Alexendros. Nací en Valencia y he trabajado en oficios diversos: hostelería, gestión y, más tarde, el trabajo frente a pantallas. Aprendí a leer a las personas y los negocios antes que a hablar de herramientas.",
+      p2: "Este sitio se mantiene al margen del dinero: aquí no se vende nada. Escribo sobre libertad, atención, soberanía personal y vida digital, sin filtros. Si buscas la vertiente comercial, está en {link}. Si quieres saber lo que pienso, quédate.",
       p2Link: "alexendros.dev",
-      p3: "Creo en elegir con criterio, en no entregar lo crítico a quien no te conoce y en escribir para quien sospecha de las narrativas cómodas. Este proyecto es sencillo a propósito: un sitio claro, sin ruido y sin pedir nada a cambio.",
+      p3: "Creo en decidir con criterio, en no confiar lo esencial a desconocidos y en escribir para quienes desconfían de los relatos cómodos. Este proyecto es sencillo a propósito: un sitio claro, sin ruido, que no pide nada a cambio.",
     },
     publicaciones: {
       title: "Últimas piezas",

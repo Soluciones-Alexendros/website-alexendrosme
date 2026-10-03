@@ -21,9 +21,9 @@ const en: TranslationDict = {
   hero: {
     eyebrow: "Valencia · thought, freedom & digital life",
     signature: "Alexendros. Great solutions from unforeseen ingenuity.",
-    lead: "A personal, money-free space. I write and think out loud here. The commercial side lives at {link}.",
+    lead: "A personal space, set apart from money. I write and think out loud here; the commercial side lives at {link}.",
     leadLink: "alexendros.dev",
-    tagline: "All kinds of spirit. Profit — no idea who that is.",
+    tagline: "Enthusiasm for clear ideas, with no profit motive.",
     ctaContact: "Write to me",
     ctaAbout: "Get to know me",
   },
@@ -31,10 +31,10 @@ const en: TranslationDict = {
   sections: {
     biografia: {
       title: "(Auto)biography",
-      p1: "My name is Alejandro Domingo Agustí. Online I go by Alexendros. I was born in Valencia and have worked in different trades: hospitality, management, and later screen work. I learned to read people and businesses before talking about tools.",
-      p2: "This site is my money-free space: nothing is sold here. I write about freedom, attention, personal sovereignty and digital life without filters. If you want the commercial side, it's at {link}. If you want what I think, stay.",
+      p1: "My name is Alejandro Domingo Agustí, and online I am known as Alexendros. I was born in Valencia and have worked in various trades: hospitality, management, and later work in front of screens. I learned to read people and businesses before talking about tools.",
+      p2: "This site stands apart from money: nothing is sold here. I write about freedom, attention, personal sovereignty, and digital life, without filters. If you are looking for the commercial side, it is at {link}. If you want to know what I think, stay.",
       p2Link: "alexendros.dev",
-      p3: "I believe in choosing with criteria, in not handing what's critical to strangers, and in writing for those who distrust comfortable narratives. This project is deliberately simple: a clear site, without noise, asking for nothing in return.",
+      p3: "I believe in deciding with judgment, in not entrusting what matters most to strangers, and in writing for those who distrust comfortable narratives. This project is simple on purpose: a clear site, without noise, asking for nothing in return.",
     },
     publicaciones: {
       title: "Latest pieces",
