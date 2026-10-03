@@ -103,45 +103,14 @@ Conducta: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md). Vulnerabilidades:
 
 <!-- RELEASE_SECTION_START -->
 <details>
-<summary><strong>v0.13.1</strong> (2026-10-03)</summary>
+<summary><strong>v0.14.0</strong> (2026-10-03)</summary>
 
-## [0.13.1] — 2026-10-03 · Consolidación contenido + legal (ADR-0006) + Alineación al canon P1+P2
-
-### Añadido
-
-- Página `/legal/licencia` (ES/EN): contenidos CC BY-NC-SA 4.0, código MIT, exclusiones.
-- ADR-0006 (colección única `opinion`, retirada de `proyectos` y `/legal/seguridad`).
-- Test de contrato `prohibited-state` (13 tests: sin proyectos/Telegram/Matrix/€Ç/F.A.F.O., un solo `mailto:` en footer).
+## [0.14.0] — 2026-10-03 · Tono formal y accesible
 
 ### Cambiado
 
-- Colección única `opinion`: tipos, loader, nav, home, sitemap, feeds, search-index, OG, sitemap/feeds regenerados.
-- Legal ES/EN reescrito con datos reales (NIF, domicilio, Hostinger/Vercel/Proton Mail, Vercel Analytics descrita).
-- Footer formal (sin €Ç/F.A.F.O./cita/email como texto) + icono Mail `mailto:`; ContactFab simplificado a email.
-- Split de licencia: contenido CC BY-NC-SA 4.0, código MIT (`LICENSE`, `package.json`).
-- Docs raíz alineadas (`README`, `ARCHITECTURE`, `ROADMAP`, `TASKS`).
-
-### Eliminado
-
-- Rutas/contenido `proyectos` (app, content, feeds, sitemaps, redirección `/projects`).
-- Contacto Telegram/Matrix (config, UI, i18n).
-- Ruta `/legal/seguridad` (sustituida por `/legal/licencia`).
-- Sello €Ç, texto anticomercial informal, cita y `F.A.F.O.` del footer.
-
-### Añadido
-
-- Jobs de CI `quality`, `test`, `build`, `smoke` (se conservan `e2e`,
-  `lhci`, `a11y`, `perf`, `deploy`).
-- `npm run smoke` sobre el export estático.
-- Guías y runbooks en `docs/guides/` y `docs/runbooks/`.
-- ADRs en `docs/architecture/decisions/` (ruta histórica `docs/adr/`).
-
-### Cambiado
-
-- Renovate local a `.github/renovate.json` (managers `npm` +
-  `github-actions`).
-- `AGENTS.md` y `ARCHITECTURE.md` al contrato de flota.
-- Meta-sección Propósito en docs P1+P2.
+- Hero y (Auto)biografía (ES/EN) reescritos en registro formal y accesible:
+  lead, tagline y párrafos p1–p3.
 
 </details>
 <!-- RELEASE_SECTION_END -->
