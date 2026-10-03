@@ -5,22 +5,37 @@ publican a través de tags firmados.
 
 ## Antes de la release
 
-- Todos los cambios relevantes están en `CHANGELOG.md` bajo `[Sin publicar]`.
+- Todos los cambios relevantes están en `CHANGELOG.md` bajo `[Unreleased]`.
 - El CI está verde en `main`.
 - La documentación está actualizada (README, ARCHITECTURE, docs/).
-- Se han verificado las dependencias con `pnpm audit` o herramienta
+- Se han verificado las dependencias con `npm audit` o herramienta
   equivalente.
 
 ## Pasos
 
-1. Mover los cambios de `[Sin publicar]` a una nueva sección con número de
-   versión y fecha en `CHANGELOG.md`.
-2. Actualizar la versión en `package.json` (o el manifest correspondiente).
-3. Crear commit `chore(release): vX.Y.Z`.
-4. Crear tag firmado: `git tag -s vX.Y.Z -m "vX.Y.Z"`.
-5. Empujar tag y rama: `git push --follow-tags`.
-6. Crear release en GitHub copiando la sección del CHANGELOG.
-7. Verificar que el workflow de release publicó los artefactos esperados.
+> El versionado vive en `main` y viaja en PRs normales — nunca se commitea
+> directamente. El workflow `release.yml` solo taggea sobre el HEAD de
+> `main` (su bump local es no-op cuando la preparación ya está mergeada).
+
+1. En una rama, ejecutar `npm run release:prepare` (equivale a
+   `tsx scripts/prepare-release.ts --write`). El script calcula la próxima
+   versión con `scripts/get-next-version.sh` (la misma fuente que CI),
+   actualiza `package.json`, fusiona los bloques `## [Unreleased]` en
+   `## [X.Y.Z] — FECHA` y regenera el bloque `RELEASE_SECTION` del README.
+   Previsualizar antes con `tsx scripts/prepare-release.ts --dry-run`.
+   Forzar una versión exacta con `-- --version X.Y.Z` (debe ser mayor que el
+   último tag).
+2. Abrir PR con la preparación, mergear a `main` tras CI verde.
+3. El workflow `release.yml` (disparado por el CI en `main`) crea el tag
+   firmado `vX.Y.Z` sobre ese HEAD, sube el artefacto de `out/` y publica la
+   GitHub Release con la sección del CHANGELOG.
+4. Verificar: `npm run release:check` (exit 2 si `package.json`, CHANGELOG o
+   README derivan de la versión esperada) y tag accesible desde `main`
+   (`git merge-base --is-ancestor vX.Y.Z HEAD`). El job `quality` de CI
+   ejecuta este check: un PR con cambios releaseables sin preparación falla
+   hasta incluirla.
+
+## Versionado
 
 ## Versionado
 

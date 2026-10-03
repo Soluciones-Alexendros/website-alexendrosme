@@ -32,7 +32,9 @@
     "smoke": "node scripts/smoke.mjs",
     "audit:hydration": "tsx scripts/hydration-warning-audit.ts",
     "prepare": "husky",
-    "release": "echo 'Use GitHub Actions release.yml — standard-version removed'"
+    "release": "echo 'Use GitHub Actions release.yml — standard-version removed'",
+    "release:prepare": "tsx scripts/prepare-release.ts --write",
+    "release:check": "tsx scripts/prepare-release.ts --check"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",
