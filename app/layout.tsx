@@ -87,6 +87,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html
       lang="es"
       data-accent="gold"
+      data-scroll-behavior="smooth"
       className={`${sourceSerif.variable} ${sourceSans.variable} ${plexMono.variable}`}
       suppressHydrationWarning
     >
