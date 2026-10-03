@@ -1,3 +1,25 @@
+# Changelog
+
+### Propósito de este documento
+
+- **Objetivos:** Registrar cambios destacables del producto y de la
+  plataforma sin sustituir el historial.
+- **Estructura:** Keep a Changelog + SemVer; lo más reciente primero.
+- **Contenido a integrar según contexto:** No borres hitos. Los PRs de
+  plataforma añaden una entrada; no reescriben el resto.
+
+Todos los cambios destacables de este proyecto se documentan en este archivo.
+
+El formato sigue [Keep a Changelog 1.1.0](https://keepachangelog.com/es-ES/1.1.0/),
+y este proyecto se adhiere a [SemVer 2.0.0](https://semver.org/lang/es/).
+
+## [0.14.0] — 2026-10-03 · Tono formal y accesible
+
+### Cambiado
+
+- Hero y (Auto)biografía (ES/EN) reescritos en registro formal y accesible:
+  lead, tagline y párrafos p1–p3.
+
 ## [0.13.1] — 2026-10-03 · Consolidación contenido + legal (ADR-0006) + Alineación al canon P1+P2
 
 ### Añadido

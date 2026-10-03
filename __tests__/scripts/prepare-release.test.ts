@@ -67,6 +67,7 @@ describe("finalizeChangelog", () => {
     expect(blocks).toBe(2);
     expect(suffix).toBe("Primera parte + Segunda parte");
     expect(changelog).toContain("## [0.13.1] — 2026-10-03 · Primera parte + Segunda parte");
+    expect(changelog.startsWith("# Changelog\n\nTexto introductorio.\n\n## [0.13.1]")).toBe(true);
     expect(changelog).toContain("- Algo nuevo.");
     expect(changelog).toContain("- Un fix.");
     expect(changelog).toContain("## [0.13.0] — 2026-10-01 · Anterior");
@@ -106,6 +107,29 @@ describe("refreshReadmeSection", () => {
     expect(out).not.toContain("antiguo");
     expect(out.match(/<!-- RELEASE_SECTION_START -->/g)).toHaveLength(1);
     expect(out.match(/<!-- RELEASE_SECTION_END -->/g)).toHaveLength(1);
+  });
+
+  it("es byte-idéntico al reescribir una región ya canónica (idempotente)", () => {
+    const canon = [
+      "# T",
+      "",
+      "<!-- RELEASE_SECTION_START -->",
+      "<details>",
+      "</details>",
+      "<!-- RELEASE_SECTION_END -->",
+      "",
+      "Fin",
+      "",
+    ].join("\n");
+    const snippet = [
+      "<!-- RELEASE_SECTION_START -->",
+      "<details>",
+      "</details>",
+      "<!-- RELEASE_SECTION_END -->",
+    ].join("\n");
+    const { readme: out, updated } = refreshReadmeSection(canon, snippet);
+    expect(updated).toBe(true);
+    expect(out).toBe(canon);
   });
 
   it("no-op sin marcadores", () => {
