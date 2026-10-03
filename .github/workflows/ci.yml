@@ -73,6 +73,9 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        with:
+          # Historial completo: release:check necesita tags + log desde el último tag
+          fetch-depth: 0
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version-file: ".nvmrc"
@@ -85,6 +88,8 @@ jobs:
       - run: npm run format:check
       - run: npm run typecheck
       - run: npm run lint
+      - name: Versionado coherente (package.json + CHANGELOG + README vs tags)
+        run: npm run release:check
       - name: Audit production dependencies
         # Informativo: Next.js 16 + transitivas reportan high/critical que no
         # aplican al export estático (sin middleware, Server Actions ni image

@@ -1,6 +1,6 @@
 {
   "name": "website-alexendrosme",
-  "version": "0.8.0",
+  "version": "0.13.1",
   "private": true,
   "type": "module",
   "description": "Sitio web personal de Alexendros — espacio libre de dinero para opinión y pensamiento. Next.js 16, Tailwind v4, TypeScript strict, export estático.",
@@ -32,7 +32,9 @@
     "smoke": "node scripts/smoke.mjs",
     "audit:hydration": "tsx scripts/hydration-warning-audit.ts",
     "prepare": "husky",
-    "release": "echo 'Use GitHub Actions release.yml — standard-version removed'"
+    "release": "echo 'Use GitHub Actions release.yml — standard-version removed'",
+    "release:prepare": "tsx scripts/prepare-release.ts --write",
+    "release:check": "tsx scripts/prepare-release.ts --check"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",
