@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getRawContent, getContentCollection } from "@/lib/content/loader";
+import { getRawContent, getRelatedContent, getContentCollection } from "@/lib/content/loader";
 import { MarkdownRenderer } from "@/components/mdx";
 import { BreadcrumbJsonLd } from "@/components/breadcrumb-json-ld";
 import { ArticleMeta } from "@/components/article-meta";
@@ -10,6 +10,7 @@ import { articleOgImageUrl } from "@/lib/seo/og";
 import { hreflangAlternates } from "@/lib/seo/hreflang";
 import { BackOpinionLabel } from "@/components/translated-labels";
 import { LocaleLink } from "@/components/locale-link";
+import { RelatedArticles } from "@/components/related-articles";
 import type { Metadata } from "next";
 
 interface Props {
@@ -63,6 +64,12 @@ export default async function OpinionArticle({ params }: Props) {
 
   if (!article) notFound();
 
+  const related = (await getRelatedContent("opinion", slug, 2)).map((item) => ({
+    slug: item.slug,
+    title: item.frontmatter.title,
+    description: item.frontmatter.description,
+    readingTime: item.readingTime,
+  }));
   const tocItems = extractToc(article.content);
   const ogImage = articleOgImageUrl("opinion", slug);
   const published = article.frontmatter.date;
@@ -134,6 +141,7 @@ export default async function OpinionArticle({ params }: Props) {
             </header>
 
             <MarkdownRenderer content={article.content} />
+            <RelatedArticles items={related} />
           </article>
         </div>
 

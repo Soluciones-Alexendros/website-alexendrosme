@@ -20,13 +20,20 @@ test.describe("Anti-monetization banner", () => {
 
     // Check text content
     await expect(banner.locator(".anti-monetization-banner__text")).toContainText(
-      "Este espacio es libre de monetización. Sin anuncios, sin afiliados, sin tracking.",
+      "Este espacio es libre de monetización.",
     );
+
+    // Chips: lo que no hay aquí
+    await expect(banner.locator(".anti-monetization-banner__chip")).toHaveText([
+      "0 anuncios",
+      "0 afiliados",
+      "0 ventas",
+    ]);
 
     // Check link
     const link = banner.locator(".anti-monetization-banner__link");
     await expect(link).toBeVisible();
-    await expect(link).toContainText("Lo comercial vive en alexendros.dev");
+    await expect(link).toContainText("Ir a alexendros.dev");
     await expect(link).toHaveAttribute("href", "https://alexendros.dev");
     await expect(link).toHaveAttribute("target", "_blank");
     await expect(link).toHaveAttribute("rel", "noopener noreferrer");

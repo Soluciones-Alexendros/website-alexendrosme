@@ -1,0 +1,1788 @@
+diff --git a/app/layout.tsx b/app/layout.tsx
+index 0ddaa91..a5d603d 100644
+--- a/app/layout.tsx
++++ b/app/layout.tsx
+@@ -16,7 +16,7 @@ import { SwRegister } from "@/components/sw-register";
+ import { SkipLink } from "@/components/skip-link";
+ import { prePaintScriptString } from "@/lib/theme-pre-paint";
+ 
+-const ParticleBg = dynamic(() => import("@/components/particle-bg").then((m) => m.ParticleBg));
++const MeshBg = dynamic(() => import("@/components/mesh-bg").then((m) => m.MeshBg));
+ 
+ /** Display / títulos: variable (un solo query; evita fallo Turbopack en Vercel). */
+ const sourceSerif = Source_Serif_4({
+@@ -155,7 +155,7 @@ h1.display,.hero h1{font-family:var(--font-display);font-weight:700;letter-spaci
+             <SearchProvider>
+               <JsonLd />
+               <Atmosphere />
+-              <ParticleBg />
++              <MeshBg />
+               <AntiMonetizationBanner />
+               <Nav />
+               <main id="main" className="main-content">
+diff --git a/app/opinion/[slug]/page.tsx b/app/opinion/[slug]/page.tsx
+index 1e96c17..676eb9c 100644
+--- a/app/opinion/[slug]/page.tsx
++++ b/app/opinion/[slug]/page.tsx
+@@ -110,6 +110,7 @@ export default async function OpinionArticle({ params }: Props) {
+         ]}
+       />
+ 
++      <div className="read-progress" aria-hidden="true" />
+       <div className="site-shell article-shell">
+         <div className="article-nav">
+           <LocaleLink href="/opinion" className="ds-caption back-link">
+diff --git a/app/styles/components.css b/app/styles/components.css
+index 7d9bd9a..2b8e355 100644
+--- a/app/styles/components.css
++++ b/app/styles/components.css
+@@ -222,162 +222,156 @@
+   .section-below-fold {
+     content-visibility: auto;
+     contain-intrinsic-size: auto 40rem;
++  }
+ 
+-    .legal-doc {
+-      max-width: var(--ax-measure);
+-      font-size: var(--text-body);
+-      line-height: 1.7;
+-    }
+-    .legal-doc h1 {
+-      font-size: var(--text-display);
+-      line-height: 1.1;
+-      margin-block: 0 1.5rem;
+-    }
+-    .legal-doc h2 {
+-      font-size: var(--text-headline);
+-      line-height: 1.2;
+-      margin-block: 2rem 0.75rem;
+-    }
+-    .legal-doc h3 {
+-      font-size: var(--text-title);
+-      line-height: 1.3;
+-      margin-block: 1.5rem 0.5rem;
+-    }
+-    .legal-doc p,
+-    .legal-doc ul,
+-    .legal-doc ol {
+-      margin-block: 0.75rem;
+-    }
+-    .legal-doc a {
+-      color: inherit;
+-      text-decoration: underline;
+-      text-underline-offset: 0.25em;
+-      text-decoration-color: color-mix(in oklch, var(--primary) 60%, transparent);
+-    }
++  /* ── Páginas legales (antes anidadas por error en .section-below-fold,
++     por lo que NUNCA se aplicaban: las páginas /legal/* salían sin estilo) ── */
++  .legal-doc {
++    margin-inline: auto;
++    max-width: var(--ax-measure);
++    font-size: var(--text-body);
++    line-height: 1.7;
++  }
++  .legal-doc h1,
++  .legal-doc h2,
++  .legal-doc h3 {
++    font-family: var(--font-display);
++    font-weight: 600;
++    letter-spacing: var(--tracking-heading);
++    text-wrap: balance;
++    color: var(--ax-text-primary);
++  }
++  .legal-doc h1 {
++    font-size: var(--text-4xl);
++    line-height: 1.1;
++    margin-block: 0 1.5rem;
++  }
++  .legal-doc h2 {
++    font-size: var(--text-headline);
++    line-height: 1.2;
++    margin-block: 2rem 0.75rem;
++  }
++  .legal-doc h3 {
++    font-size: var(--text-title);
++    line-height: 1.3;
++    margin-block: 1.5rem 0.5rem;
++  }
++  .legal-doc p,
++  .legal-doc ul,
++  .legal-doc ol {
++    margin-block: 0.75rem;
++  }
++  .legal-doc ul {
++    list-style: disc;
++    padding-left: 1.5rem;
++  }
++  .legal-doc ol {
++    list-style: decimal;
++    padding-left: 1.5rem;
++  }
++  .legal-doc a {
++    color: inherit;
++    text-decoration: underline;
++    text-underline-offset: 0.25em;
++    text-decoration-color: color-mix(in oklch, var(--primary) 60%, transparent);
++  }
+ 
+-    /* ── Legal table → stacks to <dl>-like on small screens ─── */
+-    .legal-table {
+-      width: 100%;
+-      border-collapse: collapse;
+-      font-size: var(--text-small);
+-    }
+-    .legal-table th,
+-    .legal-table td {
+-      padding: 0.75rem 0.5rem;
+-      text-align: left;
+-      border-bottom: 1px solid var(--border);
+-      vertical-align: top;
+-    }
+-    .legal-table th {
+-      font-weight: 600;
+-      color: var(--muted-foreground);
+-    }
++  /* ── Legal table → stacks to <dl>-like on small screens ─── */
++  .legal-table {
++    width: 100%;
++    border-collapse: collapse;
++    font-size: var(--text-small);
++  }
++  .legal-table th,
++  .legal-table td {
++    padding: 0.75rem 0.5rem;
++    text-align: left;
++    border-bottom: 1px solid var(--border);
++    vertical-align: top;
++  }
++  .legal-table th {
++    font-weight: 600;
++    color: var(--muted-foreground);
++  }
+ 
+-    @media (max-width: 39.99rem) {
+-      .legal-table,
+-      .legal-table tbody,
+-      .legal-table tr,
+-      .legal-table td {
+-        display: block;
+-        width: 100%;
+-      }
+-      .legal-table thead {
+-        display: none;
+-      }
+-      .legal-table tr {
+-        padding-block: 0.75rem;
+-        border-bottom: 1px solid var(--border);
+-      }
+-      .legal-table tr:last-child {
+-        border-bottom: 0;
+-      }
+-      .legal-table td {
+-        border: 0;
+-        padding: 0.25rem 0;
+-      }
+-      .legal-table td[data-label]::before {
+-        content: attr(data-label);
+-        display: block;
+-        font-size: 0.75rem;
+-        text-transform: uppercase;
+-        letter-spacing: 0.05em;
+-        color: var(--muted-foreground);
+-        margin-bottom: 0.125rem;
+-      }
++  @media (max-width: 39.99rem) {
++    .legal-table,
++    .legal-table tbody,
++    .legal-table tr,
++    .legal-table td {
++      display: block;
++      width: 100%;
+     }
+-
+-    /* ── Manifiesto (capa divulgativa en páginas legales) ──── */
+-    .manifiesto {
+-      padding: 1.5rem 1.25rem;
+-      margin-block: 1.5rem 2.5rem;
+-      border-left: 3px solid var(--primary);
+-      background: color-mix(in oklch, var(--primary) 6%, transparent);
+-      border-radius: 0 var(--ax-radius-md) var(--ax-radius-md) 0;
++    .legal-table thead {
++      display: none;
+     }
+-    .manifiesto-lead {
+-      font-size: var(--text-lg);
+-      line-height: 1.6;
+-      color: var(--foreground);
+-      font-weight: 500;
++    .legal-table tr {
++      padding-block: 0.75rem;
++      border-bottom: 1px solid var(--border);
+     }
+-    .manifiesto p + p {
+-      margin-top: 0.75rem;
++    .legal-table tr:last-child {
++      border-bottom: 0;
+     }
+-    .formal-divider {
+-      margin-block: 3rem 1.5rem;
++    .legal-table td {
+       border: 0;
+-      height: 1px;
+-      background: linear-gradient(
+-        to right,
+-        var(--border) 0%,
+-        color-mix(in oklch, var(--primary) 40%, var(--border)) 50%,
+-        var(--border) 100%
+-      );
++      padding: 0.25rem 0;
+     }
+-    .formal-label {
++    .legal-table td[data-label]::before {
++      content: attr(data-label);
+       display: block;
+-      margin-top: -0.625rem;
+-      margin-bottom: 1.5rem;
+-      font-family: var(--font-mono);
+-      font-size: var(--text-xs);
++      font-size: 0.75rem;
+       text-transform: uppercase;
+-      letter-spacing: 0.08em;
++      letter-spacing: 0.05em;
+       color: var(--muted-foreground);
+-      text-align: center;
++      margin-bottom: 0.125rem;
+     }
+   }
+ 
+-  /* ── Stack marquee ─────────────────────────────────────── */
+-  .marquee-track {
+-    display: flex;
+-    align-items: center;
+-    gap: 2.5rem;
+-    width: max-content;
+-    animation: marquee 40s linear infinite;
+-    will-change: transform;
++  /* ── Manifiesto (capa divulgativa en páginas legales) ──── */
++  .manifiesto {
++    padding: 1.5rem 1.25rem;
++    margin-block: 1.5rem 2.5rem;
++    border-left: 3px solid var(--primary);
++    background: color-mix(in oklch, var(--primary) 6%, transparent);
++    border-radius: 0 var(--ax-radius-md) var(--ax-radius-md) 0;
+   }
+-  .marquee-viewport:hover .marquee-track,
+-  .marquee-viewport:focus-within .marquee-track {
+-    animation-play-state: paused;
++  .manifiesto-lead {
++    font-size: var(--text-lg);
++    line-height: 1.6;
++    color: var(--foreground);
++    font-weight: 500;
+   }
+-  .marquee-viewport {
+-    overflow: hidden;
+-    padding-block: 2rem;
+-    -webkit-mask-image: linear-gradient(
++  .manifiesto p + p {
++    margin-top: 0.75rem;
++  }
++  .formal-divider {
++    margin-block: 3rem 1.5rem;
++    border: 0;
++    height: 1px;
++    background: linear-gradient(
+       to right,
+-      transparent 0,
+-      #000 10%,
+-      #000 90%,
+-      transparent 100%
++      var(--border) 0%,
++      color-mix(in oklch, var(--primary) 40%, var(--border)) 50%,
++      var(--border) 100%
+     );
+-    mask-image: linear-gradient(to right, transparent 0, #000 10%, #000 90%, transparent 100%);
++  }
++  .formal-label {
++    display: block;
++    margin-top: -0.625rem;
++    margin-bottom: 1.5rem;
++    font-family: var(--font-mono);
++    font-size: var(--text-xs);
++    text-transform: uppercase;
++    letter-spacing: 0.08em;
++    color: var(--muted-foreground);
++    text-align: center;
+   }
+ 
+   /* ── Atmosphere Alexendros.me Design System v1 (4 layers) ─────────────── */
+   .atm {
+     position: fixed;
+     inset: 0;
+-    z-index: -1;
++    z-index: -11;
+     pointer-events: none;
+     overflow: hidden;
+     contain: layout paint;
+@@ -939,16 +933,6 @@
+   }
+ 
+   /* ── Misión: título de tarjeta ───────────────────── */
+-  .card-title {
+-    color: var(--foreground);
+-    font-weight: 600;
+-    font-size: var(--text-lg);
+-  }
+-  .card-subtitle {
+-    font-size: var(--text-xs);
+-    color: var(--muted-foreground);
+-    margin-top: 0.125rem;
+-  }
+ 
+   /* ── Contenedor body/layout ──────────────────────── */
+   .body-layout {
+@@ -967,89 +951,40 @@
+   }
+ 
+   /* ── Canvas partículas ───────────────────────────── */
+-  .particle-canvas {
++  /* Capas del fondo (de atrás adelante):
++     -20 halo dorado (body::before) · -19 grano (body::after) · -11 atmósfera
++     (.atm: haze/spark/dust/vignette) · -10 malla de nodos (.mesh-canvas). */
++  .mesh-canvas {
+     position: fixed;
+     inset: 0;
+-    width: 100vw;
+-    height: 100vh;
++    width: 100%;
++    height: 100%;
+     z-index: -10;
+     pointer-events: none;
++    opacity: 0.9;
++    /* La malla enmarca el contenido: más tenue tras la columna de lectura. */
++    -webkit-mask-image: radial-gradient(
++      ellipse 55% 60% at 50% 42%,
++      oklch(0 0 0 / 0.32) 0%,
++      #000 80%
++    );
++    mask-image: radial-gradient(ellipse 55% 60% at 50% 42%, oklch(0 0 0 / 0.32) 0%, #000 80%);
+   }
+-
+-  /* ── Logo en StackMarquee ────────────────────────── */
+-  .marquee-row {
+-    display: flex;
+-    flex-shrink: 0;
+-    align-items: center;
+-    gap: 3.5rem;
+-    padding-inline: 1.75rem;
+-  }
+-
+-  .marquee-item {
+-    display: flex;
+-    flex-shrink: 0;
+-    flex-direction: column;
+-    align-items: center;
+-    gap: 0.5rem;
+-    border-radius: var(--ax-radius-md);
+-    padding: 0.25rem 0.5rem;
+-    color: var(--foreground);
+-    transition: color var(--ax-duration-fast) var(--ax-ease-out-expo);
+-  }
+-  .marquee-item:focus-visible {
+-    outline: none;
+-    box-shadow: var(--ax-ring-focus);
+-  }
+-
+-  .marquee-logo-wrap {
+-    position: relative;
+-    display: flex;
+-    height: 2.75rem;
+-    width: 2.75rem;
+-    align-items: center;
+-    justify-content: center;
+-  }
+-  .marquee-logo-img {
+-    position: relative;
+-    height: 2.75rem;
+-    width: 2.75rem;
+-    transition: transform var(--ax-duration-base) var(--ax-ease-out-expo);
+-  }
+-  .marquee-item:hover .marquee-logo-img {
+-    transform: scale(1.1);
+-  }
+-
+-  .marquee-logo-glow {
+-    position: absolute;
+-    inset: 0;
+-    border-radius: var(--ax-radius-full);
+-    opacity: 0.4;
+-    transition: opacity var(--ax-duration-base) var(--ax-ease-out-expo);
+-    pointer-events: none;
+-  }
+-  .marquee-item:hover .marquee-logo-glow {
+-    opacity: 0.8;
+-  }
+-
+-  .marquee-logo-label {
+-    font-size: var(--text-xs);
+-    font-weight: 500;
+-    letter-spacing: 0.05em;
+-    color: var(--muted-foreground);
+-    transition: color var(--ax-duration-fast) var(--ax-ease-out-expo);
+-  }
+-  .marquee-item:hover .marquee-logo-label {
+-    color: var(--foreground);
++  :root[data-theme="light"] .mesh-canvas {
++    opacity: 0.7;
+   }
+ 
+   /* ── Contenedor home sections (scroll-mt) ────────── */
+   .scroll-section {
+-    scroll-margin-top: 4rem;
++    scroll-margin-top: calc(4.5rem + var(--ax-banner-offset, 0px));
+   }
+ 
+   /* ── Contenedor de contenido (max-width 3xl) ─────── */
+   .content-container {
+-    max-width: 48rem;
++    /* 48rem = ancho de nav y footer; se descuenta el padding del shell para que el
++       texto arranque exactamente bajo el logo. */
++    max-width: calc(48rem - 2 * var(--ax-safe-inset));
++    margin-inline: auto;
+   }
+ 
+   /* ── Cabecera de sección (título + descripción) ──── */
+@@ -1065,39 +1000,10 @@
+   }
+ 
+   /* ── Stack vertical por tamaño ────────────────────── */
+-  .stack-xl-gap {
+-    display: flex;
+-    flex-direction: column;
+-    gap: 2.5rem;
+-  }
+-
+-  /* ── Tarjeta misión: texto cuerpo ────────────────── */
+-  .card-body {
+-    color: var(--muted-foreground);
+-    line-height: 1.625;
+-    font-size: var(--text-sm);
+-  }
+ 
+   /* ── Enlace de tarjeta misión ────────────────────── */
+-  .card-link {
+-    display: inline-block;
+-    padding-block: 0.75rem;
+-    font-size: var(--text-sm);
+-    color: var(--primary);
+-  }
+ 
+   /* ── Sección StackMarquee en home ────────────────── */
+-  .marquee-section {
+-    content-visibility: auto;
+-    contain-intrinsic-size: auto 40rem;
+-    padding-top: 1rem;
+-  }
+-  .marquee-heading {
+-    margin-bottom: 0.5rem;
+-  }
+-  .marquee-desc {
+-    margin-bottom: 1rem;
+-  }
+ 
+   /* ── Avance de navegación ────────────────────────── */
+   .back-link {
+@@ -1132,13 +1038,13 @@
+   /* Headings con tabIndex necesitan scroll-margin para que scrollIntoView
+      no quede tapado por la nav sticky */
+   :where(.prose) :where(h1, h2, h3, h4, h5, h6) {
+-    scroll-margin-top: 5rem;
++    scroll-margin-top: calc(5rem + var(--ax-banner-offset, 0px));
+   }
+ 
+   .toc {
+     position: sticky;
+-    top: 5.5rem;
+-    max-height: calc(100vh - 7rem);
++    top: calc(5.5rem + var(--ax-banner-offset, 0px));
++    max-height: calc(100dvh - 7rem - var(--ax-banner-offset, 0px));
+     overflow-y: auto;
+     padding: 0.75rem 0 0.75rem 1rem;
+     border-left: 1px solid var(--border);
+@@ -1262,11 +1168,142 @@
+     inset: -0.35rem -0.25rem;
+     min-height: 24px;
+   }
+-  .hero-signature--shimmer {
++
++  /* ── Nav: cristal esmerilado (el token glass existía pero no se usaba) ── */
++  .site-nav {
++    -webkit-backdrop-filter: blur(14px) saturate(140%);
++    backdrop-filter: blur(14px) saturate(140%);
++  }
++  @media (prefers-reduced-transparency: reduce) {
++    .site-nav {
++      -webkit-backdrop-filter: none;
++      backdrop-filter: none;
++      background: var(--background);
++    }
++  }
++
++  /* ── Hero: nombre en latón + punto de pulso (reutiliza @keyframes pulse-dot) ── */
++  .hero-name {
+     color: var(--ax-accent);
+     -webkit-text-fill-color: var(--ax-accent);
+-    background: none;
+-    animation: none;
++  }
++  .hero-eyebrow {
++    display: inline-flex;
++    align-items: center;
++    gap: 0.625rem;
++  }
++  .hero-eyebrow__dot {
++    position: relative;
++    flex: none;
++    width: 0.5rem;
++    height: 0.5rem;
++    border-radius: var(--ax-radius-full);
++    background: var(--ax-accent);
++  }
++  .hero-eyebrow__dot::after {
++    content: "";
++    position: absolute;
++    inset: 0;
++    border-radius: inherit;
++    background: var(--ax-accent);
++    animation: pulse-dot 2.4s var(--ax-ease-out-expo) infinite;
++  }
++
++  /* ── Tarjetas de pieza: foco de luz que sigue al puntero (--mx/--my vía CSSOM) ── */
++  .article-item {
++    isolation: isolate;
++    padding: 0.875rem 1rem;
++    margin: -0.875rem -1rem;
++    border-radius: var(--ax-radius-lg);
++  }
++  .article-item::before {
++    content: "";
++    position: absolute;
++    inset: 0;
++    z-index: -1;
++    border-radius: inherit;
++    opacity: 0;
++    pointer-events: none;
++    background: radial-gradient(
++      22rem circle at var(--mx, 50%) var(--my, 30%),
++      color-mix(in oklch, var(--ax-accent) 13%, transparent),
++      transparent 70%
++    );
++    transition: opacity var(--ax-duration-slow) var(--ax-ease-out-expo);
++  }
++  .article-item:hover::before,
++  .article-item:focus-visible::before {
++    opacity: 1;
++  }
++  @media (hover: none) {
++    .article-item::before {
++      display: none;
++    }
++  }
++
++  /* ── Revelado al hacer scroll (CSS puro; si no hay soporte, todo visible) ── */
++  @supports (animation-timeline: view()) {
++    .reveal {
++      animation: reveal-up linear both;
++      animation-timeline: view();
++      animation-range: entry 0% entry 35%;
++    }
++  }
++  @media (prefers-reduced-motion: reduce) {
++    .reveal {
++      animation: none;
++    }
++  }
++
++  /* ── Barra de progreso de lectura (artículos) ── */
++  .read-progress {
++    display: none;
++  }
++  @supports (animation-timeline: scroll()) {
++    .read-progress {
++      display: block;
++      position: fixed;
++      top: 0;
++      left: 0;
++      right: 0;
++      height: 2px;
++      z-index: var(--ax-z-overlay);
++      background: var(--ax-accent);
++      transform-origin: 0 50%;
++      transform: scaleX(0);
++      animation: read-progress linear both;
++      animation-timeline: scroll(root block);
++      pointer-events: none;
++    }
++  }
++  @media (prefers-reduced-motion: reduce) {
++    .read-progress {
++      animation: none;
++      transform: scaleX(0);
++    }
++  }
++
++  /* ── Cierre de la home ── */
++  .closing {
++    position: relative;
++  }
++  .closing::before {
++    content: "";
++    position: absolute;
++    top: 0;
++    left: 50%;
++    width: min(48rem, calc(100% - 2rem));
++    height: 1px;
++    transform: translateX(-50%);
++    background: linear-gradient(
++      to right,
++      transparent,
++      color-mix(in oklch, var(--ax-accent) 55%, var(--border)),
++      transparent
++    );
++  }
++  .closing__inner {
++    align-items: flex-start;
+   }
+ 
+   /* Motion: nav link underline + FAB con spring */
+@@ -1286,55 +1323,6 @@
+   transform: rotate(0deg);
+ }
+ 
+-/* ── Stack marquee brand colors ──────────────────── */
+-.marquee-item[data-brand="nextjs"],
+-.marquee-item[data-brand="vercel"],
+-.marquee-item[data-brand="resend"] {
+-  color: currentColor;
+-}
+-.marquee-item[data-brand="typescript"] {
+-  color: #3178c6;
+-}
+-.marquee-item[data-brand="supabase"] {
+-  color: #3fcf8e;
+-}
+-.marquee-item[data-brand="prisma"] {
+-  color: #2d3748;
+-}
+-.marquee-item[data-brand="stripe"] {
+-  color: #635bff;
+-}
+-.marquee-item[data-brand="tailwindcss"] {
+-  color: #06b6d4;
+-}
+-.marquee-item[data-brand="turborepo"] {
+-  color: #ff1e56;
+-}
+-
+-.marquee-logo-glow[data-glow-color="typescript"] {
+-  background: radial-gradient(circle, #3178c6 0%, transparent 65%);
+-}
+-.marquee-logo-glow[data-glow-color="supabase"] {
+-  background: radial-gradient(circle, #3fcf8e 0%, transparent 65%);
+-}
+-.marquee-logo-glow[data-glow-color="prisma"] {
+-  background: radial-gradient(circle, #2d3748 0%, transparent 65%);
+-}
+-.marquee-logo-glow[data-glow-color="stripe"] {
+-  background: radial-gradient(circle, #635bff 0%, transparent 65%);
+-}
+-.marquee-logo-glow[data-glow-color="tailwindcss"] {
+-  background: radial-gradient(circle, #06b6d4 0%, transparent 65%);
+-}
+-.marquee-logo-glow[data-glow-color="turborepo"] {
+-  background: radial-gradient(circle, #ff1e56 0%, transparent 65%);
+-}
+-.marquee-logo-glow[data-glow-color="nextjs"],
+-.marquee-logo-glow[data-glow-color="vercel"],
+-.marquee-logo-glow[data-glow-color="resend"] {
+-  background: radial-gradient(circle, var(--ax-text-tertiary) 0%, transparent 65%);
+-}
+-
+ /* ── Service Worker update toast ─────────────────── */
+ .sw-toast {
+   position: fixed;
+@@ -1387,7 +1375,6 @@
+ }
+ 
+ @media (prefers-reduced-motion: reduce) {
+-  .hero-signature--shimmer,
+   .hero-animate {
+     animation: none;
+   }
+@@ -1569,3 +1556,35 @@
+     animation: none;
+   }
+ }
++
++/* ── Overrides sin capa ─────────────────────────────────────────────────────
++   El <style> crítico de layout.tsx es unlayered y está fijado por hash en la CSP
++   (vercel.json), así que no se edita: estas reglas lo corrigen por especificidad. */
++
++/* El hero medía 52rem y la nav/footer 48rem → el logo y el H1 no compartían borde. */
++.site-shell.hero-section {
++  max-width: 48rem;
++}
++
++/* 100vh incluye la barra de URL en móvil y provoca scroll sobrante; dvh la excluye. */
++@supports (min-height: 100dvh) {
++  body.body-layout {
++    min-height: 100dvh;
++  }
++}
++
++@keyframes reveal-up {
++  from {
++    opacity: 0;
++    transform: translateY(1.25rem);
++  }
++  to {
++    opacity: 1;
++    transform: none;
++  }
++}
++@keyframes read-progress {
++  to {
++    transform: scaleX(1);
++  }
++}
+diff --git a/app/styles/print.css b/app/styles/print.css
+index bd1b5d9..4817aab 100644
+--- a/app/styles/print.css
++++ b/app/styles/print.css
+@@ -30,7 +30,7 @@
+   .site-footer,
+   .anti-monetization-banner,
+   .contact-fab,
+-  .particle-canvas,
++  .mesh-canvas,
+   .atm,
+   .toc,
+   .toc-mobile,
+diff --git a/app/styles/prose.css b/app/styles/prose.css
+index 57deacc..5878073 100644
+--- a/app/styles/prose.css
++++ b/app/styles/prose.css
+@@ -12,7 +12,28 @@
+     margin-bottom: 1rem;
+     margin-top: 2.75rem;
+     color: var(--ax-text-primary);
+-    scroll-margin-top: 5.5rem;
++    scroll-margin-top: calc(5.5rem + var(--ax-banner-offset, 0px));
++    /* Tailwind preflight deja h1–h6 en font-size/weight: inherit → sin esto los
++       títulos de los artículos se veían como texto de párrafo. */
++    font-family: var(--font-display);
++    font-weight: 600;
++    line-height: 1.2;
++    letter-spacing: var(--tracking-heading);
++    text-wrap: balance;
++  }
++  .prose h1 {
++    font-size: var(--text-3xl);
++  }
++  .prose h2 {
++    font-size: var(--text-2xl);
++  }
++  .prose h3 {
++    font-size: var(--text-xl);
++  }
++  .prose h4 {
++    font-size: var(--text-lg);
++    font-family: var(--font-sans);
++    font-weight: 600;
+   }
+   .prose h1:first-child,
+   .prose h2:first-child,
+@@ -55,6 +76,24 @@
+   .prose ul {
+     list-style-type: disc;
+   }
++  .prose ol {
++    list-style-type: decimal;
++  }
++  .prose li::marker {
++    color: var(--ax-accent-dim);
++  }
++  .prose img,
++  .prose video {
++    max-width: 100%;
++    height: auto;
++    border-radius: var(--ax-radius-lg);
++    margin-block: 1.5rem;
++  }
++  .prose pre code {
++    background: none;
++    padding: 0;
++    font-size: inherit;
++  }
+   .prose ul li,
+   .prose ol li {
+     color: var(--ax-text-secondary);
+@@ -69,6 +108,8 @@
+     border-left: 2px solid color-mix(in oklch, var(--primary) 25%, transparent);
+     padding-left: 1rem;
+     font-style: italic;
++    font-family: var(--font-display);
++    font-size: var(--text-lg);
+     color: var(--ax-text-secondary);
+     margin-block: 1.5rem;
+   }
+diff --git a/app/styles/tokens/index.css b/app/styles/tokens/index.css
+index 1a93b49..728ed9c 100644
+--- a/app/styles/tokens/index.css
++++ b/app/styles/tokens/index.css
+@@ -71,7 +71,6 @@
+   --font-display: var(--font-source-serif), var(--font-source-sans), ui-serif, Georgia, serif;
+ 
+   /* Keyframes para Tailwind v4 animate-* utilities */
+-  --animate-marquee: marquee 40s linear infinite;
+   --animate-atm-drift: atm-drift 18s ease-in-out infinite alternate;
+   --animate-pulse-dot: pulse-dot 2s var(--ax-ease-smooth) infinite;
+   --animate-hero-shimmer: hero-shimmer 6s var(--ax-ease-in-out) infinite alternate;
+diff --git a/app/styles/tokens/motion.css b/app/styles/tokens/motion.css
+index 14e36ae..02a3cb6 100644
+--- a/app/styles/tokens/motion.css
++++ b/app/styles/tokens/motion.css
+@@ -43,14 +43,6 @@
+ /* =====================================================================
+    KEYFRAMES — animaciones globales
+    ===================================================================== */
+-@keyframes marquee {
+-  from {
+-    transform: translateX(0);
+-  }
+-  to {
+-    transform: translateX(-50%);
+-  }
+-}
+ 
+ @keyframes atm-drift {
+   from {
+@@ -121,11 +113,6 @@
+     scroll-behavior: auto !important;
+   }
+ 
+-  .marquee-track {
+-    animation: none !important;
+-    transform: none !important;
+-  }
+-
+   .atm__haze,
+   .atm__spark,
+   .atm__dust {
+diff --git a/app/styles/utilities.css b/app/styles/utilities.css
+index 02d8f18..0279e2b 100644
+--- a/app/styles/utilities.css
++++ b/app/styles/utilities.css
+@@ -1,5 +1,5 @@
+ /* utilities.css — custom @utility directives (Tailwind v4 syntax).
+-   Used via class (e.g. `animate-marquee`, `no-scrollbar`). */
++   Used via class (e.g. `no-scrollbar`). */
+ 
+ @utility no-scrollbar {
+   -ms-overflow-style: none;
+@@ -10,10 +10,6 @@
+   }
+ }
+ 
+-@utility animate-marquee {
+-  animation: marquee 40s linear infinite;
+-}
+-
+ @utility mask-fade-x {
+   -webkit-mask-image: linear-gradient(
+     to right,
+diff --git a/components/anti-monetization-banner.tsx b/components/anti-monetization-banner.tsx
+index cde02e1..851271a 100644
+--- a/components/anti-monetization-banner.tsx
++++ b/components/anti-monetization-banner.tsx
+@@ -1,21 +1,39 @@
+ "use client";
+ 
+-import { useLayoutEffect, useState } from "react";
++import { useEffect, useLayoutEffect, useRef, useState } from "react";
+ import { Shield, ArrowUpRight, X } from "lucide-react";
+ import { cn } from "@/lib/utils";
+ import { useI18n } from "@/lib/i18n";
+ 
+ const DISMISS_KEY = "anti-monetization-dismissed";
+ 
++/** localStorage puede lanzar (Safari privado, cookies bloqueadas): nunca debe romper la UI. */
++function readDismissed(): boolean {
++  try {
++    return localStorage.getItem(DISMISS_KEY) === "true";
++  } catch {
++    return false;
++  }
++}
++
++function writeDismissed(): void {
++  try {
++    localStorage.setItem(DISMISS_KEY, "true");
++  } catch {
++    // almacenamiento no disponible: el aviso reaparecerá en la próxima visita
++  }
++}
++
+ export function AntiMonetizationBanner() {
+   // SSR + first client paint assume visible (matches pre-paint data-ax-banner=1) to avoid CLS.
+   const [dismissed, setDismissed] = useState(false);
+   const [reduceMotion, setReduceMotion] = useState(false);
+   const [isHovered, setIsHovered] = useState(false);
++  const bannerRef = useRef<HTMLDivElement | null>(null);
+   const { t } = useI18n();
+ 
+   useLayoutEffect(() => {
+-    const isDismissed = localStorage.getItem(DISMISS_KEY) === "true";
++    const isDismissed = readDismissed();
+     setDismissed(isDismissed);
+     document.documentElement.setAttribute("data-ax-banner", isDismissed ? "0" : "1");
+ 
+@@ -30,6 +48,27 @@ export function AntiMonetizationBanner() {
+     return () => mediaQuery.removeEventListener("change", handleChange);
+   }, []);
+ 
++  // El offset CSS (3.25rem/3.5rem) es solo una estimación inicial anti-CLS. Si el texto
++  // salta a 2–3 líneas (móvil, zoom, idioma EN) el banner mide más y tapaba la nav sticky:
++  // aquí se publica la altura real. Se usa CSSOM (no atributo style) → compatible con la CSP.
++  useEffect(() => {
++    const root = document.documentElement;
++    const el = bannerRef.current;
++    if (dismissed || !el) {
++      root.style.removeProperty("--ax-banner-offset");
++      return;
++    }
++    const publish = () => root.style.setProperty("--ax-banner-offset", `${el.offsetHeight}px`);
++    publish();
++    if (typeof ResizeObserver === "undefined") return;
++    const observer = new ResizeObserver(publish);
++    observer.observe(el);
++    return () => {
++      observer.disconnect();
++      root.style.removeProperty("--ax-banner-offset");
++    };
++  }, [dismissed]);
++
+   if (dismissed) {
+     return null;
+   }
+@@ -42,7 +81,7 @@ export function AntiMonetizationBanner() {
+ 
+   const handleDismiss = () => {
+     setDismissed(true);
+-    localStorage.setItem(DISMISS_KEY, "true");
++    writeDismissed();
+     document.documentElement.setAttribute("data-ax-banner", "0");
+   };
+ 
+@@ -53,6 +92,7 @@ export function AntiMonetizationBanner() {
+ 
+   return (
+     <div
++      ref={bannerRef}
+       className={bannerClass}
+       role="region"
+       aria-label={t("antiMonetization.regionLabel")}
+diff --git a/components/home-content.tsx b/components/home-content.tsx
+index f55f5d6..e999bc0 100644
+--- a/components/home-content.tsx
++++ b/components/home-content.tsx
+@@ -25,18 +25,41 @@ function formatDate(dateStr: string, locale: string) {
+   });
+ }
+ 
++/** Publica la posición del puntero en --mx/--my para el foco de luz de la tarjeta (CSS puro). */
++function trackPointer(e: React.PointerEvent<HTMLElement>) {
++  const el = e.currentTarget;
++  const rect = el.getBoundingClientRect();
++  el.style.setProperty("--mx", `${e.clientX - rect.left}px`);
++  el.style.setProperty("--my", `${e.clientY - rect.top}px`);
++}
++
+ export function HomeContent({ latestArticles }: HomeContentProps) {
+   const { t, locale } = useI18n();
+   const prefix = useLocalePrefix();
+ 
++  // «Alexendros.» se resalta en latón; el resto de la firma queda en tinta. Mismo texto accesible.
++  const signature = t("hero.signature");
++  const splitAt = signature.indexOf(". ");
++  const heroName = splitAt > 0 ? signature.slice(0, splitAt + 1) : null;
++  const heroRest = splitAt > 0 ? signature.slice(splitAt + 2) : signature;
++
+   return (
+     <>
+       <section className="site-shell hero-section">
+         <div className="cluster-center">
+-          <p className="hero-eyebrow">{t("hero.eyebrow")}</p>
++          <p className="hero-eyebrow">
++            <span className="hero-eyebrow__dot" aria-hidden="true" />
++            {t("hero.eyebrow")}
++          </p>
+         </div>
+-        <h1 className="hero-signature hero-signature--shimmer hero-animate display">
+-          {t("hero.signature")}
++        <h1 className="hero-signature hero-animate display">
++          {heroName ? (
++            <>
++              <span className="hero-name">{heroName}</span> {heroRest}
++            </>
++          ) : (
++            signature
++          )}
+         </h1>
+         <p
+           className="prose-lead"
+@@ -66,10 +89,10 @@ export function HomeContent({ latestArticles }: HomeContentProps) {
+         aria-labelledby="h2-biografia"
+       >
+         <div className="content-container stack-lg">
+-          <h2 id="h2-biografia" className="headline">
++          <h2 id="h2-biografia" className="headline reveal">
+             {t("sections.biografia.title")}
+           </h2>
+-          <div className="stack-md prose">
++          <div className="stack-md prose reveal">
+             <p>{t("sections.biografia.p1")}</p>
+             <p
+               dangerouslySetInnerHTML={{
+@@ -92,7 +115,7 @@ export function HomeContent({ latestArticles }: HomeContentProps) {
+         aria-labelledby="h2-publicaciones"
+       >
+         <div className="content-container stack-lg">
+-          <div className="section-head">
++          <div className="section-head reveal">
+             <h2 id="h2-publicaciones" className="headline">
+               {t("sections.publicaciones.title")}
+             </h2>
+@@ -112,10 +135,11 @@ export function HomeContent({ latestArticles }: HomeContentProps) {
+           ) : (
+             <div className="stack-lg">
+               {latestArticles.map((article) => (
+-                <article key={`${article.type}-${article.slug}`}>
++                <article key={`${article.type}-${article.slug}`} className="reveal">
+                   <Link
+                     href={withLocalePrefix(prefix, `/${article.type}/${article.slug}`)}
+                     className="article-item"
++                    onPointerMove={trackPointer}
+                   >
+                     <time dateTime={article.frontmatter.date} className="ds-caption">
+                       {formatDate(article.frontmatter.date, locale)}
+@@ -132,9 +156,17 @@ export function HomeContent({ latestArticles }: HomeContentProps) {
+         </div>
+       </section>
+ 
+-      <div role="region" aria-label={t("contact.fabLabel")}>
+-        <ContactFab />
+-      </div>
++      <section className="site-shell section closing" aria-labelledby="h2-contacto">
++        <div className="content-container stack-md closing__inner reveal">
++          <h2 id="h2-contacto" className="headline">
++            {t("sections.contacto.title")}
++          </h2>
++          <p className="section-desc">{t("sections.contacto.desc")}</p>
++          <div className="cluster" role="group" aria-label={t("contact.fabLabel")}>
++            <ContactFab />
++          </div>
++        </div>
++      </section>
+     </>
+   );
+ }
+diff --git a/components/mesh-bg.tsx b/components/mesh-bg.tsx
+new file mode 100644
+index 0000000..9b1b2b5
+--- /dev/null
++++ b/components/mesh-bg.tsx
+@@ -0,0 +1,325 @@
++"use client";
++
++import { useEffect, useRef } from "react";
++
++/**
++ * MeshBg — fondo de identidad de alexendros.me.
++ *
++ * Una red de nodos latón sobre la atmósfera violeta: cada nodo es un punto
++ * soberano y los enlaces aparecen solo cuando dos nodos se encuentran. Es la
++ * imagen literal de «menos plataformas, más protocolos»: nadie en el centro,
++ * todo conectado por caminos abiertos. Ocasionalmente un paquete viaja por un
++ * enlace (un mensaje entre pares) y el cursor se une a la red como un nodo más.
++ *
++ * Reglas de oro (mismas que el resto del sistema):
++ * - Sin dependencias, sin red, sin tracking: solo Canvas 2D.
++ * - Colores leídos de los tokens `--ax-*` y re-leídos al cambiar de tema.
++ * - prefers-reduced-motion / data-reduce / viewport estrecho → un único frame
++ *   estático (la personalidad se mantiene, el movimiento no).
++ * - Pausa en pestañas ocultas. DPR limitado a 2. Coste O(n²) con n ≤ 90.
++ */
++
++type Node = { x: number; y: number; vx: number; vy: number; r: number };
++type Packet = { a: number; b: number; t: number; speed: number };
++type Palette = { line: string; node: string; packet: string };
++
++const MOBILE_MAX = 768;
++const FALLBACK_DARK: Palette = { line: "#c9a24a", node: "#c9a24a", packet: "#f0d98a" };
++const FALLBACK_LIGHT: Palette = { line: "#7a5a12", node: "#7a5a12", packet: "#5b4009" };
++
++/** Devuelve `value` si el canvas lo entiende como color; si no, `fallback`. */
++function validColor(ctx: CanvasRenderingContext2D, value: string, fallback: string): string {
++  if (!value) return fallback;
++  const sentinel = "#010203";
++  ctx.fillStyle = sentinel;
++  ctx.fillStyle = value;
++  return ctx.fillStyle === sentinel ? fallback : value;
++}
++
++function readPalette(ctx: CanvasRenderingContext2D): Palette {
++  const root = document.documentElement;
++  const styles = getComputedStyle(root);
++  const light =
++    root.getAttribute("data-theme") === "light" ||
++    (!root.hasAttribute("data-theme") &&
++      window.matchMedia("(prefers-color-scheme: light)").matches);
++  const fb = light ? FALLBACK_LIGHT : FALLBACK_DARK;
++  const accent = styles.getPropertyValue("--ax-accent").trim();
++  const bright = styles.getPropertyValue("--ax-accent-bright").trim();
++  return {
++    line: validColor(ctx, accent, fb.line),
++    node: validColor(ctx, accent, fb.node),
++    // En claro, --ax-accent-bright es MÁS oscuro que el acento (hover); es lo que queremos.
++    packet: validColor(ctx, bright, fb.packet),
++  };
++}
++
++export function MeshBg() {
++  const ref = useRef<HTMLCanvasElement | null>(null);
++
++  useEffect(() => {
++    const canvas = ref.current;
++    if (!canvas) return;
++    const ctx = canvas.getContext("2d");
++    if (!ctx) return;
++
++    const reduceQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
++    const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
++
++    let w = 0;
++    let h = 0;
++    let dpr = 1;
++    let nodes: Node[] = [];
++    let packets: Packet[] = [];
++    let palette = readPalette(ctx);
++    let linkDist = 140;
++    let raf = 0;
++    let running = false;
++    let last = 0;
++    let sinceSpawn = 0;
++    let resizeRaf = 0;
++    const pointer = { x: -9999, y: -9999, active: false };
++
++    const isStatic = () =>
++      reduceQuery.matches ||
++      document.documentElement.getAttribute("data-reduce") === "true" ||
++      window.innerWidth < MOBILE_MAX;
++
++    const layout = () => {
++      dpr = Math.min(window.devicePixelRatio || 1, 2);
++      w = window.innerWidth;
++      h = window.innerHeight;
++      canvas.width = Math.round(w * dpr);
++      canvas.height = Math.round(h * dpr);
++      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
++
++      const small = w < MOBILE_MAX;
++      const count = small ? 26 : Math.max(34, Math.min(90, Math.floor((w * h) / 21000)));
++      linkDist = small ? 120 : Math.max(120, Math.min(170, w / 9));
++      nodes = Array.from({ length: count }, () => ({
++        x: Math.random() * w,
++        y: Math.random() * h,
++        vx: (Math.random() - 0.5) * 0.22,
++        vy: (Math.random() - 0.5) * 0.22,
++        r: Math.random() * 1.1 + 0.7,
++      }));
++      packets = [];
++    };
++
++    const step = (k: number) => {
++      for (const n of nodes) {
++        if (pointer.active) {
++          const dx = pointer.x - n.x;
++          const dy = pointer.y - n.y;
++          const d2 = dx * dx + dy * dy;
++          if (d2 < 190 * 190 && d2 > 1) {
++            const d = Math.sqrt(d2);
++            const pull = ((190 - d) / 190) * 0.012 * k;
++            n.vx += (dx / d) * pull;
++            n.vy += (dy / d) * pull;
++          }
++        }
++        // Amortiguación suave y tope de velocidad: deriva, nunca enjambre.
++        n.vx *= 0.995;
++        n.vy *= 0.995;
++        const sp = Math.hypot(n.vx, n.vy);
++        if (sp > 0.45) {
++          n.vx = (n.vx / sp) * 0.45;
++          n.vy = (n.vy / sp) * 0.45;
++        }
++        n.x += n.vx * k;
++        n.y += n.vy * k;
++        if (n.x < -10) n.x = w + 10;
++        else if (n.x > w + 10) n.x = -10;
++        if (n.y < -10) n.y = h + 10;
++        else if (n.y > h + 10) n.y = -10;
++      }
++    };
++
++    const links = (): Array<[number, number, number]> => {
++      const out: Array<[number, number, number]> = [];
++      const max2 = linkDist * linkDist;
++      for (let i = 0; i < nodes.length; i++) {
++        const a = nodes[i];
++        if (!a) continue;
++        for (let j = i + 1; j < nodes.length; j++) {
++          const b = nodes[j];
++          if (!b) continue;
++          const dx = a.x - b.x;
++          const dy = a.y - b.y;
++          const d2 = dx * dx + dy * dy;
++          if (d2 < max2) out.push([i, j, 1 - Math.sqrt(d2) / linkDist]);
++        }
++      }
++      return out;
++    };
++
++    const draw = (animated: boolean) => {
++      ctx.clearRect(0, 0, w, h);
++      const ls = links();
++
++      ctx.lineWidth = 1;
++      ctx.strokeStyle = palette.line;
++      for (const [i, j, strength] of ls) {
++        const a = nodes[i];
++        const b = nodes[j];
++        if (!a || !b) continue;
++        ctx.globalAlpha = strength * 0.22;
++        ctx.beginPath();
++        ctx.moveTo(a.x, a.y);
++        ctx.lineTo(b.x, b.y);
++        ctx.stroke();
++      }
++
++      // El visitante se une a la red: enlaces desde el cursor a los nodos cercanos.
++      if (animated && pointer.active) {
++        for (const n of nodes) {
++          const d = Math.hypot(pointer.x - n.x, pointer.y - n.y);
++          if (d < 170) {
++            ctx.globalAlpha = (1 - d / 170) * 0.42;
++            ctx.beginPath();
++            ctx.moveTo(pointer.x, pointer.y);
++            ctx.lineTo(n.x, n.y);
++            ctx.stroke();
++          }
++        }
++      }
++
++      ctx.fillStyle = palette.node;
++      for (const n of nodes) {
++        ctx.globalAlpha = 0.5;
++        ctx.beginPath();
++        ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
++        ctx.fill();
++      }
++
++      if (animated) {
++        ctx.fillStyle = palette.packet;
++        for (const p of packets) {
++          const a = nodes[p.a];
++          const b = nodes[p.b];
++          if (!a || !b) continue;
++          const x = a.x + (b.x - a.x) * p.t;
++          const y = a.y + (b.y - a.y) * p.t;
++          const fade = Math.sin(p.t * Math.PI);
++          ctx.globalAlpha = 0.25 * fade;
++          ctx.beginPath();
++          ctx.arc(x, y, 5, 0, Math.PI * 2);
++          ctx.fill();
++          ctx.globalAlpha = 0.9 * fade;
++          ctx.beginPath();
++          ctx.arc(x, y, 1.8, 0, Math.PI * 2);
++          ctx.fill();
++        }
++      }
++      ctx.globalAlpha = 1;
++      return ls;
++    };
++
++    const frame = (now: number) => {
++      if (!running) return;
++      const dt = Math.min(48, now - last || 16.7);
++      last = now;
++      const k = dt / 16.7;
++
++      step(k);
++
++      // Avanza paquetes y descarta los que llegaron.
++      for (const p of packets) p.t += p.speed * dt;
++      packets = packets.filter((p) => p.t < 1);
++
++      const ls = draw(true);
++
++      sinceSpawn += dt;
++      if (sinceSpawn > 1400 && packets.length < 4 && ls.length > 0) {
++        sinceSpawn = 0;
++        const pick = ls[Math.floor(Math.random() * ls.length)];
++        if (pick) packets.push({ a: pick[0], b: pick[1], t: 0, speed: 1 / 1100 });
++      }
++      raf = requestAnimationFrame(frame);
++    };
++
++    const stop = () => {
++      running = false;
++      if (raf) cancelAnimationFrame(raf);
++      raf = 0;
++    };
++
++    const start = () => {
++      if (running) return;
++      running = true;
++      last = 0;
++      raf = requestAnimationFrame(frame);
++    };
++
++    /** Decide entre animar o pintar un solo frame, según preferencias y visibilidad. */
++    const sync = () => {
++      if (isStatic()) {
++        stop();
++        draw(false);
++        return;
++      }
++      if (document.hidden) {
++        stop();
++        return;
++      }
++      start();
++    };
++
++    layout();
++    sync();
++
++    const onResize = () => {
++      if (resizeRaf) return;
++      resizeRaf = requestAnimationFrame(() => {
++        resizeRaf = 0;
++        const widthChanged = window.innerWidth !== w;
++        const heightJump = Math.abs(window.innerHeight - h) > h * 0.25;
++        // En móvil la barra del navegador cambia innerHeight al hacer scroll: se ignora.
++        if (widthChanged || heightJump) {
++          layout();
++          sync();
++        }
++      });
++    };
++
++    const onPointerMove = (e: PointerEvent) => {
++      if (!finePointer.matches || e.pointerType !== "mouse") return;
++      pointer.x = e.clientX;
++      pointer.y = e.clientY;
++      pointer.active = true;
++    };
++    const onPointerLeave = () => {
++      pointer.active = false;
++    };
++
++    // Re-lee los tokens cuando cambia el tema (data-theme / class en <html>).
++    const themeObserver = new MutationObserver(() => {
++      palette = readPalette(ctx);
++      if (!running) draw(false);
++    });
++    themeObserver.observe(document.documentElement, {
++      attributes: true,
++      attributeFilter: ["data-theme", "class", "data-reduce"],
++    });
++
++    window.addEventListener("resize", onResize);
++    window.addEventListener("pointermove", onPointerMove, { passive: true });
++    document.documentElement.addEventListener("pointerleave", onPointerLeave);
++    document.addEventListener("visibilitychange", sync);
++    reduceQuery.addEventListener("change", sync);
++
++    return () => {
++      stop();
++      if (resizeRaf) cancelAnimationFrame(resizeRaf);
++      themeObserver.disconnect();
++      window.removeEventListener("resize", onResize);
++      window.removeEventListener("pointermove", onPointerMove);
++      document.documentElement.removeEventListener("pointerleave", onPointerLeave);
++      document.removeEventListener("visibilitychange", sync);
++      reduceQuery.removeEventListener("change", sync);
++    };
++  }, []);
++
++  return <canvas ref={ref} aria-hidden="true" className="mesh-canvas" data-testid="particle-bg" />;
++}
+diff --git a/components/nav.tsx b/components/nav.tsx
+index 782f29b..eb158ef 100644
+--- a/components/nav.tsx
++++ b/components/nav.tsx
+@@ -16,6 +16,8 @@ const MobileMenu = dynamic(() => import("@/components/mobile-menu").then((m) =>
+   ssr: false,
+ });
+ 
++const NAV_SECTION_IDS = siteConfig.nav.map((item) => item.href.replace("#", ""));
++
+ function scrollBehavior(): ScrollBehavior {
+   if (
+     typeof window !== "undefined" &&
+@@ -47,7 +49,7 @@ export function Nav() {
+   const prefix = localePrefix(pathname);
+   const [modKey, setModKey] = useState("Ctrl");
+ 
+-  const activeHash = useScrollSpy(siteConfig.nav.map((item) => item.href.replace("#", "")));
++  const activeHash = useScrollSpy(NAV_SECTION_IDS);
+   const onHome = pathname === "/" || pathname === "/en";
+   const stripped = prefix ? pathname.slice(prefix.length) || "/" : pathname;
+   const onOpinion = stripped.startsWith("/opinion");
+diff --git a/components/particle-bg.tsx b/components/particle-bg.tsx
+deleted file mode 100644
+index 412dcf6..0000000
+--- a/components/particle-bg.tsx
++++ /dev/null
+@@ -1,117 +0,0 @@
+-"use client";
+-
+-import { useEffect, useRef, useState } from "react";
+-
+-type Particle = {
+-  x: number;
+-  y: number;
+-  vx: number;
+-  vy: number;
+-  r: number;
+-  a: number;
+-  hue: 0 | 1;
+-};
+-
+-export function ParticleBg() {
+-  const ref = useRef<HTMLCanvasElement | null>(null);
+-  const [mounted, setMounted] = useState(false);
+-
+-  // Respetar prefers-reduced-motion y viewports estrechos: sin canvas/rAF bajo 768px.
+-  useEffect(() => {
+-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+-    if (window.innerWidth < 768) return;
+-    setMounted(true);
+-  }, []);
+-
+-  useEffect(() => {
+-    if (!mounted) return;
+-    const canvas = ref.current;
+-    if (!canvas) return;
+-    const ctx = canvas.getContext("2d");
+-    if (!ctx) return;
+-
+-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+-
+-    const styles = getComputedStyle(document.documentElement);
+-    // Fallbacks alineados a Patrón axds gama Alexendros.me Design System (oro + ámbar profundo).
+-    const primary: string = styles.getPropertyValue("--primary").trim() || "oklch(0.76 0.12 85)";
+-    const accent: string = styles.getPropertyValue("--ax-accent").trim() || "oklch(0.76 0.12 85)";
+-
+-    let particles: Particle[] = [];
+-    let raf = 0;
+-    let resizeRaf = 0;
+-
+-    const applyResize = () => {
+-      const w = window.innerWidth;
+-      const h = window.innerHeight;
+-      canvas.width = w * dpr;
+-      canvas.height = h * dpr;
+-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+-
+-      const density = w < 640 ? 0.00004 : 0.00008;
+-      const minCount = w < 640 ? 20 : 40;
+-      const maxCount = w < 640 ? 60 : 120;
+-      const count = Math.max(minCount, Math.min(maxCount, Math.floor(w * h * density)));
+-      particles = Array.from({ length: count }, () => ({
+-        x: Math.random() * w,
+-        y: Math.random() * h,
+-        vx: (Math.random() - 0.5) * 0.12,
+-        vy: (Math.random() - 0.5) * 0.12,
+-        r: Math.random() * 1.2 + 0.4,
+-        a: Math.random() * 0.35 + 0.1,
+-        hue: Math.random() < 0.8 ? 0 : 1,
+-      }));
+-    };
+-
+-    const resize = () => {
+-      if (resizeRaf) return;
+-      resizeRaf = requestAnimationFrame(() => {
+-        resizeRaf = 0;
+-        applyResize();
+-      });
+-    };
+-
+-    const draw = () => {
+-      const w = window.innerWidth;
+-      const h = window.innerHeight;
+-      ctx.clearRect(0, 0, w, h);
+-      for (const p of particles) {
+-        p.x += p.vx;
+-        p.y += p.vy;
+-        if (p.x < -2) p.x = w + 2;
+-        else if (p.x > w + 2) p.x = -2;
+-        if (p.y < -2) p.y = h + 2;
+-        else if (p.y > h + 2) p.y = -2;
+-        ctx.beginPath();
+-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+-        const color = p.hue === 0 ? primary : accent;
+-        ctx.fillStyle = color.startsWith("oklch") ? color.replace(/\)$/, ` / ${p.a})`) : color;
+-        ctx.globalAlpha = color.startsWith("oklch") ? 1 : p.a;
+-        ctx.fill();
+-        ctx.globalAlpha = 1;
+-      }
+-      raf = requestAnimationFrame(draw);
+-    };
+-
+-    applyResize();
+-    draw();
+-    window.addEventListener("resize", resize);
+-
+-    return () => {
+-      window.removeEventListener("resize", resize);
+-      if (resizeRaf) cancelAnimationFrame(resizeRaf);
+-      if (raf) cancelAnimationFrame(raf);
+-    };
+-  }, [mounted]);
+-
+-  if (!mounted) return null;
+-
+-  return (
+-    <canvas
+-      ref={ref}
+-      role="img"
+-      aria-label="Fondo decorativo de partículas doradas, sin información relevante"
+-      className="particle-canvas"
+-    />
+-  );
+-}
+diff --git a/components/theme-provider.tsx b/components/theme-provider.tsx
+index 2dc9d35..f52f0ba 100644
+--- a/components/theme-provider.tsx
++++ b/components/theme-provider.tsx
+@@ -48,7 +48,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
+ 
+   useEffect(() => {
+     setMounted(true);
+-    const stored = localStorage.getItem("theme");
++    let stored: string | null = null;
++    try {
++      stored = localStorage.getItem("theme");
++    } catch {
++      // storage bloqueado: se mantiene "system"
++    }
+     if (stored && isTheme(stored)) {
+       setTheme(stored);
+     }
+@@ -69,7 +74,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
+     applyResolvedTheme(resolved, animate);
+ 
+     setResolvedTheme(resolved);
+-    localStorage.setItem("theme", theme);
++    try {
++      localStorage.setItem("theme", theme);
++    } catch {
++      // quota / modo privado: el tema solo dura la sesión
++    }
+   }, [theme, mounted]);
+ 
+   useEffect(() => {
+diff --git a/components/theme-toggle.tsx b/components/theme-toggle.tsx
+index 549bc74..b2fd6e1 100644
+--- a/components/theme-toggle.tsx
++++ b/components/theme-toggle.tsx
+@@ -30,7 +30,7 @@ export function ThemeToggle() {
+     },
+   ];
+ 
+-  const currentTheme = (themes.find((t) => t.value === theme) ?? themes[0]) as (typeof themes)[0];
++  const currentTheme = (themes.find((o) => o.value === theme) ?? themes[0]) as (typeof themes)[0];
+ 
+   return (
+     <PopoverRoot>
+@@ -65,26 +65,33 @@ export function ThemeToggle() {
+         </button>
+       </PopoverTrigger>
+       <PopoverContent className="w-40 p-1" sideOffset={8} align="end" forceMount>
+-        {themes.map((t) => (
+-          <button
+-            key={t.value}
+-            type="button"
+-            onClick={() => setTheme(t.value)}
+-            className={cn(
+-              "flex w-full items-center gap-3 [border-radius:var(--ax-radius-sm)] px-3 py-2 text-sm theme-toggle-option",
+-              "transition-colors duration-fast ease-out-expo",
+-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+-              "hover:bg-muted",
+-              theme === t.value ? "bg-muted text-foreground" : "text-muted-foreground",
+-            )}
+-            role="menuitemradio"
+-            aria-checked={theme === t.value}
+-          >
+-            {t.icon}
+-            <span className="flex-1 text-left">{t.label}</span>
+-            {theme === t.value && <Check className="size-4 text-primary" aria-hidden="true" />}
+-          </button>
+-        ))}
++        <div
++          role="radiogroup"
++          aria-label={t("theme.ariaLabel").replace("{theme}", currentTheme.label)}
++        >
++          {themes.map((option) => (
++            <button
++              key={option.value}
++              type="button"
++              onClick={() => setTheme(option.value)}
++              className={cn(
++                "flex w-full items-center gap-3 [border-radius:var(--ax-radius-sm)] px-3 py-2 text-sm theme-toggle-option",
++                "transition-colors duration-fast ease-out-expo",
++                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
++                "hover:bg-muted",
++                theme === option.value ? "bg-muted text-foreground" : "text-muted-foreground",
++              )}
++              role="radio"
++              aria-checked={theme === option.value}
++            >
++              {option.icon}
++              <span className="flex-1 text-left">{option.label}</span>
++              {theme === option.value && (
++                <Check className="size-4 text-primary" aria-hidden="true" />
++              )}
++            </button>
++          ))}
++        </div>
+       </PopoverContent>
+     </PopoverRoot>
+   );
+diff --git a/lib/hooks/useScrollSpy.ts b/lib/hooks/useScrollSpy.ts
+index f37eae2..95aaa5a 100644
+--- a/lib/hooks/useScrollSpy.ts
++++ b/lib/hooks/useScrollSpy.ts
+@@ -7,38 +7,42 @@ interface ScrollSpyOptions {
+   threshold?: number[];
+ }
+ 
++const DEFAULT_THRESHOLD = [0, 0.25, 0.5, 0.75, 1];
++
++/**
++ * Devuelve el `#id` de la sección más visible (se conserva la última activa mientras
++ * ninguna intersecta). Las deps se derivan de valores primitivos (`ids.join`), así que un
++ * array nuevo en cada render ya no recrea los observers.
++ */
+ export function useScrollSpy(ids: string[], options: ScrollSpyOptions = {}): string {
+   const [activeId, setActiveId] = useState("");
++  const idsKey = ids.join("|");
++  const { rootMargin = "-20% 0px -60% 0px", threshold = DEFAULT_THRESHOLD } = options;
++  const thresholdKey = threshold.join(",");
+ 
+   useEffect(() => {
+-    const observers: IntersectionObserver[] = [];
++    const list = idsKey ? idsKey.split("|") : [];
+     const ratios = new Map<string, number>();
+ 
+-    const { rootMargin = "-20% 0px -60% 0px", threshold = [0, 0.25, 0.5, 0.75, 1] } = options;
+-
+-    ids.forEach((id) => {
++    const observer = new IntersectionObserver(
++      (entries) => {
++        for (const entry of entries) {
++          ratios.set(entry.target.id, entry.isIntersecting ? entry.intersectionRatio : 0);
++        }
++        const best = [...ratios.entries()].sort((a, b) => b[1] - a[1])[0];
++        // Contrato: si ninguna sección intersecta (hueco entre ellas), se conserva la última activa.
++        if (best && best[1] > 0) setActiveId(`#${best[0]}`);
++      },
++      { rootMargin, threshold: thresholdKey.split(",").map(Number) },
++    );
++
++    for (const id of list) {
+       const el = document.getElementById(id);
+-      if (!el) return;
+-
+-      const observer = new IntersectionObserver(
+-        ([entry]) => {
+-          if (entry) {
+-            ratios.set(id, entry.intersectionRatio);
+-            const best = [...ratios.entries()].sort((a, b) => b[1] - a[1])[0];
+-            if (best && best[1] > 0) {
+-              setActiveId(`#${best[0]}`);
+-            }
+-          }
+-        },
+-        { rootMargin, threshold },
+-      );
+-
+-      observer.observe(el);
+-      observers.push(observer);
+-    });
+-
+-    return () => observers.forEach((o) => o.disconnect());
+-  }, [ids, options.rootMargin, options.threshold]);
++      if (el) observer.observe(el);
++    }
++
++    return () => observer.disconnect();
++  }, [idsKey, rootMargin, thresholdKey]);
+ 
+   return activeId;
+ }
+diff --git a/lib/i18n/dictionaries/en.ts b/lib/i18n/dictionaries/en.ts
+index e682118..c8515f7 100644
+--- a/lib/i18n/dictionaries/en.ts
++++ b/lib/i18n/dictionaries/en.ts
+@@ -42,6 +42,10 @@ const en: TranslationDict = {
+       opinionLabel: "Opinion",
+       empty: "No posts yet.",
+     },
++    contacto: {
++      title: "Shall we talk?",
++      desc: "No forms, no tracking: just an email.",
++    },
+   },
+ 
+   footer: {
+diff --git a/lib/i18n/dictionaries/es.ts b/lib/i18n/dictionaries/es.ts
+index e313caa..e1752d1 100644
+--- a/lib/i18n/dictionaries/es.ts
++++ b/lib/i18n/dictionaries/es.ts
+@@ -42,6 +42,10 @@ const es: TranslationDict = {
+       opinionLabel: "Opinión",
+       empty: "No hay publicaciones aún.",
+     },
++    contacto: {
++      title: "¿Hablamos?",
++      desc: "Sin formularios ni seguimiento: un correo y ya está.",
++    },
+   },
+ 
+   footer: {
+diff --git a/tests/visual-regression.spec.ts b/tests/visual-regression.spec.ts
+index 565fa66..c4417a3 100644
+--- a/tests/visual-regression.spec.ts
++++ b/tests/visual-regression.spec.ts
+@@ -42,7 +42,7 @@ test.describe("Visual Regression", { tag: "@visual" }, () => {
+           // Hide dynamic elements that cause flaky screenshots
+           await page.addStyleTag({
+             content: `
+-            .particle-bg, .atm__haze, .atm__spark, .atm__dust,
++            .particle-bg, .mesh-canvas, .atm__haze, .atm__spark, .atm__dust,
+             .marquee-track, [data-testid="particle-bg"] {
+               display: none !important;
+             }

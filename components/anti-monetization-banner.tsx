@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 
 const DISMISS_KEY = "anti-monetization-dismissed";
+/** Debe coincidir con --ax-duration-slow (colapso animado antes de desmontar). */
+const COLLAPSE_MS = 360;
 
 /** localStorage puede lanzar (Safari privado, cookies bloqueadas): nunca debe romper la UI. */
 function readDismissed(): boolean {
@@ -27,10 +29,12 @@ function writeDismissed(): void {
 export function AntiMonetizationBanner() {
   // SSR + first client paint assume visible (matches pre-paint data-ax-banner=1) to avoid CLS.
   const [dismissed, setDismissed] = useState(false);
+  const [closing, setClosing] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const bannerRef = useRef<HTMLDivElement | null>(null);
-  const { t } = useI18n();
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { t, tArray } = useI18n();
 
   useLayoutEffect(() => {
     const isDismissed = readDismissed();
@@ -48,9 +52,9 @@ export function AntiMonetizationBanner() {
     return () => mediaQuery.removeEventListener("change", handleChange);
   }, []);
 
-  // El offset CSS (3.25rem/3.5rem) es solo una estimación inicial anti-CLS. Si el texto
-  // salta a 2–3 líneas (móvil, zoom, idioma EN) el banner mide más y tapaba la nav sticky:
-  // aquí se publica la altura real. Se usa CSSOM (no atributo style) → compatible con la CSP.
+  // El offset CSS (3.25rem/3.5rem) es solo una estimación inicial anti-CLS. Se publica la altura
+  // real (también durante el colapso animado, así el contenido sube suavemente). Se usa CSSOM
+  // (no atributo style) → compatible con la CSP.
   useEffect(() => {
     const root = document.documentElement;
     const el = bannerRef.current;
@@ -69,54 +73,88 @@ export function AntiMonetizationBanner() {
     };
   }, [dismissed]);
 
+  useEffect(
+    () => () => {
+      if (closeTimer.current) clearTimeout(closeTimer.current);
+    },
+    [],
+  );
+
   if (dismissed) {
     return null;
   }
 
-  const bannerClass = cn(
-    "anti-monetization-banner",
-    reduceMotion && "anti-monetization-banner--reduced-motion",
-    isHovered && "anti-monetization-banner--hovered",
-  );
-
-  const handleDismiss = () => {
+  const finish = () => {
     setDismissed(true);
-    writeDismissed();
     document.documentElement.setAttribute("data-ax-banner", "0");
   };
 
-  const textParts = t("antiMonetization.text").split("{strong}");
+  const handleDismiss = () => {
+    if (closing) return;
+    writeDismissed(); // se persiste al instante, aunque la animación no llegue a terminar
+    if (reduceMotion) {
+      finish();
+      return;
+    }
+    setClosing(true);
+    closeTimer.current = setTimeout(finish, COLLAPSE_MS);
+  };
+
+  const [before = "", after = ""] = t("antiMonetization.text").split("{strong}");
+  const chips = tArray("antiMonetization.chips");
 
   return (
     <div
       ref={bannerRef}
-      className={bannerClass}
+      className={cn(
+        "anti-monetization-banner",
+        reduceMotion && "anti-monetization-banner--reduced-motion",
+        isHovered && "anti-monetization-banner--hovered",
+      )}
       role="region"
       aria-label={t("antiMonetization.regionLabel")}
       data-reduced-motion={reduceMotion ? "true" : "false"}
+      data-state={closing ? "closing" : "open"}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onKeyDown={(e) => {
+        if (e.key === "Escape") handleDismiss();
+      }}
     >
-      <div className="anti-monetization-banner__content">
-        <Shield className="anti-monetization-banner__icon" aria-hidden="true" />
-        <p className="anti-monetization-banner__text">
-          {textParts[0]}
-          <strong>{t("antiMonetization.strong")}</strong>
-          {textParts.slice(1).join("{strong}")}
-        </p>
-        <a
-          href="https://alexendros.dev"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="anti-monetization-banner__link"
-        >
-          {t("antiMonetization.link")}
-          <ArrowUpRight
-            className="anti-monetization-banner__link-icon"
-            aria-hidden="true"
-            size={14}
-          />
-        </a>
+      <div className="anti-monetization-banner__inner">
+        <div className="anti-monetization-banner__content">
+          <Shield className="anti-monetization-banner__icon" aria-hidden="true" />
+          <p className="anti-monetization-banner__text">
+            {before}
+            <strong>{t("antiMonetization.strong")}</strong>
+            {after}
+          </p>
+          {chips.length > 0 ? (
+            <ul
+              className="anti-monetization-banner__chips"
+              aria-label={t("antiMonetization.chipsLabel")}
+            >
+              {chips.map((chip) => (
+                <li key={chip} className="anti-monetization-banner__chip">
+                  {chip}
+                </li>
+              ))}
+            </ul>
+          ) : null}
+          <a
+            href="https://alexendros.dev"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="anti-monetization-banner__link"
+          >
+            {t("antiMonetization.link")}
+            <ArrowUpRight
+              className="anti-monetization-banner__link-icon"
+              aria-hidden="true"
+              size={14}
+            />
+          </a>
+        </div>
       </div>
       <button
         type="button"

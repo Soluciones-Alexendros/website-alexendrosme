@@ -38,9 +38,28 @@ const en: TranslationDict = {
     },
     publicaciones: {
       title: "Latest pieces",
-      desc: "The latest from {opinionLink}.",
+      desc: "Short pieces, no filler. The latest from {opinionLink}.",
       opinionLabel: "Opinion",
-      empty: "No posts yet.",
+      empty: "No pieces published yet. Check back soon.",
+    },
+    principios: {
+      title: "What I stand for",
+      desc: "Three ideas running through everything I write.",
+      atencion: {
+        title: "Attention",
+        body: "Your attention is yours. When something costs no money, it usually costs hours.",
+        cta: "Read about attention",
+      },
+      soberania: {
+        title: "Sovereignty",
+        body: "Keep what's critical in your hands: identity, files, conversations. Delegating is fine; not knowing to whom isn't.",
+        cta: "Read about sovereignty",
+      },
+      protocolos: {
+        title: "Protocols",
+        body: "Open roads before walled gardens. If a service disappears, your voice shouldn't.",
+        cta: "Read about protocols",
+      },
     },
     contacto: {
       title: "Shall we talk?",
@@ -60,12 +79,21 @@ const en: TranslationDict = {
   },
 
   antiMonetization: {
-    text: "This space is free of {strong}. No ads, no affiliates, no tracking.",
+    text: "This space is free of {strong}.",
     strong: "monetization",
-    link: "The commercial stuff lives at alexendros.dev",
+    chips: ["0 ads", "0 affiliates", "0 sales"],
+    chipsLabel: "What you won't find here",
+    link: "Go to alexendros.dev",
     dismissLabel: "Close monetization-free notice",
     regionLabel: "Monetization-free space notice",
   },
+
+  motion: {
+    pause: "Pause background animations",
+    play: "Resume background animations",
+  },
+
+  backToTop: "Back to top",
 
   theme: {
     system: "System",
@@ -89,6 +117,7 @@ const en: TranslationDict = {
     tagsLabel: "Tags",
     minutesShort: "min read",
     tocTitle: "On this page",
+    related: "Keep reading",
   },
 
   opinion: {
@@ -129,10 +158,10 @@ const en: TranslationDict = {
 
   errors: {
     notFoundTitle: "Page not found",
-    notFoundDesc: "This page doesn't exist or has moved.",
+    notFoundDesc: "This link leads nowhere: the page doesn't exist or has moved.",
     notFoundCta: "Back to home",
     errorTitle: "Something went wrong",
-    errorDesc: "An unexpected error occurred. Please try again.",
+    errorDesc: "An unexpected error occurred. Try again or head back home.",
     errorCta: "Back to home",
   },
 
@@ -140,6 +169,9 @@ const en: TranslationDict = {
     fabLabel: "Contact actions",
     emailLabel: "Send email",
     contactame: "Contact me",
+    copy: "Copy email",
+    copied: "Email copied",
+    copyError: "Couldn't copy the email",
   },
 };
 

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { siteConfig } from "@/lib/site";
 import { ExternalLink, Mail } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import { MotionToggle } from "@/components/motion-toggle";
 
 export function Footer() {
   const year = new Date().getFullYear();
@@ -83,6 +84,7 @@ export function Footer() {
             >
               <Mail className="icn-md" aria-hidden="true" />
             </a>
+            <MotionToggle />
           </div>
 
           <p className="footer-legal">

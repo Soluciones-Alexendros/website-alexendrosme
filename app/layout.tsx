@@ -4,6 +4,7 @@ import "./globals.css";
 import type { Metadata, Viewport } from "next";
 import { Nav } from "@/components/nav";
 import { Footer } from "@/components/footer";
+import { BackToTop } from "@/components/back-to-top";
 import { Atmosphere } from "@/components/atmosphere";
 import { JsonLd } from "@/components/json-ld";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -163,6 +164,7 @@ h1.display,.hero h1{font-family:var(--font-display);font-weight:700;letter-spaci
                 {children}
               </main>
               <Footer />
+              <BackToTop />
               {/* Vercel Web Analytics — privacy-first, no cookies. Activate in Vercel Dashboard → Analytics → Enable */}
               <Analytics />
               <SwRegister />
