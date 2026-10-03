@@ -42,6 +42,10 @@ const es: TranslationDict = {
       opinionLabel: "Opinión",
       empty: "No hay publicaciones aún.",
     },
+    contacto: {
+      title: "¿Hablamos?",
+      desc: "Sin formularios ni seguimiento: un correo y ya está.",
+    },
   },
 
   footer: {

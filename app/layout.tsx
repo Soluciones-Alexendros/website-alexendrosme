@@ -16,7 +16,7 @@ import { SwRegister } from "@/components/sw-register";
 import { SkipLink } from "@/components/skip-link";
 import { prePaintScriptString } from "@/lib/theme-pre-paint";
 
-const ParticleBg = dynamic(() => import("@/components/particle-bg").then((m) => m.ParticleBg));
+const MeshBg = dynamic(() => import("@/components/mesh-bg").then((m) => m.MeshBg));
 
 /** Display / títulos: variable (un solo query; evita fallo Turbopack en Vercel). */
 const sourceSerif = Source_Serif_4({
@@ -155,7 +155,7 @@ h1.display,.hero h1{font-family:var(--font-display);font-weight:700;letter-spaci
             <SearchProvider>
               <JsonLd />
               <Atmosphere />
-              <ParticleBg />
+              <MeshBg />
               <AntiMonetizationBanner />
               <Nav />
               <main id="main" className="main-content">

@@ -1,5 +1,5 @@
 /* utilities.css — custom @utility directives (Tailwind v4 syntax).
-   Used via class (e.g. `animate-marquee`, `no-scrollbar`). */
+   Used via class (e.g. `no-scrollbar`). */
 
 @utility no-scrollbar {
   -ms-overflow-style: none;
@@ -8,10 +8,6 @@
   &::-webkit-scrollbar {
     display: none;
   }
-}
-
-@utility animate-marquee {
-  animation: marquee 40s linear infinite;
 }
 
 @utility mask-fade-x {

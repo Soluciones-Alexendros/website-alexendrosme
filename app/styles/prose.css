@@ -12,7 +12,28 @@
     margin-bottom: 1rem;
     margin-top: 2.75rem;
     color: var(--ax-text-primary);
-    scroll-margin-top: 5.5rem;
+    scroll-margin-top: calc(5.5rem + var(--ax-banner-offset, 0px));
+    /* Tailwind preflight deja h1–h6 en font-size/weight: inherit → sin esto los
+       títulos de los artículos se veían como texto de párrafo. */
+    font-family: var(--font-display);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: var(--tracking-heading);
+    text-wrap: balance;
+  }
+  .prose h1 {
+    font-size: var(--text-3xl);
+  }
+  .prose h2 {
+    font-size: var(--text-2xl);
+  }
+  .prose h3 {
+    font-size: var(--text-xl);
+  }
+  .prose h4 {
+    font-size: var(--text-lg);
+    font-family: var(--font-sans);
+    font-weight: 600;
   }
   .prose h1:first-child,
   .prose h2:first-child,
@@ -55,6 +76,24 @@
   .prose ul {
     list-style-type: disc;
   }
+  .prose ol {
+    list-style-type: decimal;
+  }
+  .prose li::marker {
+    color: var(--ax-accent-dim);
+  }
+  .prose img,
+  .prose video {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--ax-radius-lg);
+    margin-block: 1.5rem;
+  }
+  .prose pre code {
+    background: none;
+    padding: 0;
+    font-size: inherit;
+  }
   .prose ul li,
   .prose ol li {
     color: var(--ax-text-secondary);
@@ -69,6 +108,8 @@
     border-left: 2px solid color-mix(in oklch, var(--primary) 25%, transparent);
     padding-left: 1rem;
     font-style: italic;
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
     color: var(--ax-text-secondary);
     margin-block: 1.5rem;
   }
