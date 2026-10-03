@@ -68,6 +68,8 @@ export function bumpPackageJson(pkgText: string, version: string): string {
 
 export type FinalizeResult = { changelog: string; suffix: string; blocks: number };
 
+export class NothingToRelease extends Error {}
+
 /**
  * Fusiona los bloques `## [Unreleased]` superiores en un único
  * `## [X.Y.Z] — FECHA · sufijos`. Lanza si no hay nada que releasear.
@@ -106,7 +108,7 @@ export function finalizeChangelog(md: string, version: string, date: string): Fi
   }
   if (current) blocks.push(current);
   if (blocks.length === 0)
-    throw new Error("CHANGELOG.md no tiene bloques ## [Unreleased] que releasear");
+    throw new NothingToRelease("CHANGELOG.md no tiene bloques ## [Unreleased] que releasear");
 
   const suffix = blocks
     .map((b) => b.suffix)
@@ -273,7 +275,18 @@ function main(): void {
   const date = args.date ?? today();
 
   const nextPkg = bumpPackageJson(pkgText, version);
-  const { changelog: nextMd, suffix, blocks } = finalizeChangelog(mdText, version, date);
+  let nextMd = mdText;
+  let suffix = "";
+  let blocks = 0;
+  try {
+    const finalized = finalizeChangelog(mdText, version, date);
+    nextMd = finalized.changelog;
+    suffix = finalized.suffix;
+    blocks = finalized.blocks;
+  } catch (err) {
+    if (!(err instanceof NothingToRelease)) throw err;
+    // Árbol ya finalizado (p. ej. --check tras --write): no hay diff de CHANGELOG.
+  }
 
   // La sección aún no existe en disco (modo dry-run/check): si la extracción
   // falla se deriva el snippet del contenido finalizado en memoria.
