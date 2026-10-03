@@ -30,7 +30,7 @@ export function ThemeToggle() {
     },
   ];
 
-  const currentTheme = (themes.find((t) => t.value === theme) ?? themes[0]) as (typeof themes)[0];
+  const currentTheme = (themes.find((o) => o.value === theme) ?? themes[0]) as (typeof themes)[0];
 
   return (
     <PopoverRoot>
@@ -65,26 +65,33 @@ export function ThemeToggle() {
         </button>
       </PopoverTrigger>
       <PopoverContent className="w-40 p-1" sideOffset={8} align="end" forceMount>
-        {themes.map((t) => (
-          <button
-            key={t.value}
-            type="button"
-            onClick={() => setTheme(t.value)}
-            className={cn(
-              "flex w-full items-center gap-3 [border-radius:var(--ax-radius-sm)] px-3 py-2 text-sm theme-toggle-option",
-              "transition-colors duration-fast ease-out-expo",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-              "hover:bg-muted",
-              theme === t.value ? "bg-muted text-foreground" : "text-muted-foreground",
-            )}
-            role="menuitemradio"
-            aria-checked={theme === t.value}
-          >
-            {t.icon}
-            <span className="flex-1 text-left">{t.label}</span>
-            {theme === t.value && <Check className="size-4 text-primary" aria-hidden="true" />}
-          </button>
-        ))}
+        <div
+          role="radiogroup"
+          aria-label={t("theme.ariaLabel").replace("{theme}", currentTheme.label)}
+        >
+          {themes.map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              onClick={() => setTheme(option.value)}
+              className={cn(
+                "flex w-full items-center gap-3 [border-radius:var(--ax-radius-sm)] px-3 py-2 text-sm theme-toggle-option",
+                "transition-colors duration-fast ease-out-expo",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                "hover:bg-muted",
+                theme === option.value ? "bg-muted text-foreground" : "text-muted-foreground",
+              )}
+              role="radio"
+              aria-checked={theme === option.value}
+            >
+              {option.icon}
+              <span className="flex-1 text-left">{option.label}</span>
+              {theme === option.value && (
+                <Check className="size-4 text-primary" aria-hidden="true" />
+              )}
+            </button>
+          ))}
+        </div>
       </PopoverContent>
     </PopoverRoot>
   );

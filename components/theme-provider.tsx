@@ -48,7 +48,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     setMounted(true);
-    const stored = localStorage.getItem("theme");
+    let stored: string | null = null;
+    try {
+      stored = localStorage.getItem("theme");
+    } catch {
+      // storage bloqueado: se mantiene "system"
+    }
     if (stored && isTheme(stored)) {
       setTheme(stored);
     }
@@ -69,7 +74,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     applyResolvedTheme(resolved, animate);
 
     setResolvedTheme(resolved);
-    localStorage.setItem("theme", theme);
+    try {
+      localStorage.setItem("theme", theme);
+    } catch {
+      // quota / modo privado: el tema solo dura la sesión
+    }
   }, [theme, mounted]);
 
   useEffect(() => {

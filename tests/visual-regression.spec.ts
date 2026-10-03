@@ -42,7 +42,7 @@ test.describe("Visual Regression", { tag: "@visual" }, () => {
           // Hide dynamic elements that cause flaky screenshots
           await page.addStyleTag({
             content: `
-            .particle-bg, .atm__haze, .atm__spark, .atm__dust,
+            .particle-bg, .mesh-canvas, .atm__haze, .atm__spark, .atm__dust,
             .marquee-track, [data-testid="particle-bg"] {
               display: none !important;
             }

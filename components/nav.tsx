@@ -16,6 +16,8 @@ const MobileMenu = dynamic(() => import("@/components/mobile-menu").then((m) => 
   ssr: false,
 });
 
+const NAV_SECTION_IDS = siteConfig.nav.map((item) => item.href.replace("#", ""));
+
 function scrollBehavior(): ScrollBehavior {
   if (
     typeof window !== "undefined" &&
@@ -47,7 +49,7 @@ export function Nav() {
   const prefix = localePrefix(pathname);
   const [modKey, setModKey] = useState("Ctrl");
 
-  const activeHash = useScrollSpy(siteConfig.nav.map((item) => item.href.replace("#", "")));
+  const activeHash = useScrollSpy(NAV_SECTION_IDS);
   const onHome = pathname === "/" || pathname === "/en";
   const stripped = prefix ? pathname.slice(prefix.length) || "/" : pathname;
   const onOpinion = stripped.startsWith("/opinion");

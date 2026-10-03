@@ -16,7 +16,7 @@ import { SwRegister } from "@/components/sw-register";
 import { SkipLink } from "@/components/skip-link";
 import { prePaintScriptString } from "@/lib/theme-pre-paint";
 
-const ParticleBg = dynamic(() => import("@/components/particle-bg").then((m) => m.ParticleBg));
+const MeshBg = dynamic(() => import("@/components/mesh-bg").then((m) => m.MeshBg));
 
 /** Display / títulos: variable (un solo query; evita fallo Turbopack en Vercel). */
 const sourceSerif = Source_Serif_4({
@@ -87,6 +87,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html
       lang="es"
       data-accent="gold"
+      data-scroll-behavior="smooth"
       className={`${sourceSerif.variable} ${sourceSans.variable} ${plexMono.variable}`}
       suppressHydrationWarning
     >
@@ -155,7 +156,7 @@ h1.display,.hero h1{font-family:var(--font-display);font-weight:700;letter-spaci
             <SearchProvider>
               <JsonLd />
               <Atmosphere />
-              <ParticleBg />
+              <MeshBg />
               <AntiMonetizationBanner />
               <Nav />
               <main id="main" className="main-content">
@@ -165,6 +166,18 @@ h1.display,.hero h1{font-family:var(--font-display);font-weight:700;letter-spaci
               {/* Vercel Web Analytics — privacy-first, no cookies. Activate in Vercel Dashboard → Analytics → Enable */}
               <Analytics />
               <SwRegister />
+              {/* Pre-paint banner measure: el banner es fixed y body reserva su altura
+                  vía --ax-banner-offset. La estimación del <head> (3.25/3.5rem) falla
+                  cuando el texto salta a 2 líneas en móvil → el ResizeObserver
+                  corregía tras hidratar y todo <main> se desplazaba (CLS > 0.1).
+                  Este script corre durante el parseo (bloquea el primer pintado, con
+                  CSS ya aplicado) y publica la altura real, así el primer frame ya
+                  reserva el espacio correcto y la hidratación no mueve nada. */}
+              <script
+                dangerouslySetInnerHTML={{
+                  __html: `(function(){try{if(document.documentElement.getAttribute('data-ax-banner')==='0')return;var b=document.querySelector('.anti-monetization-banner');if(b){document.documentElement.style.setProperty('--ax-banner-offset',b.offsetHeight+'px')}}catch(e){}})()`,
+                }}
+              />
             </SearchProvider>
           </ThemeProvider>
         </I18nProvider>

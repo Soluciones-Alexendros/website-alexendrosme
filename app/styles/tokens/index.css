@@ -71,7 +71,6 @@
   --font-display: var(--font-source-serif), var(--font-source-sans), ui-serif, Georgia, serif;
 
   /* Keyframes para Tailwind v4 animate-* utilities */
-  --animate-marquee: marquee 40s linear infinite;
   --animate-atm-drift: atm-drift 18s ease-in-out infinite alternate;
   --animate-pulse-dot: pulse-dot 2s var(--ax-ease-smooth) infinite;
   --animate-hero-shimmer: hero-shimmer 6s var(--ax-ease-in-out) infinite alternate;

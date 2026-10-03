@@ -110,6 +110,7 @@ export default async function OpinionArticle({ params }: Props) {
         ]}
       />
 
+      <div className="read-progress" aria-hidden="true" />
       <div className="site-shell article-shell">
         <div className="article-nav">
           <LocaleLink href="/opinion" className="ds-caption back-link">

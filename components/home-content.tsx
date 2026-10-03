@@ -25,18 +25,41 @@ function formatDate(dateStr: string, locale: string) {
   });
 }
 
+/** Publica la posición del puntero en --mx/--my para el foco de luz de la tarjeta (CSS puro). */
+function trackPointer(e: React.PointerEvent<HTMLElement>) {
+  const el = e.currentTarget;
+  const rect = el.getBoundingClientRect();
+  el.style.setProperty("--mx", `${e.clientX - rect.left}px`);
+  el.style.setProperty("--my", `${e.clientY - rect.top}px`);
+}
+
 export function HomeContent({ latestArticles }: HomeContentProps) {
   const { t, locale } = useI18n();
   const prefix = useLocalePrefix();
+
+  // «Alexendros.» se resalta en latón; el resto de la firma queda en tinta. Mismo texto accesible.
+  const signature = t("hero.signature");
+  const splitAt = signature.indexOf(". ");
+  const heroName = splitAt > 0 ? signature.slice(0, splitAt + 1) : null;
+  const heroRest = splitAt > 0 ? signature.slice(splitAt + 2) : signature;
 
   return (
     <>
       <section className="site-shell hero-section">
         <div className="cluster-center">
-          <p className="hero-eyebrow">{t("hero.eyebrow")}</p>
+          <p className="hero-eyebrow">
+            <span className="hero-eyebrow__dot" aria-hidden="true" />
+            {t("hero.eyebrow")}
+          </p>
         </div>
-        <h1 className="hero-signature hero-signature--shimmer hero-animate display">
-          {t("hero.signature")}
+        <h1 className="hero-signature hero-animate display">
+          {heroName ? (
+            <>
+              <span className="hero-name">{heroName}</span> {heroRest}
+            </>
+          ) : (
+            signature
+          )}
         </h1>
         <p
           className="prose-lead"
@@ -66,10 +89,10 @@ export function HomeContent({ latestArticles }: HomeContentProps) {
         aria-labelledby="h2-biografia"
       >
         <div className="content-container stack-lg">
-          <h2 id="h2-biografia" className="headline">
+          <h2 id="h2-biografia" className="headline reveal">
             {t("sections.biografia.title")}
           </h2>
-          <div className="stack-md prose">
+          <div className="stack-md prose reveal">
             <p>{t("sections.biografia.p1")}</p>
             <p
               dangerouslySetInnerHTML={{
@@ -92,7 +115,7 @@ export function HomeContent({ latestArticles }: HomeContentProps) {
         aria-labelledby="h2-publicaciones"
       >
         <div className="content-container stack-lg">
-          <div className="section-head">
+          <div className="section-head reveal">
             <h2 id="h2-publicaciones" className="headline">
               {t("sections.publicaciones.title")}
             </h2>
@@ -112,10 +135,11 @@ export function HomeContent({ latestArticles }: HomeContentProps) {
           ) : (
             <div className="stack-lg">
               {latestArticles.map((article) => (
-                <article key={`${article.type}-${article.slug}`}>
+                <article key={`${article.type}-${article.slug}`} className="reveal">
                   <Link
                     href={withLocalePrefix(prefix, `/${article.type}/${article.slug}`)}
                     className="article-item"
+                    onPointerMove={trackPointer}
                   >
                     <time dateTime={article.frontmatter.date} className="ds-caption">
                       {formatDate(article.frontmatter.date, locale)}
@@ -132,9 +156,17 @@ export function HomeContent({ latestArticles }: HomeContentProps) {
         </div>
       </section>
 
-      <div role="region" aria-label={t("contact.fabLabel")}>
-        <ContactFab />
-      </div>
+      <section className="site-shell section closing" aria-labelledby="h2-contacto">
+        <div className="content-container stack-md closing__inner reveal">
+          <h2 id="h2-contacto" className="headline">
+            {t("sections.contacto.title")}
+          </h2>
+          <p className="section-desc">{t("sections.contacto.desc")}</p>
+          <div className="cluster" role="group" aria-label={t("contact.fabLabel")}>
+            <ContactFab />
+          </div>
+        </div>
+      </section>
     </>
   );
 }
