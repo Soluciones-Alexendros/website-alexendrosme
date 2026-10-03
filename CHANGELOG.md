@@ -1,19 +1,4 @@
-# Changelog
-
-### Propósito de este documento
-
-- **Objetivos:** Registrar cambios destacables del producto y de la
-  plataforma sin sustituir el historial.
-- **Estructura:** Keep a Changelog + SemVer; lo más reciente primero.
-- **Contenido a integrar según contexto:** No borres hitos. Los PRs de
-  plataforma añaden una entrada; no reescriben el resto.
-
-Todos los cambios destacables de este proyecto se documentan en este archivo.
-
-El formato sigue [Keep a Changelog 1.1.0](https://keepachangelog.com/es-ES/1.1.0/),
-y este proyecto se adhiere a [SemVer 2.0.0](https://semver.org/lang/es/).
-
-## [Unreleased] · Consolidación contenido + legal (ADR-0006)
+## [0.13.1] — 2026-10-03 · Consolidación contenido + legal (ADR-0006) + Alineación al canon P1+P2
 
 ### Añadido
 
@@ -35,8 +20,6 @@ y este proyecto se adhiere a [SemVer 2.0.0](https://semver.org/lang/es/).
 - Contacto Telegram/Matrix (config, UI, i18n).
 - Ruta `/legal/seguridad` (sustituida por `/legal/licencia`).
 - Sello €Ç, texto anticomercial informal, cita y `F.A.F.O.` del footer.
-
-## [Unreleased] · Alineación al canon P1+P2
 
 ### Añadido
 
