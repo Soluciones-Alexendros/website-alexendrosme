@@ -103,42 +103,14 @@ Conducta: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md). Vulnerabilidades:
 
 <!-- RELEASE_SECTION_START -->
 <details>
-<summary><strong>v0.15.0</strong> (2026-10-03)</summary>
+<summary><strong>v0.15.1</strong> (2026-10-24)</summary>
 
-## [0.15.0] — 2026-10-03 · Ronda 2: fondo interactivo, movimiento, banner, principios
+## [0.15.1] — 2026-10-24
 
-### Añadido
+### Seguridad
 
-- **components/mesh-bg.tsx v2**: malla 3 capas con parallax (0.03/0.07/0.13), 6 hubs pulsantes (3 móvil), paquetes con estela, ratón atrae nodos, clic/toque→onda, 34 nodos móvil (~30fps), gobernador rendimiento (reduce 15% nodos si coste >1.5s, mín 20), pausa pestaña oculta.
-- **components/atmosphere.tsx**: capa `.atm__aurora` degradado cónico rotando 110s latón+violeta, atenuado en tema claro.
-- **components/motion-toggle.tsx + lib/motion.ts**: botón Pausa/Play en footer (`aria-pressed`), preferencia `auto|on|off` en localStorage con try/catch, publicada en `<html data-motion>`, respeta `prefers-reduced-motion` (elección explícita > media query > `data-reduce`).
-- **components/anti-monetization-banner.tsx v2**: frase corta + chips `0 anuncios · 0 afiliados · 0 ventas`, botón píldora, colapso animado `grid-template-rows 1fr→0fr`, `×` gira 90°, Esc cierra, JSX puro (sin `dangerouslySetInnerHTML`), línea latón barre borde, cierre persiste al instante, sobrevive localStorage bloqueado, **descarte permanente**.
-- **Nueva sección "Lo que defiendo"** (home): 3 tarjetas Atención·Soberanía·Protocolos, enlaces en `lib/principles.ts`, test verifica slugs existen.
-- **components/back-to-top.tsx**: botón flotante con anillo de progreso circular.
-- **components/related-articles.tsx**: sección "Sigue leyendo" en artículos de opinión.
-- **components/copy-email.tsx**: copia email con feedback `aria-live`.
-- Tokens visuales: `::selection`, `accent-color`, `scrollbar-color` en latón.
-
-### Cambiado
-
-- **components/ui/button.tsx**: `size="lg"` ahora `h-12 px-6 text-base` (era 40px < default 44px), sheen al hover, CTAs hero con iconos, `.fab-btn` hover corregido.
-- **Artículos retocados**: `soberania-digital`, `protocolos-vs-plataformas`, `escape-del-feudo-algoritmico` (microcopy, accesibilidad).
-- **components/spot-card.tsx**: foco luz puntero via CSSOM (`--mx/--my`).
-
-### Eliminado
-
-- `dangerouslySetInnerHTML` del banner (ahora JSX puro).
-- `100vw`/`100vh` residuales → `100%`/`100dvh`.
-
-### Test
-
-- 356 tests (baseline 355 + 22 nuevos: banner, motion-toggle, copy-email, principles, motion, helpers).
-- Snapshots Playwright actualizados (home light/dark mobile/tablet/desktop, aviso-legal variantes).
-
-### Decisiones de producto
-
-- Respeto a `prefers-reduced-motion` (§2.3): animaciones detenidas por defecto si usuario lo solicita, botón Play para activar.
-- Banner anti-monetización: descarte permanente (no reaparece).
+- **next** y `@next/eslint-plugin-next` a `16.4.3` (cierra RCE/SSRF y demás críticas/altas Dependabot de Next).
+- Overrides de transitivas: `postcss@8.5.31`, `js-yaml@3.15.2`, `nanoid@3.3.20`, `fast-uri@3.1.7`, `source-map-js@1.2.2`, `compression@1.8.2`, `baseline-browser-mapping@2.11.32` (y `sharp` vía Next ≥0.35.5).
 
 </details>
 <!-- RELEASE_SECTION_END -->

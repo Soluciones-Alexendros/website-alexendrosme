@@ -1,6 +1,6 @@
 {
   "name": "website-alexendrosme",
-  "version": "0.15.0",
+  "version": "0.15.1",
   "private": true,
   "type": "module",
   "description": "Sitio web personal de Alexendros — espacio libre de dinero para opinión y pensamiento. Next.js 16, Tailwind v4, TypeScript strict, export estático.",
@@ -43,7 +43,7 @@
     "gray-matter": "^4.0.3",
     "idb-keyval": "^6.2.2",
     "lucide-react": "^1.25.0",
-    "next": "^16.2.10",
+    "next": "^16.4.3",
     "radix-ui": "^1.6.4",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
@@ -58,7 +58,7 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.11.3",
     "@eslint/js": "^10.0.1",
-    "@next/eslint-plugin-next": "^16.2.10",
+    "@next/eslint-plugin-next": "^16.4.3",
     "@playwright/test": "^1.61.0",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^26.1.1",
@@ -115,6 +115,12 @@
     "*.{json,md,css}": "prettier --write"
   },
   "overrides": {
-    "postcss@<8.5.10": ">=8.5.10"
+    "postcss": "8.5.31",
+    "js-yaml": "3.15.2",
+    "nanoid": "3.3.20",
+    "fast-uri": "3.1.7",
+    "source-map-js": "1.2.2",
+    "compression": "1.8.2",
+    "baseline-browser-mapping": "2.11.32"
   }
 }
