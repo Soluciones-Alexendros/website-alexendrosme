@@ -13,6 +13,13 @@ Todos los cambios destacables de este proyecto se documentan en este archivo.
 El formato sigue [Keep a Changelog 1.1.0](https://keepachangelog.com/es-ES/1.1.0/),
 y este proyecto se adhiere a [SemVer 2.0.0](https://semver.org/lang/es/).
 
+## [Unreleased]
+
+### Seguridad
+
+- **next** y `@next/eslint-plugin-next` a `16.4.3` (cierra RCE/SSRF y demás críticas/altas Dependabot de Next).
+- Overrides de transitivas: `postcss@8.5.31`, `js-yaml@3.15.2`, `nanoid@3.3.20`, `fast-uri@3.1.7`, `source-map-js@1.2.2`, `compression@1.8.2`, `baseline-browser-mapping@2.11.32` (y `sharp` vía Next ≥0.35.5).
+
 ## [0.15.0] — 2026-10-03 · Ronda 2: fondo interactivo, movimiento, banner, principios
 
 ### Añadido
