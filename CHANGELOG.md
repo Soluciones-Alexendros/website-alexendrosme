@@ -13,7 +13,7 @@ Todos los cambios destacables de este proyecto se documentan en este archivo.
 El formato sigue [Keep a Changelog 1.1.0](https://keepachangelog.com/es-ES/1.1.0/),
 y este proyecto se adhiere a [SemVer 2.0.0](https://semver.org/lang/es/).
 
-## [Unreleased]
+## [0.15.1] — 2026-10-24
 
 ### Seguridad
 
