@@ -21,7 +21,8 @@
 [![Tailwind CSS](https://img.shields.io/badge/tailwind-4-06b6d4?logo=tailwindcss)](https://tailwindcss.com)
 [![TypeScript](https://img.shields.io/badge/typescript-strict-3178c6?logo=typescript)](https://www.typescriptlang.org)
 [![Tests: 323 passed](https://img.shields.io/badge/tests-323%20passed-44cc11?logo=vitest)](https://github.com/Soluciones-Alexendros/website-alexendrosme/actions)
-[![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/license-CC%20BY--NC--SA%204.0-orange.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Content: CC BY-NC-SA 4.0](https://img.shields.io/badge/content-CC%20BY--NC--SA%204.0-orange.svg)](https://alexendros.me/legal/licencia)
 
 ## Qué es
 
@@ -96,8 +97,10 @@ Tokens con prefijo `--ax-*` para colores, motion, spacing y layout. Triple caden
 
 ## Licencia y comunidad
 
-Contenido editorial: [CC BY-NC-SA 4.0](LICENSE). Código fuente: MIT (ver
-[licencia](app/legal/licencia/page.tsx)). Contribuciones: [CONTRIBUTING.md](CONTRIBUTING.md).
+Contenido editorial: [CC BY-NC-SA 4.0](https://alexendros.me/legal/licencia).
+Código fuente: [MIT](LICENSE). Detalle de ambas:
+[página de licencia](https://alexendros.me/legal/licencia).
+Contribuciones: [CONTRIBUTING.md](CONTRIBUTING.md).
 Conducta: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md). Vulnerabilidades:
 [SECURITY.md](SECURITY.md). Soporte: [SUPPORT.md](SUPPORT.md).
 
