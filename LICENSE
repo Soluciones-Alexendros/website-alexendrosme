@@ -1,22 +1,6 @@
-Licencias de website-alexendrosme
+MIT License
 
 Copyright (c) 2026 Alejandro Domingo Agustí (Alexendros)
-
-1. Contenidos editoriales — CC BY-NC-SA 4.0
-
-Los textos, artículos y demás contenidos editoriales originales de este
-sitio se publican bajo la licencia Creative Commons
-Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0).
-
-Eres libre de compartir y adaptar el material siempre que des crédito
-apropiado, no lo uses con fines comerciales y distribuyas tus
-contribuciones bajo la misma licencia.
-
-Texto legal completo: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
-
-2. Código fuente — MIT
-
-El código fuente de este repositorio se publica bajo la licencia MIT:
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -35,12 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-3. Exclusiones
-
-Estas licencias no cubren marcas, nombres, logotipos ni derechos de imagen,
-tampoco materiales de terceros (fuentes, librerías, assets) que conservan
-sus propias licencias.
-
-Más detalle: https://alexendros.me/legal/licencia
-Consultas: contacto@alexendros.me
