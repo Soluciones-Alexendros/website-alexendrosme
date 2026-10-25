@@ -191,7 +191,7 @@ y este proyecto se adhiere a [SemVer 2.0.0](https://semver.org/lang/es/).
 - **Validación JSON-LD en CI**: `scripts/validate-jsonld.ts` escanea `out/` post-build, extrae 44 bloques `application/ld+json` en 14 páginas y valida `@context` + `@type`.
 - **A11y axe-core en CI**: tests `a11y.spec.ts` des-excluidos de `playwright.config.ts` — 5 páginas verificadas WCAG 2.1 AA en cada CI pipeline.
 - **Health-check sintético**: `scripts/health-check.sh` para monitorización externa (cron-job.org, UptimeRobot): HTTP 200 en home + feeds + sitemaps + security headers.
-- **AUDITORIA-CRITICA.md**: informe completo repo+web nivel PROFUNDO. 6 defectos encontrados, 6 corregidos. Plan de magnificación 3 fases (8 ítems). Salud del proyecto: 9.8/10.
+- **docs/audits/AUDITORIA-CRITICA.md**: informe completo repo+web nivel PROFUNDO. 6 defectos encontrados, 6 corregidos. Plan de magnificación 3 fases (8 ítems). Salud del proyecto: 9.8/10.
 
 - **Modo claro/oscuro** (Tarea 7): soporte completo `prefers-color-scheme` + toggle manual (System/Light/Dark) con persistencia localStorage. Tokens OKLCH light mode calculados perceptualemente (hue 85 superficies, hue 315 texto, contraste ≥4.5:1 WCAG AA). ThemeProvider + ThemeToggle (Radix Popover, iconos Monitor/Sun/Moon). Script anti-FOUC inline en `<head>`.
 - **Banner anti-monetización** (Tarea 5): aviso superior fijo "Este espacio es libre de dinero. Sin anuncios, sin afiliados, sin tracking. Lo comercial vive en alexendros.dev". Descartable (localStorage), respeta `prefers-reduced-motion`, animación slide-down/up, glass effect con `--ax-glass-*` tokens.
@@ -259,8 +259,8 @@ y este proyecto se adhiere a [SemVer 2.0.0](https://semver.org/lang/es/).
 
 ### Documentación
 
-- `docs/auditoria-tecnica-2026-04-14.md`: renombrado desde `AUDITORÍA TÉCNICA alexendros.md` + nota de snapshot histórico superseded.
-- `docs/AUDIT-REPORT.md`: ya existente en main.
+- `docs/audits/auditoria-tecnica-2026-04-14.md`: renombrado desde `AUDITORÍA TÉCNICA alexendros.md` + nota de snapshot histórico superseded.
+- `docs/audits/AUDIT-REPORT.md`: ya existente en main.
 
 ### Eliminado
 
