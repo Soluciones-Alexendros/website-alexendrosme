@@ -29,6 +29,55 @@ permissions:
   contents: read
 
 jobs:
+  secrets:
+    name: secrets
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      # Binario gitleaks (no la action de pago). Checksum release v8.30.1.
+      - name: gitleaks
+        run: |
+          set -euo pipefail
+          curl -sSfL -o gitleaks.tar.gz https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz
+          echo "551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb  gitleaks.tar.gz" | sha256sum -c -
+          tar -xzf gitleaks.tar.gz gitleaks
+          ./gitleaks detect --source . --redact --verbose
+
+  sca:
+    name: sca
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version-file: ".nvmrc"
+          cache: npm
+      - run: npm ci
+      - name: npm audit (producción, high)
+        run: npm audit --omit=dev --audit-level=high
+      - name: npm audit (todas, high)
+        run: npm audit --audit-level=high
+      - name: OSV-Scanner (high/critical sobre package-lock.json)
+        run: |
+          set -euo pipefail
+          curl -sSfL -o osv-scanner https://github.com/google/osv-scanner/releases/download/v2.2.3/osv-scanner_linux_amd64
+          echo "8cdb138b36cdb9c99c455cafb32a1c83e1823448dc00e1c8ab9afe474a5e93f0  osv-scanner" | sha256sum -c -
+          chmod +x osv-scanner
+          # Exit 1 del binario también con medium/low: filtramos en el gate.
+          ./osv-scanner scan -L package-lock.json --format json --output-file osv-results.json || true
+          node scripts/osv-fail-on-high.mjs osv-results.json
+
   runner-health:
     if: github.event_name == 'workflow_dispatch' && inputs.runner == 'self-hosted'
     runs-on: [self-hosted, ts]
