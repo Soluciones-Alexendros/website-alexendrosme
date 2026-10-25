@@ -13,6 +13,24 @@ Todos los cambios destacables de este proyecto se documentan en este archivo.
 El formato sigue [Keep a Changelog 1.1.0](https://keepachangelog.com/es-ES/1.1.0/),
 y este proyecto se adhiere a [SemVer 2.0.0](https://semver.org/lang/es/).
 
+## [0.15.2] — 2026-10-25
+
+### Seguridad
+
+- Cierra path-injection CodeQL en `a11y-audit` / `perf-audit` con `resolveSafePath`.
+- Sube `happy-dom` ≥21.0.4, `zod` ≥4.6.6, `vite` 8.1.6 y `brace-expansion` parcheado (0 high en `npm audit --audit-level=high`).
+- Jobs CI `secrets` (gitleaks v8.30.1) y `sca` (npm audit + OSV high/critical).
+
+### Corregido
+
+- Workflow Lighthouse Scores: pipefail, extractor Node, config de producción y fallback a `out/` sin bajar umbrales.
+- `get-next-version.sh` solo interpreta tipos conventional en el subject (evita falsos bumps por el cuerpo del squash).
+
+### Cambiado
+
+- `LICENSE` MIT reconocible (contenido editorial CC BY-NC-SA en `/legal/licencia`).
+- Raíz: elimina `p.zip`; auditorías históricas en `docs/audits/`.
+
 ## [0.15.1] — 2026-10-24
 
 ### Seguridad

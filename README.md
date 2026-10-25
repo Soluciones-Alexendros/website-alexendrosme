@@ -106,14 +106,25 @@ Conducta: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md). Vulnerabilidades:
 
 <!-- RELEASE_SECTION_START -->
 <details>
-<summary><strong>v0.15.1</strong> (2026-10-24)</summary>
+<summary><strong>v0.15.2</strong> (2026-10-25)</summary>
 
-## [0.15.1] — 2026-10-24
+## [0.15.2] — 2026-10-25
 
 ### Seguridad
 
-- **next** y `@next/eslint-plugin-next` a `16.4.3` (cierra RCE/SSRF y demás críticas/altas Dependabot de Next).
-- Overrides de transitivas: `postcss@8.5.31`, `js-yaml@3.15.2`, `nanoid@3.3.20`, `fast-uri@3.1.7`, `source-map-js@1.2.2`, `compression@1.8.2`, `baseline-browser-mapping@2.11.32` (y `sharp` vía Next ≥0.35.5).
+- Cierra path-injection CodeQL en `a11y-audit` / `perf-audit` con `resolveSafePath`.
+- Sube `happy-dom` ≥21.0.4, `zod` ≥4.6.6, `vite` 8.1.6 y `brace-expansion` parcheado (0 high en `npm audit --audit-level=high`).
+- Jobs CI `secrets` (gitleaks v8.30.1) y `sca` (npm audit + OSV high/critical).
+
+### Corregido
+
+- Workflow Lighthouse Scores: pipefail, extractor Node, config de producción y fallback a `out/` sin bajar umbrales.
+- `get-next-version.sh` solo interpreta tipos conventional en el subject (evita falsos bumps por el cuerpo del squash).
+
+### Cambiado
+
+- `LICENSE` MIT reconocible (contenido editorial CC BY-NC-SA en `/legal/licencia`).
+- Raíz: elimina `p.zip`; auditorías históricas en `docs/audits/`.
 
 </details>
 <!-- RELEASE_SECTION_END -->
