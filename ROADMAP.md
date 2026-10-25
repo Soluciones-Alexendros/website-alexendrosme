@@ -23,7 +23,7 @@ Roadmap por fases y componentes, actualizado a **consolidación 2026-09-30 (ADR-
 - [x] Lighthouse budgets en CI (LCP < 4s, CLS < 0.1, TBT < 300ms) + `content-visibility`.
 - [x] Sitemaps segmentados (`generate-sitemap.ts`), validación JSON-LD en CI (44 bloques).
 - [x] Tests a11y axe-core WCAG 2.1 AA en CI + `health-check.sh`.
-- [x] AUDITORIA-CRITICA.md: 6 defectos corregidos (shell injection, CSS huérfano, SHA pinning, etc.). Salud 9.8/10.
+- [x] `docs/audits/AUDITORIA-CRITICA.md`: 6 defectos corregidos (shell injection, CSS huérfano, SHA pinning, etc.). Salud 9.8/10.
 
 ### Contenido y SEO (v0.5.0 → v0.8.0)
 
