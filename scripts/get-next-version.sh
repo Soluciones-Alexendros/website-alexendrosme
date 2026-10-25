@@ -7,7 +7,9 @@
 # Comportamiento:
 #   - Busca el último tag vX.Y.Z en la rama actual
 #   - Analiza commits desde ese tag con conventional-commit parsing
-#   - BREAKING CHANGE / ! → major | feat → minor | fix/refactor/perf → patch
+#   - Tipos feat/fix/refactor/perf (y !) solo en el **subject** del commit
+#     (el cuerpo de un squash/PR puede mencionar `fix:` sin ser un bump)
+#   - BREAKING CHANGE / BREAKING: en subject o body → major
 #   - Si no hay cambios relevantes → no emite nada (exit 1)
 #
 # Salida: vX.Y.Z (próxima versión)
@@ -36,20 +38,31 @@ MAJOR_BUMP=0
 MINOR_BUMP=0
 PATCH_BUMP=0
 
-while IFS= read -r line; do
-  # BREAKING: "BREAKING CHANGE:", "BREAKING:", o "feat!:", "fix!:"
-  case "$line" in
-    *BREAKING\ CHANGE:*|*BREAKING:*|*!:*)
+while IFS= read -r sha; do
+  [ -z "$sha" ] && continue
+  subject=$(git log -1 --format='%s' "$sha")
+  body=$(git log -1 --format='%b' "$sha")
+
+  # BREAKING en subject o body
+  case "$subject"$'\n'"$body" in
+    *BREAKING\ CHANGE:*|*BREAKING:*)
       MAJOR_BUMP=1
       ;;
-    *feat\(*\):*|*feat:*)
+  esac
+
+  # Tipos conventional solo en el subject (evita falsos positivos del cuerpo del PR)
+  case "$subject" in
+    *!:*|feat!*|fix!*|refactor!*|perf!*)
+      MAJOR_BUMP=1
+      ;;
+    feat\(*\):*|feat:*)
       [ "$MAJOR_BUMP" -eq 0 ] && MINOR_BUMP=1
       ;;
-    *fix\(*\):*|*fix:*|*refactor\(*\):*|*refactor:*|*perf\(*\):*|*perf:*)
+    fix\(*\):*|fix:*|refactor\(*\):*|refactor:*|perf\(*\):*|perf:*)
       [ "$MAJOR_BUMP" -eq 0 ] && [ "$MINOR_BUMP" -eq 0 ] && PATCH_BUMP=1
       ;;
   esac
-done < <(git log "$LAST_TAG..HEAD" --format="%s%n%b" 2>/dev/null || echo "")
+done < <(git rev-list "$LAST_TAG..HEAD" 2>/dev/null || true)
 
 if [ "$MAJOR_BUMP" -eq 0 ] && [ "$MINOR_BUMP" -eq 0 ] && [ "$PATCH_BUMP" -eq 0 ]; then
   echo "::notice::No se detectaron cambios que requieran release (solo chore/docs/ci/style)" >&2
