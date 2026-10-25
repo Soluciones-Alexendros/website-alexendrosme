@@ -12,10 +12,19 @@ import { readFileSync, existsSync, statSync } from "node:fs";
 import { join, extname } from "node:path";
 import { chromium } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import { resolveSafePath } from "./safe-path.mjs";
 
 const PORT = 3444;
 const OUT_DIR = new URL("../out", import.meta.url).pathname;
 const BASE_URL = `http://localhost:${PORT}`;
+
+/**
+ * @param {string} candidate Relative path under OUT_DIR (no leading user URL)
+ * @returns {string | null}
+ */
+function safeUnderOut(candidate) {
+  return resolveSafePath(OUT_DIR, candidate);
+}
 
 // ── MIME types ──
 const MIME = {
@@ -42,42 +51,36 @@ const MIME = {
  *   /opinion/ejemplo/ → directory with extracted assets
  */
 function resolvePath(urlPath) {
-  // Remove query string
-  const path = urlPath.split("?")[0];
-  const decoded = decodeURIComponent(path);
-  const filePath = join(OUT_DIR, decoded);
+  const path = (urlPath ?? "").split("?")[0];
 
-  // Direct match
-  if (existsSync(filePath) && statSync(filePath).isFile()) {
-    return filePath;
-  }
+  /** @param {string} rel */
+  const tryFile = (rel) => {
+    const safe = safeUnderOut(rel);
+    if (!safe) return null;
+    if (existsSync(safe) && statSync(safe).isFile()) return safe;
+    return null;
+  };
+
+  // Direct match under OUT_DIR
+  const direct = tryFile(path);
+  if (direct) return direct;
 
   // Try with .html extension (Next.js static export pattern)
-  const htmlPath = `${filePath}.html`;
-  if (existsSync(htmlPath)) {
-    return htmlPath;
-  }
+  const asHtml = tryFile(`${path.replace(/\/$/, "")}.html`);
+  if (asHtml) return asHtml;
 
   // Try as directory with index.html
-  const indexPath = join(filePath, "index.html");
-  if (existsSync(indexPath)) {
-    return indexPath;
-  }
+  const asIndex = tryFile(join(path, "index.html"));
+  if (asIndex) return asIndex;
 
   // For root, serve index.html
   if (path === "/" || path === "") {
-    const rootIndex = join(OUT_DIR, "index.html");
-    if (existsSync(rootIndex)) return rootIndex;
+    const rootIndex = tryFile("index.html");
+    if (rootIndex) return rootIndex;
   }
 
-  // Handle Next.js internal files (start with _)
-  if (existsSync(filePath)) return filePath;
-
-  // Fallback: 404 page
-  const fallback = join(OUT_DIR, "404.html");
-  if (existsSync(fallback)) return fallback;
-
-  return null;
+  // Fallback: 404 page (still constrained to OUT_DIR)
+  return tryFile("404.html");
 }
 
 // ── Static server ──
