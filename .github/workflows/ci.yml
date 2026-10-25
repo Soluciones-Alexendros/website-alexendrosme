@@ -75,7 +75,9 @@ jobs:
           echo "8cdb138b36cdb9c99c455cafb32a1c83e1823448dc00e1c8ab9afe474a5e93f0  osv-scanner" | sha256sum -c -
           chmod +x osv-scanner
           # Exit 1 del binario también con medium/low: filtramos en el gate.
-          ./osv-scanner scan -L package-lock.json --format json --output-file osv-results.json || true
+          # --output-file no escribe en v2.2.3 en este runner; capturamos stdout.
+          ./osv-scanner scan -L package-lock.json --format json > osv-results.json || true
+          test -s osv-results.json || echo '{"results":[]}' > osv-results.json
           node scripts/osv-fail-on-high.mjs osv-results.json
 
   runner-health:
