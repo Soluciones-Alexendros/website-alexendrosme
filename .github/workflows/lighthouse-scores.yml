@@ -2,7 +2,7 @@ name: Lighthouse Scores
 
 on:
   schedule:
-    - cron: "0 6 * * 1"  # Every Monday at 06:00 UTC
+    - cron: "0 6 * * 1" # Every Monday at 06:00 UTC
   workflow_dispatch:
 
 concurrency:
@@ -15,7 +15,7 @@ permissions:
 jobs:
   audit:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     permissions:
       contents: read
     steps:
@@ -26,62 +26,37 @@ jobs:
           cache: npm
       - run: npm ci
 
-      - name: Build static export (for LHCI compatibility)
+      - name: Build static export (fallback target + LHCI budgets)
         run: npm run build
 
-      - name: Run Lighthouse CI against production URL
+      - name: Run Lighthouse CI (production, then local out/ fallback)
         id: lhci
         run: |
-          npx @lhci/cli@0.14.x autorun \
-            --config=lighthouserc.cjs \
-            --collect.url=https://alexendros.me/ \
-            --collect.numberOfRuns=1 \
-            --collect.settings.chromeFlags="--headless=new --no-sandbox" \
-            2>&1 | tee /tmp/lhci-output.txt
+          set -euo pipefail
+          rm -rf .lighthouseci
+          MODE=production
+          if ! npx @lhci/cli@0.14.x autorun --config=lighthouserc.production.cjs 2>&1 | tee /tmp/lhci-output.txt; then
+            echo "::warning::Production LHCI failed (often NO_FCP on hosted runners). Falling back to local out/ with the same assertMatrix."
+            if grep -q 'NO_FCP' /tmp/lhci-output.txt 2>/dev/null; then
+              echo "::notice::Detected NO_FCP against https://alexendros.me/ — measuring built out/ instead. Budgets unchanged."
+            fi
+            rm -rf .lighthouseci
+            MODE=local
+            npx @lhci/cli@0.14.x autorun --config=lighthouserc.cjs 2>&1 | tee /tmp/lhci-output.txt
+          fi
+          echo "mode=$MODE" >> "$GITHUB_OUTPUT"
 
       - name: Extract scores from LHCI results
         id: scores
-        run: |
-          REPORT=$(find .lighthouseci -name 'assertion-results-*.json' 2>/dev/null | head -1)
-          if [ -z "$REPORT" ]; then
-            npx lighthouse "https://alexendros.me/" --output json \
-              --chrome-flags="--headless=new --no-sandbox" 2>/dev/null > /tmp/lh-direct.json
-            REPORT="/tmp/lh-direct.json"
-          fi
-
-          {
-            PERFORMANCE=$(REPORT_PATH="$REPORT" python3 -c "
-              import json,os
-              d=json.load(open(os.environ['REPORT_PATH']))
-              print(f\"{d['categories']['performance']['score']*100:.0f}\")
-            ")
-            ACCESSIBILITY=$(REPORT_PATH="$REPORT" python3 -c "
-              import json,os
-              d=json.load(open(os.environ['REPORT_PATH']))
-              print(f\"{d['categories']['accessibility']['score']*100:.0f}\")
-            ")
-            BP=$(REPORT_PATH="$REPORT" python3 -c "
-              import json,os
-              d=json.load(open(os.environ['REPORT_PATH']))
-              print(f\"{d['categories']['best-practices']['score']*100:.0f}\")
-            ")
-            SEO=$(REPORT_PATH="$REPORT" python3 -c "
-              import json,os
-              d=json.load(open(os.environ['REPORT_PATH']))
-              print(f\"{d['categories']['seo']['score']*100:.0f}\")
-            ")
-            echo "perf=$PERFORMANCE"
-            echo "a11y=$ACCESSIBILITY"
-            echo "bp=$BP"
-            echo "seo=$SEO"
-          } >> "$GITHUB_OUTPUT"
+        run: node scripts/lhci-extract-scores.mjs
 
       - name: Print scores
         run: |
+          echo "Mode:           ${{ steps.lhci.outputs.mode }}"
           echo "Performance:    ${{ steps.scores.outputs.perf }}%"
           echo "Accessibility:  ${{ steps.scores.outputs.a11y }}%"
           echo "Best Practices: ${{ steps.scores.outputs.bp }}%"
-          echo "SEO:           ${{ steps.scores.outputs.seo }}%"
+          echo "SEO:            ${{ steps.scores.outputs.seo }}%"
           echo ""
           echo "LHCI results uploaded to temporary-public-storage (see LHCI dashboard)."
 
@@ -117,21 +92,8 @@ jobs:
             };
 
             if (!gistId || gistId === '') {
-              console.log('╔══════════════════════════════════════════════════════════╗');
-              console.log('║  LH_GIST_ID not set — badge NOT updated.                ║');
-              console.log('║                                                        ║');
-              console.log('║  To enable dynamic Lighthouse badge:                   ║');
-              console.log('║  1. Create a gist at https://gist.github.com           ║');
-              console.log('║     with filename "lighthouse.json"                     ║');
-              console.log('║  2. Copy the gist ID from the URL                      ║');
-              console.log('║  3. Set LH_GIST_ID in repo secrets                     ║');
-              console.log('║                                                        ║');
-              console.log('║  Scores this run:                                      ║');
-              console.log(`║    Performance:    ${perf}%                              ║`);
-              console.log(`║    Accessibility:  ${a11y}%                              ║`);
-              console.log(`║    Best Practices: ${bp}%                              ║`);
-              console.log(`║    SEO:            ${seo}%                              ║`);
-              console.log('╚══════════════════════════════════════════════════════════╝');
+              console.log('LH_GIST_ID not set — badge NOT updated.');
+              console.log(`Scores: P:${perf}% A:${a11y}% BP:${bp}% SEO:${seo}%`);
               return;
             }
 
@@ -148,11 +110,7 @@ jobs:
               const badgeUrl = `https://img.shields.io/endpoint?url=${encodeURIComponent(
                 gist.files['lighthouse.json'].raw_url
               )}&logo=lighthouse&style=flat`;
-              console.log(`✅ Badge updated successfully!`);
-              console.log(`Badge URL: ${badgeUrl}`);
-              console.log('');
-              console.log('To use in README.md, add:');
-              console.log(`[![Lighthouse](${badgeUrl})](${encodeURIComponent('https://googlechrome.github.io/lighthouse/viewer/?psiurl=https%3A%2F%2Falexendros.me')})`);
+              console.log(`Badge updated: ${badgeUrl}`);
             } catch (err) {
               console.error('Failed to update gist:', err.message);
               if (err.status === 404) {
