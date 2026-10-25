@@ -78,7 +78,7 @@ Lista viva de pendientes del repositorio standalone `website-alexendrosme`
 
 ## 9. Auditoría PROFUNDA + Saneamiento ✅ (2026-07-15)
 
-> Informe en `AUDITORIA-CRITICA.md`. 6 defectos encontrados, 6 corregidos.
+> Informe en `docs/audits/AUDITORIA-CRITICA.md`. 6 defectos encontrados, 6 corregidos.
 
 - [x] DEFECTO-001: Shell injection en release.yml (inputs → env).
 - [x] DEFECTO-002: CSS huérfano en components.css (4 declaraciones sueltas).
