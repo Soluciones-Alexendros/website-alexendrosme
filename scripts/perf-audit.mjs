@@ -13,11 +13,20 @@ import AxeBuilder from "@axe-core/playwright";
 import { createServer } from "node:http";
 import { readFileSync, existsSync, statSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { resolveSafePath } from "./safe-path.mjs";
 
 const PORT = 4335;
 const OUT_DIR = new URL("../out", import.meta.url).pathname;
 const BASE = `http://localhost:${PORT}`;
 const REPORT_DIR = new URL("../perf-reports", import.meta.url).pathname;
+
+/**
+ * @param {string} candidate
+ * @returns {string | null}
+ */
+function safeUnderOut(candidate) {
+  return resolveSafePath(OUT_DIR, candidate);
+}
 
 const MIME = {
   ".html": "text/html",
@@ -33,34 +42,32 @@ const MIME = {
 function start() {
   return new Promise((r) => {
     const s = createServer((q, res) => {
-      let p = decodeURIComponent(q.url.split("?")[0]);
-      let fp = join(OUT_DIR, p === "/" ? "index.html" : p);
+      const p = (q.url ?? "").split("?")[0];
+      const rootRel = p === "/" || p === "" ? "index.html" : p;
 
-      // Try direct, +.html, /index.html, root index, 404
-      const candidates = [
-        fp,
-        fp + ".html",
-        join(fp, "index.html"),
-        join(OUT_DIR, "index.html"),
-        join(OUT_DIR, "404.html"),
+      // Relative candidates only — each pass through resolveSafePath.
+      const candidateRels = [
+        rootRel,
+        `${rootRel.replace(/\/$/, "")}.html`,
+        join(rootRel, "index.html"),
+        "index.html",
+        "404.html",
       ];
-      for (const t of candidates) {
+
+      for (const rel of candidateRels) {
+        const t = safeUnderOut(rel);
+        if (!t) continue;
         if (existsSync(t) && statSync(t).isFile()) {
           const c = readFileSync(t);
           const ext = "." + t.split(".").pop().toLowerCase();
-          res.writeHead(200, { "Content-Type": MIME[ext] ?? "octet-stream" });
+          const status = rel === "404.html" && rootRel !== "404.html" ? 404 : 200;
+          res.writeHead(status, { "Content-Type": MIME[ext] ?? "octet-stream" });
           res.end(c);
           return;
         }
       }
-      const fallback = join(OUT_DIR, "404.html");
-      if (existsSync(fallback)) {
-        res.writeHead(404, { "Content-Type": "text/html" });
-        res.end(readFileSync(fallback));
-      } else {
-        res.writeHead(404);
-        res.end("");
-      }
+      res.writeHead(404);
+      res.end("");
     }).listen(PORT, () => {
       console.log(`Server:${BASE}`);
       r(s);
