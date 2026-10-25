@@ -67,10 +67,12 @@ del proyecto: security@alexendros.me.
 ## Dependencias
 
 CI ejecuta `npm audit --omit=dev --audit-level=high` en el job `quality`
-como **aviso** (no gate): el baseline de Next.js 16 reporta advisories de
-runtime (middleware, Server Actions, image optimizer) que no aplican a este
-export estático. Renovate (`.github/renovate.json`) cubre `npm` y
-`github-actions`. No hay Dependabot de version-updates.
+como **aviso** (informativo). La **puerta** high es el job `sca`:
+`npm audit --omit=dev --audit-level=high`, `npm audit --audit-level=high` y
+OSV-Scanner sobre `package-lock.json` (falla solo con critical/high). El job
+`secrets` (gitleaks) escanea el historial en cada PR/push. Renovate
+(`.github/renovate.json`) cubre `npm` y `github-actions`. No hay Dependabot
+de version-updates.
 
 ## Trade-offs de seguridad conocidos
 
