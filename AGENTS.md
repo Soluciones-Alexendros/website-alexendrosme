@@ -114,3 +114,14 @@ docs/           architecture/, guides/, runbooks/
 - Jobs `quality`, `test`, `build` y `smoke` verdes
 - Docs canónicos actualizados si cambia el contrato
 - Sin secretos en el diff
+
+## Learned User Preferences
+
+- No mezclar la migración TypeScript 6→7 (issue #120 / bloqueo por typescript-eslint) con remediaciones de dependencias o code scanning.
+- Auto-merge solo cuando el PR esté todo verde; preferir merge commit (nunca squash) al cerrar BUILD.
+
+## Learned Workspace Facts
+
+- El clone `Portales/alexendrosme` corresponde al repo GitHub `Soluciones-Alexendros/website-alexendrosme`; producción publicada: `https://alexendros.me`.
+- Al tocar CI, `renovate.json`, `SECURITY.md` o `CODEOWNERS`, alinear con `Soluciones-Alexendros/repo-standard`.
+- Renovate es el único bot de dependencias; Dependabot solo para alertas (no añadir `dependabot.yml`).
