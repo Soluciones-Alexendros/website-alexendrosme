@@ -122,7 +122,7 @@ y este proyecto se adhiere a [SemVer 2.0.0](https://semver.org/lang/es/).
 
 ### Añadido
 
-- Stubs de proyectos **ALIGNUX** y **NEUBAT** en `content/proyectos/`.
+- Stub del proyecto **NEUBAT** en `content/proyectos/`.
 - `theme-color` dual (light `#faf8f2` / dark `#17130f`) en viewport y meta.
 
 ### Cambiado
